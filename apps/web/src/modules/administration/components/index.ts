@@ -1,0 +1,4 @@
+/**
+ * Administration module — components
+ */
+export {};

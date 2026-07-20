@@ -1,0 +1,4 @@
+/**
+ * Settings module — constants
+ */
+export {};

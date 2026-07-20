@@ -1,0 +1,4 @@
+/**
+ * Maintenance module — hooks
+ */
+export {};

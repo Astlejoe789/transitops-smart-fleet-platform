@@ -1,0 +1,44 @@
+{
+  "name": "transitops",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered Smart Fleet & Transport Operations Platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "db:generate": "prisma generate --schema=database/prisma/schema.prisma",
+    "db:validate": "prisma validate --schema=database/prisma/schema.prisma",
+    "db:format": "prisma format --schema=database/prisma/schema.prisma",
+    "db:migrate": "prisma migrate dev --schema=database/prisma/schema.prisma",
+    "db:seed": "tsx database/seeds/seed.ts",
+    "db:studio": "prisma studio --schema=database/prisma/schema.prisma",
+    "clean": "rimraf apps/*/dist apps/*/node_modules node_modules",
+    "prepare": "echo 'Ready'"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.3.0",
+    "rimraf": "^6.0.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

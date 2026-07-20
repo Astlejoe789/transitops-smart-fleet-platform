@@ -1,0 +1,4 @@
+/**
+ * Billing module — constants
+ */
+export {};

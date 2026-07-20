@@ -1,0 +1,4 @@
+/**
+ * Analytics module — components
+ */
+export {};

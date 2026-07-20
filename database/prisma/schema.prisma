@@ -1,0 +1,783 @@
+// ============================================
+// TransitOps — Prisma Database Schema
+// AI-Powered Smart Fleet & Transport Operations
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  SUPER_ADMIN
+  COMPANY_ADMIN
+  BRANCH_MANAGER
+  FLEET_MANAGER
+  DISPATCHER
+  DRIVER
+  FINANCE_MANAGER
+  VIEWER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  IN_TRANSIT
+  UNDER_MAINTENANCE
+  OUT_OF_SERVICE
+  DECOMMISSIONED
+}
+
+enum VehicleType {
+  TRUCK
+  VAN
+  TRAILER
+  BUS
+  PICKUP
+  CONTAINER_CARRIER
+}
+
+enum FuelType {
+  DIESEL
+  PETROL
+  ELECTRIC
+  HYBRID
+  CNG
+}
+
+enum DriverStatus {
+  AVAILABLE
+  ON_TRIP
+  ON_LEAVE
+  SUSPENDED
+  TERMINATED
+}
+
+enum LicenseCategory {
+  CLASS_A
+  CLASS_B
+  CLASS_C
+  CLASS_D
+  HEAVY_RIGID
+  COMBINATION
+}
+
+enum TripStatus {
+  SCHEDULED
+  DISPATCHED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DELAYED
+}
+
+enum TripPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum MaintenanceType {
+  ROUTINE_SERVICE
+  REPAIR
+  INSPECTION
+  TIRE_CHANGE
+  OIL_CHANGE
+  BREAKDOWN
+}
+
+enum ExpenseCategory {
+  FUEL
+  MAINTENANCE
+  TOLL
+  PARKING
+  DRIVER_ALLOWANCE
+  PERMIT
+  INSURANCE
+  OTHER
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  VOID
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CREDIT_CARD
+  CASH
+  CHECK
+  DIGITAL_WALLET
+}
+
+enum NotificationType {
+  TRIP_ASSIGNED
+  MAINTENANCE_DUE
+  LICENSE_EXPIRING
+  INVOICE_OVERDUE
+  EXPENSE_ALERT
+  SYSTEM
+}
+
+enum NotificationSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  EXPORT
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+// 1. Company (Tenant)
+model Company {
+  id         String    @id @default(uuid())
+  name       String
+  code       String    @unique
+  email      String
+  phone      String?
+  address    String?
+  taxId      String?
+  logoUrl    String?
+  isVerified Boolean   @default(false)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  // Relationships
+  branches        Branch[]
+  roles           Role[]
+  users           User[]
+  vehicles        Vehicle[]
+  drivers         Driver[]
+  trips           Trip[]
+  maintenanceLogs MaintenanceLog[]
+  fuelLogs        FuelLog[]
+  expenses        Expense[]
+  customers       Customer[]
+  vendors         Vendor[]
+  invoices        Invoice[]
+  payments        Payment[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  settings        Setting[]
+
+  @@index([code])
+  @@index([deletedAt])
+  @@map("companies")
+}
+
+// 2. Branch
+model Branch {
+  id        String    @id @default(uuid())
+  companyId String
+  name      String
+  code      String
+  phone     String?
+  address   String?
+  managerId String?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relationships
+  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  users    User[]
+  vehicles Vehicle[]
+  drivers  Driver[]
+  trips    Trip[]
+  expenses Expense[]
+  invoices Invoice[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([deletedAt])
+  @@map("branches")
+}
+
+// 3. Role
+model Role {
+  id          String   @id @default(uuid())
+  companyId   String?
+  name        String
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  company         Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  users           User[]
+  rolePermissions RolePermission[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("roles")
+}
+
+// 4. Permission
+model Permission {
+  id          String   @id @default(uuid())
+  module      String
+  action      String
+  description String?
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  rolePermissions RolePermission[]
+
+  @@unique([module, action])
+  @@map("permissions")
+}
+
+// 5. RolePermission (Junction)
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime @default(now())
+
+  // Relationships
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// 6. User
+model User {
+  id           String     @id @default(uuid())
+  companyId    String
+  branchId     String?
+  roleId       String
+  email        String     @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  avatarUrl    String?
+  status       UserStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+
+  // Relationships
+  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch        Branch?        @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  role          Role           @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  driverProfile Driver?
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([email])
+  @@index([roleId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+// 7. Vehicle
+model Vehicle {
+  id              String        @id @default(uuid())
+  companyId       String
+  branchId        String?
+  make            String
+  model           String
+  year            Int
+  vin             String        @unique
+  plateNumber     String        @unique
+  type            VehicleType
+  fuelType        FuelType
+  status          VehicleStatus @default(AVAILABLE)
+  currentOdometer Float         @default(0)
+  fuelCapacity    Float?
+  payloadCapacity Float?
+  color           String?
+  purchaseDate    DateTime?
+  insuranceExpiry DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+
+  // Relationships
+  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch          Branch?           @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  documents       VehicleDocument[]
+  trips           Trip[]
+  maintenanceLogs MaintenanceLog[]
+  fuelLogs        FuelLog[]
+  expenses        Expense[]
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([status])
+  @@index([plateNumber])
+  @@index([deletedAt])
+  @@map("vehicles")
+}
+
+// 8. VehicleDocument
+model VehicleDocument {
+  id           String    @id @default(uuid())
+  vehicleId    String
+  title        String
+  documentType String
+  fileUrl      String
+  issuedDate   DateTime?
+  expiryDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relationships
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([expiryDate])
+  @@map("vehicle_documents")
+}
+
+// 9. Driver
+model Driver {
+  id               String          @id @default(uuid())
+  companyId        String
+  branchId         String?
+  userId           String          @unique
+  licenseNumber    String          @unique
+  licenseCategory  LicenseCategory
+  licenseExpiry    DateTime
+  status           DriverStatus    @default(AVAILABLE)
+  emergencyContact String?
+  joinedDate       DateTime        @default(now())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  deletedAt        DateTime?
+
+  // Relationships
+  company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch    Branch?          @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents DriverDocument[]
+  trips     Trip[]
+  fuelLogs  FuelLog[]
+  expenses  Expense[]
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([status])
+  @@index([licenseExpiry])
+  @@index([deletedAt])
+  @@map("drivers")
+}
+
+// 10. DriverDocument
+model DriverDocument {
+  id           String    @id @default(uuid())
+  driverId     String
+  title        String
+  documentType String
+  fileUrl      String
+  issuedDate   DateTime?
+  expiryDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relationships
+  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId])
+  @@index([expiryDate])
+  @@map("driver_documents")
+}
+
+// 11. Trip
+model Trip {
+  id                String       @id @default(uuid())
+  companyId         String
+  branchId          String?
+  tripNumber        String       @unique
+  vehicleId         String
+  driverId          String
+  customerId        String?
+  origin            String
+  destination       String
+  status            TripStatus   @default(SCHEDULED)
+  priority          TripPriority @default(MEDIUM)
+  scheduledStart    DateTime
+  scheduledEnd      DateTime
+  actualStart       DateTime?
+  actualEnd         DateTime?
+  startOdometer     Float?
+  endOdometer       Float?
+  estimatedDistance Float?
+  actualDistance    Float?
+  cargoDescription  String?
+  notes             String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  deletedAt         DateTime?
+
+  // Relationships
+  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch   Branch?   @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  vehicle  Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+  driver   Driver    @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  fuelLogs FuelLog[]
+  expenses Expense[]
+  invoices Invoice[]
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@index([customerId])
+  @@index([status])
+  @@index([scheduledStart])
+  @@index([deletedAt])
+  @@map("trips")
+}
+
+// 12. MaintenanceLog
+model MaintenanceLog {
+  id               String            @id @default(uuid())
+  companyId        String
+  vehicleId        String
+  vendorId         String?
+  maintenanceType  MaintenanceType
+  status           MaintenanceStatus @default(SCHEDULED)
+  description      String
+  cost             Float             @default(0)
+  scheduledDate    DateTime
+  completedDate    DateTime?
+  odometerReading  Float?
+  invoiceReference String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  // Relationships
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vendor  Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+  @@index([vehicleId])
+  @@index([vendorId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@map("maintenance_logs")
+}
+
+// 13. FuelLog
+model FuelLog {
+  id              String   @id @default(uuid())
+  companyId       String
+  vehicleId       String
+  driverId        String
+  tripId          String?
+  fuelDate        DateTime @default(now())
+  liters          Float
+  costPerLiter    Float
+  totalCost       Float
+  odometerReading Float
+  stationName     String?
+  receiptUrl      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relationships
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  trip    Trip?   @relation(fields: [tripId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@index([tripId])
+  @@index([fuelDate])
+  @@map("fuel_logs")
+}
+
+// 14. Expense
+model Expense {
+  id          String          @id @default(uuid())
+  companyId   String
+  branchId    String?
+  tripId      String?
+  vehicleId   String?
+  driverId    String?
+  category    ExpenseCategory
+  amount      Float
+  currency    String          @default("USD")
+  expenseDate DateTime        @default(now())
+  description String?
+  receiptUrl  String?
+  isApproved  Boolean         @default(false)
+  approvedBy  String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relationships
+  company Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch  Branch?  @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  trip    Trip?    @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  driver  Driver?  @relation(fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([tripId])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@index([category])
+  @@index([expenseDate])
+  @@map("expenses")
+}
+
+// 15. Customer
+model Customer {
+  id            String    @id @default(uuid())
+  companyId     String
+  name          String
+  contactPerson String?
+  email         String
+  phone         String?
+  address       String?
+  taxId         String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  // Relationships
+  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  trips    Trip[]
+  invoices Invoice[]
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@index([deletedAt])
+  @@map("customers")
+}
+
+// 16. Vendor
+model Vendor {
+  id            String    @id @default(uuid())
+  companyId     String
+  name          String
+  category      String
+  contactPerson String?
+  email         String?
+  phone         String?
+  address       String?
+  taxId         String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  // Relationships
+  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  maintenanceLogs MaintenanceLog[]
+
+  @@index([companyId])
+  @@index([category])
+  @@index([deletedAt])
+  @@map("vendors")
+}
+
+// 17. Invoice
+model Invoice {
+  id            String        @id @default(uuid())
+  companyId     String
+  branchId      String?
+  customerId    String
+  tripId        String?
+  invoiceNumber String        @unique
+  status        InvoiceStatus @default(DRAFT)
+  issueDate     DateTime      @default(now())
+  dueDate       DateTime
+  subtotal      Float         @default(0)
+  taxAmount     Float         @default(0)
+  totalAmount   Float         @default(0)
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+
+  // Relationships
+  company  Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch   Branch?       @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  customer Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  trip     Trip?         @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  items    InvoiceItem[]
+  payments Payment[]
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([customerId])
+  @@index([tripId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([deletedAt])
+  @@map("invoices")
+}
+
+// 18. InvoiceItem
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  description String
+  quantity    Float    @default(1)
+  unitPrice   Float
+  totalPrice  Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+// 19. Payment
+model Payment {
+  id              String        @id @default(uuid())
+  companyId       String
+  invoiceId       String
+  paymentNumber   String        @unique
+  amount          Float
+  paymentDate     DateTime      @default(now())
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(COMPLETED)
+  referenceNumber String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relationships
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([invoiceId])
+  @@index([paymentStatus])
+  @@index([paymentDate])
+  @@map("payments")
+}
+
+// 20. Notification
+model Notification {
+  id        String               @id @default(uuid())
+  companyId String
+  userId    String
+  type      NotificationType
+  severity  NotificationSeverity @default(INFO)
+  title     String
+  message   String
+  isRead    Boolean              @default(false)
+  readAt    DateTime?
+  linkUrl   String?
+  createdAt DateTime             @default(now())
+
+  // Relationships
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// 21. AuditLog
+model AuditLog {
+  id         String      @id @default(uuid())
+  companyId  String
+  userId     String?
+  action     AuditAction
+  entityType String
+  entityId   String?
+  oldValues  Json?
+  newValues  Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+
+  // Relationships
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// 22. Setting
+model Setting {
+  id        String   @id @default(uuid())
+  companyId String
+  category  String
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, category, key])
+  @@index([companyId])
+  @@map("settings")
+}

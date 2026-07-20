@@ -1,0 +1,4 @@
+/**
+ * Dashboard module — constants
+ */
+export {};

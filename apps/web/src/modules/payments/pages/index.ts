@@ -1,0 +1,4 @@
+/**
+ * Payments module — pages
+ */
+export {};

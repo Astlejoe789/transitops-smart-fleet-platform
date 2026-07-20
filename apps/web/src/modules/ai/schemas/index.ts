@@ -1,0 +1,4 @@
+/**
+ * Ai module — schemas
+ */
+export {};

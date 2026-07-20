@@ -1,0 +1,4 @@
+/**
+ * Expenses module — pages
+ */
+export {};

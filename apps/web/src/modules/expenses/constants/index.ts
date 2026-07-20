@@ -1,0 +1,4 @@
+/**
+ * Expenses module — constants
+ */
+export {};

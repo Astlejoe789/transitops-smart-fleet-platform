@@ -1,0 +1,4 @@
+/**
+ * Trips module — constants
+ */
+export {};
