@@ -1,0 +1,4 @@
+/**
+ * Vendors module — components
+ */
+export {};

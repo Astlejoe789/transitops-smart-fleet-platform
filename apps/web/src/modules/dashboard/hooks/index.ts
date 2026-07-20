@@ -1,0 +1,4 @@
+/**
+ * Dashboard module — hooks
+ */
+export {};

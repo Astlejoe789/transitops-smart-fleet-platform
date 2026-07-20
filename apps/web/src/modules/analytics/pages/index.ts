@@ -1,0 +1,4 @@
+/**
+ * Analytics module — pages
+ */
+export {};

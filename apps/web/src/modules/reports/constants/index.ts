@@ -1,0 +1,4 @@
+/**
+ * Reports module — constants
+ */
+export {};

@@ -1,0 +1,4 @@
+/**
+ * Notifications module — types
+ */
+export {};

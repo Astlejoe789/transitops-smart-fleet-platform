@@ -1,0 +1,4 @@
+/**
+ * Fleet module — schemas
+ */
+export {};

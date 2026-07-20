@@ -1,0 +1,4 @@
+/**
+ * Vendors module — schemas
+ */
+export {};

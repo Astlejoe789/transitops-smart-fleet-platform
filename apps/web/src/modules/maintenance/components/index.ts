@@ -1,0 +1,4 @@
+/**
+ * Maintenance module — components
+ */
+export {};

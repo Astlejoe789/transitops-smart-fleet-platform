@@ -1,0 +1,4 @@
+/**
+ * Customers module — types
+ */
+export {};

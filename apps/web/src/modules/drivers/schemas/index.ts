@@ -1,0 +1,4 @@
+/**
+ * Drivers module — schemas
+ */
+export {};

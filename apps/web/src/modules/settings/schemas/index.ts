@@ -1,0 +1,4 @@
+/**
+ * Settings module — schemas
+ */
+export {};

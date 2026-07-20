@@ -1,0 +1,4 @@
+/**
+ * Ai module — pages
+ */
+export {};

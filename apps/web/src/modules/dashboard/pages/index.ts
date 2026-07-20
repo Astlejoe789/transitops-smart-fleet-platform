@@ -1,0 +1,4 @@
+/**
+ * Dashboard module — pages
+ */
+export {};

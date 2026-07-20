@@ -1,0 +1,4 @@
+/**
+ * Auth module — schemas
+ */
+export {};
