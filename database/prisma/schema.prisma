@@ -353,6 +353,7 @@ model Vehicle {
   maintenanceLogs MaintenanceLog[]
   fuelLogs        FuelLog[]
   expenses        Expense[]
+  assignedDrivers Driver[]          @relation("DriverAssignment")
 
   @@index([companyId])
   @@index([branchId])
@@ -384,33 +385,53 @@ model VehicleDocument {
 
 // 9. Driver
 model Driver {
-  id               String          @id @default(uuid())
-  companyId        String
-  branchId         String?
-  userId           String          @unique
-  licenseNumber    String          @unique
-  licenseCategory  LicenseCategory
-  licenseExpiry    DateTime
-  status           DriverStatus    @default(AVAILABLE)
-  emergencyContact String?
-  joinedDate       DateTime        @default(now())
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  deletedAt        DateTime?
+  id                       String          @id @default(uuid())
+  companyId                String
+  branchId                 String?
+  userId                   String          @unique
+  employeeId               String          @unique
+  photoUrl                 String?
+  phone                    String?
+  dateOfBirth              DateTime?
+  gender                   String?
+  bloodGroup               String?
+  nationality              String?
+  address                  String?
+  emergencyContactName     String?
+  emergencyContactPhone    String?
+  emergencyContactRelation String?
+  licenseNumber            String          @unique
+  licenseCategory          LicenseCategory
+  licenseIssuedDate        DateTime?
+  licenseExpiry            DateTime
+  licenseIssuingAuthority  String?
+  medicalCertificateUrl    String?
+  medicalExpiry            DateTime?
+  fitnessStatus            String?
+  healthNotes              String?
+  assignedVehicleId        String?
+  status                   DriverStatus    @default(AVAILABLE)
+  joinedDate               DateTime        @default(now())
+  createdAt                DateTime        @default(now())
+  updatedAt                DateTime        @updatedAt
+  deletedAt                DateTime?
 
   // Relationships
-  company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch    Branch?          @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  documents DriverDocument[]
-  trips     Trip[]
-  fuelLogs  FuelLog[]
-  expenses  Expense[]
+  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch          Branch?          @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedVehicle Vehicle?         @relation("DriverAssignment", fields: [assignedVehicleId], references: [id], onDelete: SetNull)
+  documents       DriverDocument[]
+  trips           Trip[]
+  fuelLogs        FuelLog[]
+  expenses        Expense[]
 
   @@index([companyId])
   @@index([branchId])
   @@index([status])
   @@index([licenseExpiry])
+  @@index([medicalExpiry])
+  @@index([employeeId])
   @@index([deletedAt])
   @@map("drivers")
 }

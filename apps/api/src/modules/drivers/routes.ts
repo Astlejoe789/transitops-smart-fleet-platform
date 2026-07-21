@@ -1,18 +1,33 @@
 import { Router } from 'express';
+import { driverController } from './controller.js';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
 
-/**
- * Drivers Routes
- *
- * Define API endpoints for the drivers module.
- */
 const router = Router();
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+// All driver routes require authentication
+router.use(authMiddleware);
 
-export const driversRoutes = router;
+// Stats
+router.get('/stats', driverController.getStats.bind(driverController));
+
+// Driver CRUD
+router.get('/', driverController.getDrivers.bind(driverController));
+router.post('/', driverController.createDriver.bind(driverController));
+router.get('/:id', driverController.getDriver.bind(driverController));
+router.put('/:id', driverController.updateDriver.bind(driverController));
+router.delete('/:id', driverController.deleteDriver.bind(driverController));
+router.patch('/:id/restore', driverController.restoreDriver.bind(driverController));
+
+// Documents
+router.get('/:id/documents', driverController.getDocuments.bind(driverController));
+router.post('/:id/documents', driverController.addDocument.bind(driverController));
+router.delete('/documents/:docId', driverController.deleteDocument.bind(driverController));
+
+// Vehicle Assignment
+router.post('/:id/assign-vehicle', driverController.assignVehicle.bind(driverController));
+router.delete('/:id/unassign-vehicle', driverController.unassignVehicle.bind(driverController));
+
+// Timeline
+router.get('/:id/timeline', driverController.getTimeline.bind(driverController));
+
+export const driverRoutes = router;
