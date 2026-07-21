@@ -99,18 +99,29 @@ enum TripPriority {
 
 enum MaintenanceStatus {
   SCHEDULED
+  TECHNICIAN_ASSIGNED
   IN_PROGRESS
+  WAITING_FOR_PARTS
   COMPLETED
+  VERIFIED
+  CLOSED
   CANCELLED
 }
 
 enum MaintenanceType {
-  ROUTINE_SERVICE
-  REPAIR
+  PREVENTIVE
+  CORRECTIVE
+  EMERGENCY
   INSPECTION
-  TIRE_CHANGE
-  OIL_CHANGE
-  BREAKDOWN
+  WARRANTY
+  SCHEDULED_SERVICE
+}
+
+enum MaintenancePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
 }
 
 enum ExpenseCategory {
@@ -312,12 +323,13 @@ model User {
   deletedAt    DateTime?
 
   // Relationships
-  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch        Branch?        @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  role          Role           @relation(fields: [roleId], references: [id], onDelete: Restrict)
-  driverProfile Driver?
-  notifications Notification[]
-  auditLogs     AuditLog[]
+  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch          Branch?          @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  role            Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  driverProfile   Driver?
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  maintenanceLogs MaintenanceLog[]
 
   @@index([companyId])
   @@index([branchId])
@@ -516,32 +528,88 @@ model Trip {
 
 // 12. MaintenanceLog
 model MaintenanceLog {
-  id               String            @id @default(uuid())
-  companyId        String
-  vehicleId        String
-  vendorId         String?
-  maintenanceType  MaintenanceType
-  status           MaintenanceStatus @default(SCHEDULED)
-  description      String
-  cost             Float             @default(0)
-  scheduledDate    DateTime
-  completedDate    DateTime?
-  odometerReading  Float?
-  invoiceReference String?
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  id                   String              @id @default(uuid())
+  companyId            String
+  vehicleId            String
+  vendorId             String?
+  assignedTechnicianId String?
+  maintenanceId        String              @unique
+  maintenanceType      MaintenanceType
+  priority             MaintenancePriority @default(MEDIUM)
+  status               MaintenanceStatus   @default(SCHEDULED)
+  description          String
+  estimatedCost        Float               @default(0)
+  actualCost           Float               @default(0)
+  scheduledDate        DateTime
+  startDate            DateTime?
+  completedDate        DateTime?
+  estimatedDuration    Int?
+  actualDuration       Int?
+  odometerReading      Float?
+  warrantyStatus       String?
+  invoiceReference     String?
+  notes                String?
+  checklist            Json?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  deletedAt            DateTime?
 
   // Relationships
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  vendor  Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  company            Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  vehicle            Vehicle               @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vendor             Vendor?               @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  assignedTechnician User?                 @relation(fields: [assignedTechnicianId], references: [id], onDelete: SetNull)
+  parts              MaintenancePart[]
+  documents          MaintenanceDocument[]
 
   @@index([companyId])
   @@index([vehicleId])
   @@index([vendorId])
+  @@index([assignedTechnicianId])
   @@index([status])
   @@index([scheduledDate])
+  @@index([deletedAt])
   @@map("maintenance_logs")
+}
+
+// 12a. MaintenancePart
+model MaintenancePart {
+  id               String   @id @default(uuid())
+  maintenanceLogId String
+  name             String
+  quantity         Float    @default(1)
+  unitCost         Float
+  totalCost        Float
+  supplierId       String?
+  warranty         String?
+  stockReference   String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relationships
+  maintenanceLog MaintenanceLog @relation(fields: [maintenanceLogId], references: [id], onDelete: Cascade)
+  supplier       Vendor?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@index([maintenanceLogId])
+  @@index([supplierId])
+  @@map("maintenance_parts")
+}
+
+// 12b. MaintenanceDocument
+model MaintenanceDocument {
+  id               String   @id @default(uuid())
+  maintenanceLogId String
+  title            String
+  documentType     String
+  fileUrl          String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relationships
+  maintenanceLog MaintenanceLog @relation(fields: [maintenanceLogId], references: [id], onDelete: Cascade)
+
+  @@index([maintenanceLogId])
+  @@map("maintenance_documents")
 }
 
 // 13. FuelLog
@@ -654,8 +722,9 @@ model Vendor {
   deletedAt     DateTime?
 
   // Relationships
-  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  maintenanceLogs MaintenanceLog[]
+  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  maintenanceLogs  MaintenanceLog[]
+  maintenanceParts MaintenancePart[]
 
   @@index([companyId])
   @@index([category])

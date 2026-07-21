@@ -6,7 +6,9 @@ import {
   Receipt, 
   FileText, 
   Wrench, 
-  Fuel 
+  Fuel,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { 
   useDashboardSummary,
@@ -114,6 +116,38 @@ export default function DashboardPage() {
           value={summary?.pendingInvoices ?? 0}
           icon={FileText} 
           color="info"
+          isLoading={isLoadingSummary}
+        />
+      </div>
+
+      {/* Maintenance KPI Cards Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <SummaryCard 
+          title="Maintenance In Progress" 
+          value={summary?.maintenanceInProgress ?? 0}
+          icon={Wrench} 
+          color="warning"
+          isLoading={isLoadingSummary}
+        />
+        <SummaryCard 
+          title="Completed Services" 
+          value={summary?.completedServices ?? 0}
+          icon={CheckCircle} 
+          color="success"
+          isLoading={isLoadingSummary}
+        />
+        <SummaryCard 
+          title="Maintenance Cost (Total)" 
+          value={`$${((summary?.maintenanceCost ?? 0) / 1000).toFixed(1)}k`}
+          icon={DollarSign} 
+          color="danger"
+          isLoading={isLoadingSummary}
+        />
+        <SummaryCard 
+          title="Maintenance Due" 
+          value={summary?.maintenanceDue ?? 0}
+          icon={AlertCircle} 
+          color="danger"
           isLoading={isLoadingSummary}
         />
       </div>

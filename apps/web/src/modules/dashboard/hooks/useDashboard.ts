@@ -13,6 +13,9 @@ export interface DashboardSummary {
   monthlyExpenses: number;
   pendingInvoices: number;
   maintenanceDue: number;
+  maintenanceInProgress: number;
+  completedServices: number;
+  maintenanceCost: number;
   fuelCost: number;
 }
 

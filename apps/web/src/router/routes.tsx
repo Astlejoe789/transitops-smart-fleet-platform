@@ -19,6 +19,7 @@ import TripsPage from '@/modules/trips/pages/TripsPage';
 import TripDetailsPage from '@/modules/trips/pages/TripDetailsPage';
 import DispatchPage from '@/modules/trips/pages/DispatchPage';
 import MaintenancePage from '@/modules/maintenance/pages/MaintenancePage';
+import MaintenanceDetailsPage from '@/modules/maintenance/pages/MaintenanceDetailsPage';
 import FuelPage from '@/modules/fuel/pages/FuelPage';
 import ExpensesPage from '@/modules/expenses/pages/ExpensesPage';
 import CustomersPage from '@/modules/customers/pages/CustomersPage';
@@ -65,6 +66,7 @@ export const routes: RouteObject[] = [
       { path: 'trips/:id', element: <TripDetailsPage /> },
       { path: 'dispatch', element: <DispatchPage /> },
       { path: 'maintenance', element: <MaintenancePage /> },
+      { path: 'maintenance/:id', element: <MaintenanceDetailsPage /> },
       { path: 'fuel', element: <FuelPage /> },
       { path: 'expenses', element: <ExpensesPage /> },
       { path: 'customers', element: <CustomersPage /> },

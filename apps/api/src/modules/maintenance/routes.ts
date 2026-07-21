@@ -1,18 +1,30 @@
 import { Router } from 'express';
+import { maintenanceController } from './controller.js';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
 
-/**
- * Maintenance Routes
- *
- * Define API endpoints for the maintenance module.
- */
 const router = Router();
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+// Protect all maintenance routes
+router.use(authMiddleware);
 
-export const maintenanceRoutes = router;
+// Basic CRUD
+router.get('/', maintenanceController.getMaintenanceLogs.bind(maintenanceController));
+router.post('/', maintenanceController.createMaintenanceLog.bind(maintenanceController));
+router.get('/:id', maintenanceController.getMaintenanceLogById.bind(maintenanceController));
+router.put('/:id', maintenanceController.updateMaintenanceLog.bind(maintenanceController));
+router.delete('/:id', maintenanceController.deleteMaintenanceLog.bind(maintenanceController));
+
+// Actions
+router.patch('/:id/restore', maintenanceController.restoreMaintenanceLog.bind(maintenanceController));
+router.patch('/:id/status', maintenanceController.updateMaintenanceStatus.bind(maintenanceController));
+router.patch('/:id/assign-technician', maintenanceController.assignTechnician.bind(maintenanceController));
+
+// Parts
+router.post('/:id/parts', maintenanceController.addPart.bind(maintenanceController));
+router.delete('/:id/parts/:partId', maintenanceController.deletePart.bind(maintenanceController));
+
+// Documents
+router.post('/:id/documents', maintenanceController.addDocument.bind(maintenanceController));
+router.delete('/:id/documents/:docId', maintenanceController.deleteDocument.bind(maintenanceController));
+
+export { router as maintenanceRoutes };
