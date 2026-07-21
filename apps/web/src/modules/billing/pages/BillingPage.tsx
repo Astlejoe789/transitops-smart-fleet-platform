@@ -6,6 +6,7 @@ import { InvoicesDashboardCards } from '../components/InvoicesDashboardCards';
 import { InvoicesTable } from '../components/InvoicesTable';
 import { InvoiceFormModal } from '../components/InvoiceFormModal';
 import { RecordPaymentModal } from '../components/RecordPaymentModal';
+import { RevenueDashboard } from '../components/RevenueDashboard';
 import {
   useInvoiceSummary,
   useInvoices,
@@ -18,6 +19,7 @@ import { useRecordPayment } from '../hooks/usePayments';
 import { Invoice, InvoiceStatus } from '../types';
 
 export function BillingPage() {
+  const [activeTab, setActiveTab] = useState<'invoices' | 'revenue'>('invoices');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -59,6 +61,10 @@ export function BillingPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    window.location.href = '/api/v1/invoices/export/csv';
+  };
+
 
   const handleRecordPayment = async (data: any) => {
     await recordPayment.mutateAsync(data);
@@ -75,7 +81,7 @@ export function BillingPage() {
           <p className="text-sm text-surface-500 mt-1">Create invoices, track payments, and manage receivables</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button variant="outline" className="flex items-center gap-2" onClick={handleExportCSV}>
             <Download className="h-4 w-4" />
             Export
           </Button>
@@ -86,8 +92,32 @@ export function BillingPage() {
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <InvoicesDashboardCards summary={summary} isLoading={summaryLoading} />
+      {/* Tabs */}
+      <div className="border-b border-surface-200 dark:border-surface-800">
+        <div className="flex gap-6">
+          <button
+            onClick={() => setActiveTab('invoices')}
+            className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'invoices' ? 'border-primary-600 text-primary-600' : 'border-transparent text-surface-500 hover:text-surface-900 dark:hover:text-surface-100'
+            }`}
+          >
+            Invoices List
+          </button>
+          <button
+            onClick={() => setActiveTab('revenue')}
+            className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'revenue' ? 'border-primary-600 text-primary-600' : 'border-transparent text-surface-500 hover:text-surface-900 dark:hover:text-surface-100'
+            }`}
+          >
+            Revenue Insights
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'invoices' && (
+        <div className="space-y-6">
+          {/* KPI Cards */}
+          <InvoicesDashboardCards summary={summary} isLoading={summaryLoading} />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -118,18 +148,25 @@ export function BillingPage() {
         </div>
       </div>
 
-      {/* Invoices Table */}
-      {listLoading ? (
-        <div className="h-64 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+          {listLoading ? (
+            <div className="h-64 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+            </div>
+          ) : (
+            <InvoicesTable
+              data={invoicesResp?.data ?? []}
+              onIssue={handleIssue}
+              onVoid={handleVoid}
+              onDelete={handleDelete}
+            />
+          )}
         </div>
-      ) : (
-        <InvoicesTable
-          data={invoicesResp?.data ?? []}
-          onIssue={handleIssue}
-          onVoid={handleVoid}
-          onDelete={handleDelete}
-        />
+      )}
+
+      {activeTab === 'revenue' && (
+        <div className="space-y-6">
+          <RevenueDashboard />
+        </div>
       )}
 
       {/* Modals */}

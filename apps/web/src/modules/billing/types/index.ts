@@ -1,6 +1,9 @@
 export enum InvoiceStatus {
   DRAFT = 'DRAFT',
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
+  APPROVED = 'APPROVED',
   ISSUED = 'ISSUED',
+  SENT = 'SENT',
   PARTIALLY_PAID = 'PARTIALLY_PAID',
   PAID = 'PAID',
   OVERDUE = 'OVERDUE',
@@ -48,6 +51,7 @@ export interface Payment {
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   referenceNumber?: string;
+  receiptUrl?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -71,8 +75,10 @@ export interface Invoice {
   dueDate: string;
   subtotal: number;
   taxAmount: number;
+  discountAmount: number;
   totalAmount: number;
   notes?: string;
+  invoiceDate?: string;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;
@@ -94,4 +100,18 @@ export interface PaymentSummary {
   collectedMtd: { amount: number; count: number };
   pending: { amount: number; count: number };
   refunded: { amount: number; count: number };
+}
+
+export interface LedgerEntry {
+  type: 'INVOICE' | 'PAYMENT';
+  id: string;
+  date: string;
+  reference: string;
+  amount: number;
+  status: string;
+}
+
+export interface RevenueData {
+  monthlyRevenue: { month: number; amount: number }[];
+  topCustomers: { name: string; amount: number }[];
 }

@@ -12,6 +12,7 @@ export interface CreateInvoiceDTO {
   branchId?: string;
   dueDate: string | Date;
   taxAmount?: number;
+  discountAmount?: number;
   notes?: string;
   items: CreateInvoiceItemDTO[];
 }
@@ -19,8 +20,22 @@ export interface CreateInvoiceDTO {
 export interface UpdateInvoiceDTO {
   dueDate?: string | Date;
   taxAmount?: number;
+  discountAmount?: number;
   notes?: string;
   items?: CreateInvoiceItemDTO[];
+}
+
+export interface GenerateFromTripDTO {
+  tripId: string;
+}
+
+export interface RevenueDataQuery {
+  year?: string;
+}
+
+export interface CustomerLedgerQuery {
+  page?: string;
+  limit?: string;
 }
 
 export interface GetInvoicesQuery {

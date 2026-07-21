@@ -8,6 +8,7 @@ router.use(authMiddleware);
 
 const financeRoles = ['SUPER_ADMIN', 'COMPANY_ADMIN', 'FINANCE_MANAGER'];
 
+router.get('/export/csv', PaymentController.exportPaymentsCSV);
 router.get('/summary', PaymentController.getPaymentSummary);
 router.get('/', PaymentController.getPayments);
 router.get('/:id', PaymentController.getPaymentById);

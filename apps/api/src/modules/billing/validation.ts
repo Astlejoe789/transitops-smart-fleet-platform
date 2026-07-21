@@ -12,6 +12,7 @@ export const createInvoiceSchema = z.object({
   branchId: z.string().uuid('Invalid branch ID').optional(),
   dueDate: z.string().datetime({ message: 'Invalid due date' }),
   taxAmount: z.number().nonnegative().optional(),
+  discountAmount: z.number().nonnegative().optional(),
   notes: z.string().optional(),
   items: z.array(invoiceItemSchema).min(1, 'At least one line item is required'),
 });
@@ -19,6 +20,11 @@ export const createInvoiceSchema = z.object({
 export const updateInvoiceSchema = z.object({
   dueDate: z.string().datetime().optional(),
   taxAmount: z.number().nonnegative().optional(),
+  discountAmount: z.number().nonnegative().optional(),
   notes: z.string().optional(),
   items: z.array(invoiceItemSchema).min(1).optional(),
+});
+
+export const generateFromTripSchema = z.object({
+  tripId: z.string().uuid('Invalid trip ID'),
 });

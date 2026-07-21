@@ -6,9 +6,16 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { useInvoice, useIssueInvoice, useVoidInvoice } from '../hooks/useInvoices';
+import { 
+  useInvoice, 
+  useVoidInvoice, 
+  useSubmitForApproval, 
+  useApproveInvoice, 
+  useSendInvoice 
+} from '../hooks/useInvoices';
 import { useRecordPayment } from '../hooks/usePayments';
 import { RecordPaymentModal } from '../components/RecordPaymentModal';
+import { InvoiceWorkflowTimeline } from '../components/InvoiceWorkflowTimeline';
 import { InvoiceStatus, PaymentStatus, PaymentMethod } from '../types';
 
 function formatCurrency(n: number) {
@@ -17,7 +24,10 @@ function formatCurrency(n: number) {
 
 const statusVariant: Record<InvoiceStatus, 'default' | 'success' | 'warning' | 'destructive' | 'secondary' | 'outline'> = {
   DRAFT: 'secondary',
+  PENDING_APPROVAL: 'warning',
+  APPROVED: 'default',
   ISSUED: 'default',
+  SENT: 'default',
   PARTIALLY_PAID: 'warning',
   PAID: 'success',
   OVERDUE: 'destructive',
@@ -52,8 +62,10 @@ export function InvoiceDetailsPage() {
   const [tab, setTab] = useState<Tab>('overview');
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
-  const issueInvoice = useIssueInvoice();
   const voidInvoice = useVoidInvoice();
+  const submitInvoice = useSubmitForApproval();
+  const approveInvoice = useApproveInvoice();
+  const sendInvoice = useSendInvoice();
   const recordPayment = useRecordPayment();
 
   if (isLoading) {
@@ -101,18 +113,46 @@ export function InvoiceDetailsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 mr-2"
+            onClick={() => window.print()}
+          >
+            <FileText className="h-4 w-4" />
+            Print to PDF
+          </Button>
+
           {invoice.status === 'DRAFT' && (
             <Button
-              variant="outline"
               className="flex items-center gap-2"
-              onClick={() => issueInvoice.mutate(invoice.id)}
-              isLoading={issueInvoice.isPending}
+              onClick={() => submitInvoice.mutate(invoice.id)}
+              isLoading={submitInvoice.isPending}
             >
               <Send className="h-4 w-4" />
-              Issue
+              Submit
             </Button>
           )}
-          {['ISSUED', 'PARTIALLY_PAID'].includes(invoice.status) && (
+          {invoice.status === 'PENDING_APPROVAL' && (
+            <Button
+              className="flex items-center gap-2"
+              onClick={() => approveInvoice.mutate(invoice.id)}
+              isLoading={approveInvoice.isPending}
+            >
+              <CheckCircle className="h-4 w-4" />
+              Approve
+            </Button>
+          )}
+          {invoice.status === 'APPROVED' && (
+            <Button
+              className="flex items-center gap-2"
+              onClick={() => sendInvoice.mutate(invoice.id)}
+              isLoading={sendInvoice.isPending}
+            >
+              <Send className="h-4 w-4" />
+              Send
+            </Button>
+          )}
+          {['ISSUED', 'PARTIALLY_PAID', 'SENT'].includes(invoice.status) && (
             <Button
               className="flex items-center gap-2"
               onClick={() => setIsPaymentOpen(true)}
@@ -121,7 +161,7 @@ export function InvoiceDetailsPage() {
               Record Payment
             </Button>
           )}
-          {['DRAFT', 'ISSUED'].includes(invoice.status) && (
+          {['DRAFT', 'ISSUED', 'PENDING_APPROVAL', 'APPROVED'].includes(invoice.status) && (
             <Button
               variant="outline"
               className="text-amber-600 border-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/30 flex items-center gap-2"
@@ -135,8 +175,14 @@ export function InvoiceDetailsPage() {
         </div>
       </div>
 
+      {/* Workflow Timeline */}
+      <div className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-6 print:hidden">
+        <h2 className="font-semibold text-surface-900 dark:text-white mb-4">Invoice Lifecycle</h2>
+        <InvoiceWorkflowTimeline status={invoice.status} />
+      </div>
+
       {/* Progress Bar (for partially/fully paid) */}
-      {['ISSUED', 'PARTIALLY_PAID', 'PAID'].includes(invoice.status) && (
+      {['ISSUED', 'SENT', 'PARTIALLY_PAID', 'PAID'].includes(invoice.status) && (
         <div className="bg-white dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-800 p-6">
           <div className="flex justify-between text-sm font-medium mb-2">
             <span className="text-surface-500">Payment Progress</span>
@@ -201,6 +247,9 @@ export function InvoiceDetailsPage() {
             <div className="space-y-3">
               <div className="flex justify-between text-sm"><span className="text-surface-500">Subtotal</span><span>{formatCurrency(invoice.subtotal)}</span></div>
               <div className="flex justify-between text-sm"><span className="text-surface-500">Tax</span><span>{formatCurrency(invoice.taxAmount)}</span></div>
+              {(invoice.discountAmount ?? 0) > 0 && (
+                <div className="flex justify-between text-sm text-emerald-600"><span className="text-surface-500">Discount</span><span>- {formatCurrency(invoice.discountAmount)}</span></div>
+              )}
               <div className="flex justify-between text-base font-bold pt-3 border-t border-surface-200 dark:border-surface-700">
                 <span>Total</span><span>{formatCurrency(invoice.totalAmount)}</span>
               </div>

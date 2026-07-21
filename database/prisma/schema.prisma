@@ -156,7 +156,10 @@ enum ExpenseStatus {
 
 enum InvoiceStatus {
   DRAFT
+  PENDING_APPROVAL
+  APPROVED
   ISSUED
+  SENT
   PARTIALLY_PAID
   PAID
   OVERDUE
@@ -990,8 +993,10 @@ model Invoice {
   dueDate       DateTime
   subtotal      Float         @default(0)
   taxAmount     Float         @default(0)
+  discountAmount Float        @default(0)
   totalAmount   Float         @default(0)
   notes         String?
+  invoiceDate   DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   deletedAt     DateTime?
@@ -1043,6 +1048,7 @@ model Payment {
   paymentMethod   PaymentMethod
   paymentStatus   PaymentStatus @default(COMPLETED)
   referenceNumber String?
+  receiptUrl      String?
   notes           String?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt

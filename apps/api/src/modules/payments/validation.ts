@@ -7,5 +7,6 @@ export const recordPaymentSchema = z.object({
   paymentDate: z.string().datetime().optional(),
   paymentMethod: z.nativeEnum(PaymentMethod),
   referenceNumber: z.string().optional(),
+  receiptUrl: z.string().url('Invalid URL').optional(),
   notes: z.string().optional(),
 });

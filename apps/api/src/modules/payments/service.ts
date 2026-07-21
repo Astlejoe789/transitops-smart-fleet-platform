@@ -132,6 +132,7 @@ export class PaymentService {
         paymentMethod: data.paymentMethod,
         paymentStatus: 'COMPLETED',
         referenceNumber: data.referenceNumber,
+        receiptUrl: data.receiptUrl,
         notes: data.notes,
       },
     });
@@ -166,5 +167,19 @@ export class PaymentService {
     });
 
     return updated;
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // Phase 12 Additions
+  // ─────────────────────────────────────────────────────────
+  static async exportPaymentsCSV(companyId: string, query: GetPaymentsQuery) {
+    const { data } = await this.getPayments(companyId, { ...query, limit: '1000' });
+    
+    const rows = ['Payment Number,Invoice Number,Date,Amount,Method,Status,Reference'];
+    data.forEach(payment => {
+      rows.push(`${payment.paymentNumber},${payment.invoice?.invoiceNumber || ''},${payment.paymentDate.toISOString()},${payment.amount},${payment.paymentMethod},${payment.paymentStatus},"${payment.referenceNumber || ''}"`);
+    });
+    
+    return rows.join('\n');
   }
 }

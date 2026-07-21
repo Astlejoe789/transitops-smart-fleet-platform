@@ -6,6 +6,7 @@ export interface RecordPaymentDTO {
   paymentDate?: string | Date;
   paymentMethod: PaymentMethod;
   referenceNumber?: string;
+  receiptUrl?: string;
   notes?: string;
 }
 

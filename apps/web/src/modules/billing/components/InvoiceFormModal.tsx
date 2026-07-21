@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { X, Plus, Trash2, Receipt } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { useCustomers } from '@/modules/customers/hooks/useCustomers';
 
 const lineItemSchema = z.object({
   description: z.string().min(1, 'Required'),
@@ -15,6 +16,7 @@ const invoiceSchema = z.object({
   customerId: z.string().min(1, 'Customer is required'),
   dueDate: z.string().min(1, 'Due date is required'),
   taxAmount: z.coerce.number().nonnegative().optional(),
+  discountAmount: z.coerce.number().nonnegative().optional(),
   notes: z.string().optional(),
   items: z.array(lineItemSchema).min(1, 'At least one line item is required'),
 });
@@ -34,15 +36,20 @@ export function InvoiceFormModal({ isOpen, onClose, onSubmit, isLoading }: Invoi
     defaultValues: {
       items: [{ description: '', quantity: 1, unitPrice: 0 }],
       taxAmount: 0,
+      discountAmount: 0,
     },
   });
+
+  const { data: customersData } = useCustomers({ limit: '100' });
+  const customers = customersData?.data || [];
 
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
   const watchedItems = watch('items') || [];
   const watchedTax = watch('taxAmount') || 0;
+  const watchedDiscount = watch('discountAmount') || 0;
   const subtotal = watchedItems.reduce((sum, item) => sum + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0), 0);
-  const total = subtotal + Number(watchedTax);
+  const total = subtotal + Number(watchedTax) - Number(watchedDiscount);
 
   if (!isOpen) return null;
 
@@ -51,6 +58,7 @@ export function InvoiceFormModal({ isOpen, onClose, onSubmit, isLoading }: Invoi
       ...data,
       dueDate: new Date(data.dueDate).toISOString(),
       taxAmount: Number(data.taxAmount ?? 0),
+      discountAmount: Number(data.discountAmount ?? 0),
       items: data.items.map((item) => ({
         description: item.description,
         quantity: Number(item.quantity),
@@ -80,9 +88,19 @@ export function InvoiceFormModal({ isOpen, onClose, onSubmit, isLoading }: Invoi
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block mb-1.5 text-sm font-semibold text-surface-700 dark:text-surface-300">
-                Customer ID <span className="text-red-500">*</span>
+                Customer <span className="text-red-500">*</span>
               </label>
-              <Input {...register('customerId')} placeholder="Customer UUID" error={!!errors.customerId} />
+              <select
+                {...register('customerId')}
+                className={`flex w-full rounded-md border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-surface-900 dark:text-white ${
+                  errors.customerId ? 'border-red-500' : 'border-surface-200 dark:border-surface-700'
+                }`}
+              >
+                <option value="">Select a customer...</option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
               {errors.customerId && <p className="mt-1 text-xs text-red-500">{errors.customerId.message}</p>}
             </div>
             <div>
@@ -186,6 +204,18 @@ export function InvoiceFormModal({ isOpen, onClose, onSubmit, isLoading }: Invoi
                     type="number"
                     step="0.01"
                     {...register('taxAmount')}
+                    className="text-sm text-right h-8"
+                    min={0}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-sm text-surface-500">
+                <span>Discount</span>
+                <div className="w-28">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    {...register('discountAmount')}
                     className="text-sm text-right h-8"
                     min={0}
                   />

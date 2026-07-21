@@ -19,7 +19,10 @@ function formatCurrency(n: number) {
 
 const statusVariant: Record<InvoiceStatus, 'default' | 'success' | 'warning' | 'destructive' | 'secondary' | 'outline'> = {
   DRAFT: 'secondary',
+  PENDING_APPROVAL: 'warning',
+  APPROVED: 'default',
   ISSUED: 'default',
+  SENT: 'default',
   PARTIALLY_PAID: 'warning',
   PAID: 'success',
   OVERDUE: 'destructive',

@@ -78,4 +78,67 @@ export class BillingController {
       return ApiResponse.success(res, null, 'Invoice deleted');
     } catch (err) { next(err); }
   }
+
+  // ─────────────────────────────────────────────────────────
+  // Phase 12 Additions
+  // ─────────────────────────────────────────────────────────
+  static async submitForApproval(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId, userId } = (req as AuthenticatedRequest).user;
+      const invoice = await BillingService.submitForApproval(req.params.id, companyId, userId);
+      return ApiResponse.success(res, invoice, 'Invoice submitted for approval');
+    } catch (err) { next(err); }
+  }
+
+  static async approveInvoice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId, userId } = (req as AuthenticatedRequest).user;
+      const invoice = await BillingService.approveInvoice(req.params.id, companyId, userId);
+      return ApiResponse.success(res, invoice, 'Invoice approved');
+    } catch (err) { next(err); }
+  }
+
+  static async sendInvoice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId, userId } = (req as AuthenticatedRequest).user;
+      const invoice = await BillingService.sendInvoice(req.params.id, companyId, userId);
+      return ApiResponse.success(res, invoice, 'Invoice sent');
+    } catch (err) { next(err); }
+  }
+
+  static async generateFromTrip(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId, userId } = (req as AuthenticatedRequest).user;
+      const tripId = req.params.tripId;
+      const invoice = await BillingService.generateFromTrip(tripId, companyId, userId);
+      return ApiResponse.created(res, invoice, 'Invoice generated from trip');
+    } catch (err) { next(err); }
+  }
+
+  static async getCustomerLedger(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId } = (req as AuthenticatedRequest).user;
+      const customerId = req.params.customerId;
+      const result = await BillingService.getCustomerLedger(customerId, companyId, req.query as any);
+      return ApiResponse.paginated(res, result.data, result.meta);
+    } catch (err) { next(err); }
+  }
+
+  static async getRevenueData(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId } = (req as AuthenticatedRequest).user;
+      const data = await BillingService.getRevenueData(companyId, req.query.year as string);
+      return ApiResponse.success(res, data);
+    } catch (err) { next(err); }
+  }
+
+  static async exportInvoicesCSV(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId } = (req as AuthenticatedRequest).user;
+      const csvData = await BillingService.exportInvoicesCSV(companyId, req.query as any);
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="invoices-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send(csvData);
+    } catch (err) { next(err); }
+  }
 }

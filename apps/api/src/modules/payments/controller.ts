@@ -45,4 +45,17 @@ export class PaymentController {
       return ApiResponse.success(res, payment, 'Payment refunded');
     } catch (err) { next(err); }
   }
+
+  // ─────────────────────────────────────────────────────────
+  // Phase 12 Additions
+  // ─────────────────────────────────────────────────────────
+  static async exportPaymentsCSV(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId } = (req as AuthenticatedRequest).user;
+      const csvData = await PaymentService.exportPaymentsCSV(companyId, req.query as any);
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="payments-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send(csvData);
+    } catch (err) { next(err); }
+  }
 }
