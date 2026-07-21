@@ -20,7 +20,8 @@ import TripDetailsPage from '@/modules/trips/pages/TripDetailsPage';
 import DispatchPage from '@/modules/trips/pages/DispatchPage';
 import MaintenancePage from '@/modules/maintenance/pages/MaintenancePage';
 import MaintenanceDetailsPage from '@/modules/maintenance/pages/MaintenanceDetailsPage';
-import FuelPage from '@/modules/fuel/pages/FuelPage';
+import { FuelPage } from '@/modules/fuel/pages/FuelPage';
+import { FuelDetailsPage } from '@/modules/fuel/pages/FuelDetailsPage';
 import ExpensesPage from '@/modules/expenses/pages/ExpensesPage';
 import CustomersPage from '@/modules/customers/pages/CustomersPage';
 import VendorsPage from '@/modules/vendors/pages/VendorsPage';
@@ -68,6 +69,7 @@ export const routes: RouteObject[] = [
       { path: 'maintenance', element: <MaintenancePage /> },
       { path: 'maintenance/:id', element: <MaintenanceDetailsPage /> },
       { path: 'fuel', element: <FuelPage /> },
+      { path: 'fuel/:id', element: <FuelDetailsPage /> },
       { path: 'expenses', element: <ExpensesPage /> },
       { path: 'customers', element: <CustomersPage /> },
       { path: 'vendors', element: <VendorsPage /> },

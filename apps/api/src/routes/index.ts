@@ -5,6 +5,7 @@ import { fleetRoutes } from '../modules/fleet/index.js';
 import { driverRoutes } from '../modules/drivers/index.js';
 import { tripRoutes } from '../modules/trips/index.js';
 import { maintenanceRoutes } from '../modules/maintenance/routes.js';
+import { fuelRoutes } from '../modules/fuel/index.js';
 
 export const apiRouter = Router();
 
@@ -15,8 +16,7 @@ apiRouter.use('/fleet', fleetRoutes);
 apiRouter.use('/drivers', driverRoutes);
 apiRouter.use('/trips', tripRoutes);
 apiRouter.use('/maintenance', maintenanceRoutes);
-
-// apiRouter.use('/fuel', fuelRoutes);
+apiRouter.use('/fuel', fuelRoutes);
 // apiRouter.use('/expenses', expenseRoutes);
 // apiRouter.use('/billing', billingRoutes);
 // apiRouter.use('/payments', paymentRoutes);

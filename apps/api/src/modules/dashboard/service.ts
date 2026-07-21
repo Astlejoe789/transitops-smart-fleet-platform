@@ -18,6 +18,7 @@ export class DashboardService {
       maintenanceInProgressCount,
       completedServices,
       maintenanceCostAgg,
+      fuelCostAgg,
     ] = await Promise.all([
       prisma.vehicle.count({ where: { companyId, deletedAt: null } }),
       prisma.vehicle.count({ where: { companyId, status: 'AVAILABLE', deletedAt: null } }),
@@ -39,6 +40,7 @@ export class DashboardService {
       prisma.maintenanceLog.count({ where: { companyId, status: { in: ['IN_PROGRESS', 'WAITING_FOR_PARTS'] }, deletedAt: null } }),
       prisma.maintenanceLog.count({ where: { companyId, status: 'COMPLETED', deletedAt: null } }),
       prisma.maintenanceLog.aggregate({ _sum: { actualCost: true }, where: { companyId, deletedAt: null } }),
+      prisma.fuelLog.aggregate({ _sum: { totalCost: true }, where: { companyId, deletedAt: null } }),
     ]);
 
     // Fallback to demo data if the system is completely empty
@@ -64,7 +66,7 @@ export class DashboardService {
     // TODO: Aggregate actual revenue/expenses for the month
     const monthlyRevenue = 0; // Replace with actual aggregation
     const monthlyExpenses = 0; // Replace with actual aggregation
-    const fuelCost = 0; // Replace with actual aggregation
+    const fuelCost = fuelCostAgg._sum.totalCost || 0;
 
     return {
       totalVehicles,

@@ -57,6 +57,8 @@ enum FuelType {
   ELECTRIC
   HYBRID
   CNG
+  LPG
+  OTHER
 }
 
 enum DriverStatus {
@@ -158,6 +160,10 @@ enum PaymentMethod {
   CASH
   CHECK
   DIGITAL_WALLET
+  CORPORATE_CARD
+  FUEL_CARD
+  UPI
+  OTHER
 }
 
 enum NotificationType {
@@ -330,6 +336,7 @@ model User {
   notifications   Notification[]
   auditLogs       AuditLog[]
   maintenanceLogs MaintenanceLog[]
+  createdFuelLogs FuelLog[]
 
   @@index([companyId])
   @@index([branchId])
@@ -612,34 +619,45 @@ model MaintenanceDocument {
   @@map("maintenance_documents")
 }
 
-// 13. FuelLog
 model FuelLog {
-  id              String   @id @default(uuid())
+  id              String        @id @default(uuid())
   companyId       String
   vehicleId       String
   driverId        String
   tripId          String?
-  fuelDate        DateTime @default(now())
+  fuelLogNumber   String        @unique
+  fuelType        FuelType
+  fuelGrade       String?
+  paymentMethod   PaymentMethod
+  fuelDate        DateTime      @default(now())
   liters          Float
   costPerLiter    Float
   totalCost       Float
   odometerReading Float
+  efficiency      Float?
   stationName     String?
+  location        String?
+  receiptNumber   String?
   receiptUrl      String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  remarks         String?
+  createdById     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
 
   // Relationships
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  driver  Driver  @relation(fields: [driverId], references: [id], onDelete: Restrict)
-  trip    Trip?   @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  driver    Driver  @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  trip      Trip?   @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  createdBy User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
   @@index([companyId])
   @@index([vehicleId])
   @@index([driverId])
   @@index([tripId])
   @@index([fuelDate])
+  @@index([deletedAt])
   @@map("fuel_logs")
 }
 
