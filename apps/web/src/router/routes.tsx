@@ -16,6 +16,8 @@ import VehicleDetailsPage from '@/modules/fleet/pages/VehicleDetailsPage';
 import DriversPage from '@/modules/drivers/pages/DriversPage';
 import DriverDetailsPage from '@/modules/drivers/pages/DriverDetailsPage';
 import TripsPage from '@/modules/trips/pages/TripsPage';
+import TripDetailsPage from '@/modules/trips/pages/TripDetailsPage';
+import DispatchPage from '@/modules/trips/pages/DispatchPage';
 import MaintenancePage from '@/modules/maintenance/pages/MaintenancePage';
 import FuelPage from '@/modules/fuel/pages/FuelPage';
 import ExpensesPage from '@/modules/expenses/pages/ExpensesPage';
@@ -60,6 +62,8 @@ export const routes: RouteObject[] = [
       { path: 'drivers', element: <DriversPage /> },
       { path: 'drivers/:id', element: <DriverDetailsPage /> },
       { path: 'trips', element: <TripsPage /> },
+      { path: 'trips/:id', element: <TripDetailsPage /> },
+      { path: 'dispatch', element: <DispatchPage /> },
       { path: 'maintenance', element: <MaintenancePage /> },
       { path: 'fuel', element: <FuelPage /> },
       { path: 'expenses', element: <ExpensesPage /> },

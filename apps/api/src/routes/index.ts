@@ -3,6 +3,7 @@ import { authRoutes } from '../modules/auth/index.js';
 import { dashboardRoutes } from '../modules/dashboard/index.js';
 import { fleetRoutes } from '../modules/fleet/index.js';
 import { driverRoutes } from '../modules/drivers/index.js';
+import { tripRoutes } from '../modules/trips/index.js';
 
 export const apiRouter = Router();
 
@@ -11,7 +12,7 @@ apiRouter.use('/auth', authRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
 apiRouter.use('/fleet', fleetRoutes);
 apiRouter.use('/drivers', driverRoutes);
-// apiRouter.use('/trips', tripRoutes);
+apiRouter.use('/trips', tripRoutes);
 // apiRouter.use('/maintenance', maintenanceRoutes);
 // apiRouter.use('/fuel', fuelRoutes);
 // apiRouter.use('/expenses', expenseRoutes);
