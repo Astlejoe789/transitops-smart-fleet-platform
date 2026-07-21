@@ -1,18 +1,17 @@
 import { Router } from 'express';
+import { CustomerController } from './controller.js';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
+import { requireRole } from '../../middlewares/role.middleware.js';
 
-/**
- * Customers Routes
- *
- * Define API endpoints for the customers module.
- */
 const router = Router();
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+router.use(authMiddleware);
 
-export const customersRoutes = router;
+router.get('/', CustomerController.getCustomers);
+router.get('/:id', CustomerController.getCustomerById);
+router.post('/', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN', 'FINANCE_MANAGER'), CustomerController.createCustomer);
+router.put('/:id', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN', 'FINANCE_MANAGER'), CustomerController.updateCustomer);
+router.delete('/:id', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN'), CustomerController.deleteCustomer);
+router.patch('/:id/restore', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN'), CustomerController.restoreCustomer);
+
+export const customerRoutes = router;

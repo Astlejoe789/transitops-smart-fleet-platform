@@ -1,11 +1,5 @@
-/**
- * Expenses Module
- *
- * Barrel exports for the expenses feature module.
- * Uncomment exports as features are implemented.
- */
-
-// export { ExpensesController } from './controller.js';
-// export { ExpensesService } from './service.js';
-// export { ExpensesRepository } from './repository.js';
-// export { expensesRoutes } from './routes.js';
+export * from './types.js';
+export * from './validation.js';
+export * from './service.js';
+export * from './controller.js';
+export { default as expenseRoutes } from './routes.js';

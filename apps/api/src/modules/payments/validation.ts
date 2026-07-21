@@ -1,14 +1,11 @@
-// import { z } from 'zod';
+import { z } from 'zod';
+import { PaymentMethod } from '@prisma/client';
 
-/**
- * Payments Validation Schemas
- *
- * Zod schemas for request validation in the payments module.
- */
-
-// Example:
-// export const createPaymentsSchema = z.object({
-//   name: z.string().min(1),
-// });
-
-export {};
+export const recordPaymentSchema = z.object({
+  invoiceId: z.string().uuid('Invalid invoice ID'),
+  amount: z.number().positive('Payment amount must be positive'),
+  paymentDate: z.string().datetime().optional(),
+  paymentMethod: z.nativeEnum(PaymentMethod),
+  referenceNumber: z.string().optional(),
+  notes: z.string().optional(),
+});

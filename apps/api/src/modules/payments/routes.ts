@@ -1,18 +1,17 @@
 import { Router } from 'express';
+import { PaymentController } from './controller.js';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
+import { requireRole } from '../../middlewares/role.middleware.js';
 
-/**
- * Payments Routes
- *
- * Define API endpoints for the payments module.
- */
 const router = Router();
+router.use(authMiddleware);
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+const financeRoles = ['SUPER_ADMIN', 'COMPANY_ADMIN', 'FINANCE_MANAGER'];
 
-export const paymentsRoutes = router;
+router.get('/summary', PaymentController.getPaymentSummary);
+router.get('/', PaymentController.getPayments);
+router.get('/:id', PaymentController.getPaymentById);
+router.post('/', requireRole(...financeRoles), PaymentController.recordPayment);
+router.patch('/:id/refund', requireRole(...financeRoles), PaymentController.refundPayment);
+
+export const paymentRoutes = router;

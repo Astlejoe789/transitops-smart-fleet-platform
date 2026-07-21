@@ -1,18 +1,17 @@
 import { Router } from 'express';
+import { VendorController } from './controller.js';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
+import { requireRole } from '../../middlewares/role.middleware.js';
 
-/**
- * Vendors Routes
- *
- * Define API endpoints for the vendors module.
- */
 const router = Router();
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+router.use(authMiddleware);
 
-export const vendorsRoutes = router;
+router.get('/', VendorController.getVendors);
+router.get('/:id', VendorController.getVendorById);
+router.post('/', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN', 'FINANCE_MANAGER', 'FLEET_MANAGER'), VendorController.createVendor);
+router.put('/:id', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN', 'FINANCE_MANAGER', 'FLEET_MANAGER'), VendorController.updateVendor);
+router.delete('/:id', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN'), VendorController.deleteVendor);
+router.patch('/:id/restore', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN'), VendorController.restoreVendor);
+
+export const vendorRoutes = router;

@@ -1,18 +1,21 @@
 import { Router } from 'express';
+import { BillingController } from './controller.js';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
+import { requireRole } from '../../middlewares/role.middleware.js';
 
-/**
- * Billing Routes
- *
- * Define API endpoints for the billing module.
- */
 const router = Router();
+router.use(authMiddleware);
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+const financeRoles = ['SUPER_ADMIN', 'COMPANY_ADMIN', 'FINANCE_MANAGER'];
+
+router.get('/summary', BillingController.getInvoiceSummary);
+router.get('/', BillingController.getInvoices);
+router.get('/:id', BillingController.getInvoiceById);
+router.post('/', requireRole(...financeRoles), BillingController.createInvoice);
+router.put('/:id', requireRole(...financeRoles), BillingController.updateInvoice);
+router.patch('/:id/issue', requireRole(...financeRoles), BillingController.issueInvoice);
+router.patch('/:id/void', requireRole(...financeRoles), BillingController.voidInvoice);
+router.patch('/:id/cancel', requireRole(...financeRoles), BillingController.cancelInvoice);
+router.delete('/:id', requireRole('SUPER_ADMIN', 'COMPANY_ADMIN'), BillingController.deleteInvoice);
 
 export const billingRoutes = router;

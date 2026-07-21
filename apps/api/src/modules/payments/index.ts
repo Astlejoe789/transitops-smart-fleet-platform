@@ -1,11 +1,5 @@
-/**
- * Payments Module
- *
- * Barrel exports for the payments feature module.
- * Uncomment exports as features are implemented.
- */
-
-// export { PaymentsController } from './controller.js';
-// export { PaymentsService } from './service.js';
-// export { PaymentsRepository } from './repository.js';
-// export { paymentsRoutes } from './routes.js';
+export * from './controller.js';
+export * from './service.js';
+export * from './types.js';
+export * from './validation.js';
+export { paymentRoutes } from './routes.js';

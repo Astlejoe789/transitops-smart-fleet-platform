@@ -22,11 +22,14 @@ import MaintenancePage from '@/modules/maintenance/pages/MaintenancePage';
 import MaintenanceDetailsPage from '@/modules/maintenance/pages/MaintenanceDetailsPage';
 import { FuelPage } from '@/modules/fuel/pages/FuelPage';
 import { FuelDetailsPage } from '@/modules/fuel/pages/FuelDetailsPage';
-import ExpensesPage from '@/modules/expenses/pages/ExpensesPage';
-import CustomersPage from '@/modules/customers/pages/CustomersPage';
-import VendorsPage from '@/modules/vendors/pages/VendorsPage';
-import BillingPage from '@/modules/billing/pages/BillingPage';
-import PaymentsPage from '@/modules/payments/pages/PaymentsPage';
+import { ExpensesPage } from '@/modules/expenses/pages/ExpensesPage';
+import { ExpenseDetailsPage } from '@/modules/expenses/pages/ExpenseDetailsPage';
+import { CustomersPage } from '@/modules/customers/pages/CustomersPage';
+import { CustomerDetailsPage } from '@/modules/customers/pages/CustomerDetailsPage';
+import { VendorsPage } from '@/modules/vendors/pages/VendorsPage';
+import { VendorDetailsPage } from '@/modules/vendors/pages/VendorDetailsPage';
+import { BillingPage } from '@/modules/billing/pages/BillingPage';
+import { InvoiceDetailsPage } from '@/modules/billing/pages/InvoiceDetailsPage';
 import ReportsPage from '@/modules/reports/pages/ReportsPage';
 import AnalyticsPage from '@/modules/analytics/pages/AnalyticsPage';
 import AiPage from '@/modules/ai/pages/AiPage';
@@ -59,6 +62,12 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <DashboardPage /> },
+      // Customers
+      { path: 'customers', element: <CustomersPage /> },
+      { path: 'customers/:id', element: <CustomerDetailsPage /> },
+
+      // Setup
+      { path: 'setup', element: <div>Setup Page (Coming Soon)</div> },
       { path: 'fleet', element: <FleetPage /> },
       { path: 'fleet/:id', element: <VehicleDetailsPage /> },
       { path: 'drivers', element: <DriversPage /> },
@@ -71,10 +80,11 @@ export const routes: RouteObject[] = [
       { path: 'fuel', element: <FuelPage /> },
       { path: 'fuel/:id', element: <FuelDetailsPage /> },
       { path: 'expenses', element: <ExpensesPage /> },
-      { path: 'customers', element: <CustomersPage /> },
+      { path: 'expenses/:id', element: <ExpenseDetailsPage /> },
       { path: 'vendors', element: <VendorsPage /> },
+      { path: 'vendors/:id', element: <VendorDetailsPage /> },
       { path: 'billing', element: <BillingPage /> },
-      { path: 'payments', element: <PaymentsPage /> },
+      { path: 'billing/:id', element: <InvoiceDetailsPage /> },
       { path: 'reports', element: <ReportsPage /> },
       { path: 'analytics', element: <AnalyticsPage /> },
       { path: 'ai', element: <AiPage /> },
