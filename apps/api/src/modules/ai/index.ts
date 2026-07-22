@@ -8,4 +8,4 @@
 // export { AiController } from './controller.js';
 // export { AiService } from './service.js';
 // export { AiRepository } from './repository.js';
-// export { aiRoutes } from './routes.js';
+export { aiRoutes } from './routes.js';

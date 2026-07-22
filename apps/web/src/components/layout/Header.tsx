@@ -5,7 +5,6 @@ import { useTheme, type ThemeMode } from '@/hooks/useTheme';
 import {
   Menu,
   Search,
-  Bell,
   Sun,
   Moon,
   Laptop,
@@ -16,6 +15,7 @@ import {
   LogOut,
   ChevronRight,
 } from 'lucide-react';
+import { NotificationBell } from '@/modules/notifications/components/NotificationBell';
 
 interface HeaderProps {
   onOpenMobileDrawer: () => void;
@@ -28,11 +28,9 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
   const themeRef = useRef<HTMLDivElement>(null);
-  const notifRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -42,9 +40,6 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
       }
       if (themeRef.current && !themeRef.current.contains(e.target as Node)) {
         setThemeOpen(false);
-      }
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
-        setNotificationsOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -94,45 +89,7 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
       {/* Right Section: Actions, Theme Toggle, Profile Menu */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Notifications Dropdown */}
-        <div className="relative" ref={notifRef}>
-          <button
-            onClick={() => setNotificationsOpen(!notificationsOpen)}
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200 dark:border-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
-          >
-            <Bell className="h-4.5 w-4.5" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary-500 animate-pulse"></span>
-          </button>
-
-          {notificationsOpen && (
-            <div className="absolute right-0 mt-2 w-80 rounded-xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 p-4 shadow-xl z-30">
-              <div className="flex items-center justify-between pb-3 border-b border-surface-200 dark:border-surface-800">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-surface-900 dark:text-white">
-                  Notifications
-                </h4>
-                <span className="rounded-full bg-primary-500/10 px-2 py-0.5 text-[10px] font-bold text-primary-500">
-                  3 New
-                </span>
-              </div>
-              <div className="py-3 space-y-2 text-xs">
-                <div className="p-2 rounded-lg bg-surface-50 dark:bg-surface-800/50">
-                  <p className="font-semibold text-surface-900 dark:text-white">Vehicle Service Due</p>
-                  <p className="text-surface-400 mt-0.5">Truck #TRK-104 is due for oil maintenance.</p>
-                </div>
-                <div className="p-2 rounded-lg bg-surface-50 dark:bg-surface-800/50">
-                  <p className="font-semibold text-surface-900 dark:text-white">Driver License Expiry</p>
-                  <p className="text-surface-400 mt-0.5">Driver Marcus Vance license expires in 14 days.</p>
-                </div>
-              </div>
-              <Link
-                to="/notifications"
-                onClick={() => setNotificationsOpen(false)}
-                className="block text-center text-xs font-semibold text-primary-500 hover:underline pt-2"
-              >
-                View all notifications
-              </Link>
-            </div>
-          )}
-        </div>
+        <NotificationBell />
 
         {/* Theme Selector Dropdown */}
         <div className="relative" ref={themeRef}>

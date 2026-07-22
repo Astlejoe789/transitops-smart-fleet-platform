@@ -188,9 +188,23 @@ enum PaymentMethod {
 
 enum NotificationType {
   TRIP_ASSIGNED
+  TRIP_COMPLETED
+  TRIP_CANCELLED
   MAINTENANCE_DUE
-  LICENSE_EXPIRING
+  MAINTENANCE_OVERDUE
+  FUEL_THRESHOLD_REACHED
+  EXPENSE_SUBMITTED
+  EXPENSE_APPROVED
+  EXPENSE_REJECTED
+  INVOICE_CREATED
+  INVOICE_APPROVED
+  INVOICE_PAID
   INVOICE_OVERDUE
+  CUSTOMER_ADDED
+  VENDOR_ADDED
+  AI_RECOMMENDATION
+  SYSTEM_ALERT
+  LICENSE_EXPIRING
   EXPENSE_ALERT
   SYSTEM
 }
@@ -198,6 +212,21 @@ enum NotificationType {
 enum NotificationSeverity {
   INFO
   WARNING
+  CRITICAL
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum NotificationCategory {
+  INFORMATION
+  SUCCESS
+  WARNING
+  ERROR
   CRITICAL
 }
 
@@ -275,9 +304,12 @@ model Company {
   vendors         Vendor[]
   invoices        Invoice[]
   payments        Payment[]
-  notifications   Notification[]
-  auditLogs       AuditLog[]
-  settings        Setting[]
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
+  notificationTemplates   NotificationTemplate[]
+  notificationGroups      NotificationGroup[]
+  auditLogs               AuditLog[]
+  settings                Setting[]
 
   @@index([code])
   @@index([deletedAt])
@@ -385,8 +417,10 @@ model User {
   branch           Branch?          @relation(fields: [branchId], references: [id], onDelete: SetNull)
   role             Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
   driverProfile    Driver?
-  notifications    Notification[]
-  auditLogs        AuditLog[]
+  notifications          Notification[]
+  notificationPreference NotificationPreference?
+  notificationRecipients NotificationRecipient[]
+  auditLogs              AuditLog[]
   maintenanceLogs  MaintenanceLog[]
   createdFuelLogs  FuelLog[]
   createdExpenses  Expense[]        @relation("ExpenseCreator")
@@ -1065,28 +1099,136 @@ model Payment {
 }
 
 // 20. Notification
+// 20. Notification
 model Notification {
   id        String               @id @default(uuid())
   companyId String
   userId    String
   type      NotificationType
-  severity  NotificationSeverity @default(INFO)
+  category  NotificationCategory @default(INFORMATION)
+  priority  NotificationPriority @default(MEDIUM)
+  severity  NotificationSeverity @default(INFO) // Legacy
   title     String
   message   String
   isRead    Boolean              @default(false)
   readAt    DateTime?
   linkUrl   String?
   createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
 
   // Relationships
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company         Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveries      NotificationDelivery[]
+  history         NotificationHistory[]
+  recipients      NotificationRecipient[]
 
   @@index([companyId])
   @@index([userId])
   @@index([isRead])
   @@index([createdAt])
   @@map("notifications")
+}
+
+model NotificationPreference {
+  id                    String   @id @default(uuid())
+  companyId             String
+  userId                String   @unique
+  enableNotifications   Boolean  @default(true)
+  enableEmail           Boolean  @default(true)
+  enableSMS             Boolean  @default(false)
+  enablePush            Boolean  @default(true)
+  enableAiAlerts        Boolean  @default(true)
+  enableBillingAlerts   Boolean  @default(true)
+  enableFleetAlerts     Boolean  @default(true)
+  enableMaintenanceAlerts Boolean @default(true)
+  enableExpenseAlerts   Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("notification_preferences")
+}
+
+model NotificationTemplate {
+  id          String   @id @default(uuid())
+  companyId   String
+  name        String
+  subject     String
+  body        String   @db.Text
+  type        NotificationType
+  variables   Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("notification_templates")
+}
+
+model NotificationDelivery {
+  id             String   @id @default(uuid())
+  notificationId String
+  channel        String   // EMAIL, SMS, PUSH, WEBHOOK
+  status         String   // PENDING, SENT, FAILED
+  providerId     String?
+  errorMessage   String?
+  sentAt         DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@map("notification_deliveries")
+}
+
+model NotificationGroup {
+  id          String   @id @default(uuid())
+  companyId   String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("notification_groups")
+}
+
+model NotificationHistory {
+  id             String   @id @default(uuid())
+  notificationId String
+  action         String
+  details        String?
+  createdAt      DateTime @default(now())
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@map("notification_history")
+}
+
+model NotificationRecipient {
+  id             String   @id @default(uuid())
+  notificationId String
+  userId         String
+  status         String   // DELIVERED, READ, DISMISSED
+  readAt         DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@index([userId])
+  @@map("notification_recipients")
 }
 
 // 21. AuditLog

@@ -1,55 +1,77 @@
+import React, { Suspense } from 'react';
 import { Navigate, type RouteObject } from 'react-router-dom';
-import { AuthLayout } from '@/layouts/AuthLayout';
-import { MainLayout } from '@/layouts/MainLayout';
+import { AuthLayout } from '@/components/layout/AuthLayout';
+import { MainLayout } from '@/components/layout/MainLayout';
 import { AuthGuard } from '@/guards/AuthGuard';
 
-import LoginPage from '@/modules/auth/pages/LoginPage';
-import ForgotPasswordPage from '@/modules/auth/pages/ForgotPasswordPage';
-import ResetPasswordPage from '@/modules/auth/pages/ResetPasswordPage';
-import UnauthorizedPage from '@/pages/UnauthorizedPage';
-import NotFoundPage from '@/pages/NotFoundPage';
+// Code Splitting with React.lazy
+const LoginPage = React.lazy(() => import('@/modules/auth/pages/LoginPage'));
+const ForgotPasswordPage = React.lazy(() => import('@/modules/auth/pages/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('@/modules/auth/pages/ResetPasswordPage'));
+const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'));
+const NotFoundPage = React.lazy(() => import('@/pages/NotFoundPage'));
 
-// Module Page Imports
-import DashboardPage from '@/modules/dashboard/pages/DashboardPage';
-import FleetPage from '@/modules/fleet/pages/FleetPage';
-import VehicleDetailsPage from '@/modules/fleet/pages/VehicleDetailsPage';
-import DriversPage from '@/modules/drivers/pages/DriversPage';
-import DriverDetailsPage from '@/modules/drivers/pages/DriverDetailsPage';
-import TripsPage from '@/modules/trips/pages/TripsPage';
-import TripDetailsPage from '@/modules/trips/pages/TripDetailsPage';
-import DispatchPage from '@/modules/trips/pages/DispatchPage';
-import MaintenancePage from '@/modules/maintenance/pages/MaintenancePage';
-import MaintenanceDetailsPage from '@/modules/maintenance/pages/MaintenanceDetailsPage';
-import { FuelPage } from '@/modules/fuel/pages/FuelPage';
-import { FuelDetailsPage } from '@/modules/fuel/pages/FuelDetailsPage';
-import { ExpensesPage } from '@/modules/expenses/pages/ExpensesPage';
-import { ExpenseDetailsPage } from '@/modules/expenses/pages/ExpenseDetailsPage';
-import { CustomersPage } from '@/modules/customers/pages/CustomersPage';
-import { CustomerDetailsPage } from '@/modules/customers/pages/CustomerDetailsPage';
-import { VendorsPage } from '@/modules/vendors/pages/VendorsPage';
-import { VendorDetailsPage } from '@/modules/vendors/pages/VendorDetailsPage';
-import { BillingPage } from '@/modules/billing/pages/BillingPage';
-import { InvoiceDetailsPage } from '@/modules/billing/pages/InvoiceDetailsPage';
-import ReportsPage from '@/modules/reports/pages/ReportsPage';
-import AnalyticsPage from '@/modules/analytics/pages/AnalyticsPage';
-import AiPage from '@/modules/ai/pages/AiPage';
-import NotificationsPage from '@/modules/notifications/pages/NotificationsPage';
-import AdministrationPage from '@/modules/administration/pages/AdministrationPage';
-import SettingsPage from '@/modules/settings/pages/SettingsPage';
+const DashboardPage = React.lazy(() => import('@/modules/dashboard/pages/DashboardPage'));
+const FleetPage = React.lazy(() => import('@/modules/fleet/pages/FleetPage'));
+const VehicleDetailsPage = React.lazy(() => import('@/modules/fleet/pages/VehicleDetailsPage'));
+const DriversPage = React.lazy(() => import('@/modules/drivers/pages/DriversPage'));
+const DriverDetailsPage = React.lazy(() => import('@/modules/drivers/pages/DriverDetailsPage'));
+const TripsPage = React.lazy(() => import('@/modules/trips/pages/TripsPage'));
+const TripDetailsPage = React.lazy(() => import('@/modules/trips/pages/TripDetailsPage'));
+const DispatchPage = React.lazy(() => import('@/modules/trips/pages/DispatchPage'));
+const MaintenancePage = React.lazy(() => import('@/modules/maintenance/pages/MaintenancePage'));
+const MaintenanceDetailsPage = React.lazy(() => import('@/modules/maintenance/pages/MaintenanceDetailsPage'));
+const FuelPage = React.lazy(() => import('@/modules/fuel/pages/FuelPage'));
+const FuelDetailsPage = React.lazy(() => import('@/modules/fuel/pages/FuelDetailsPage'));
+const ExpensesPage = React.lazy(() => import('@/modules/expenses/pages/ExpensesPage'));
+const ExpenseDetailsPage = React.lazy(() => import('@/modules/expenses/pages/ExpenseDetailsPage'));
+const CustomersPage = React.lazy(() => import('@/modules/customers/pages/CustomersPage'));
+const CustomerDetailsPage = React.lazy(() => import('@/modules/customers/pages/CustomerDetailsPage'));
+const VendorsPage = React.lazy(() => import('@/modules/vendors/pages/VendorsPage'));
+const VendorDetailsPage = React.lazy(() => import('@/modules/vendors/pages/VendorDetailsPage'));
+const BillingPage = React.lazy(() => import('@/modules/billing/pages/BillingPage'));
+const InvoiceDetailsPage = React.lazy(() => import('@/modules/billing/pages/InvoiceDetailsPage'));
+const ReportsPage = React.lazy(() => import('@/modules/reports/pages/ReportsPage'));
+const AnalyticsPage = React.lazy(() => import('@/modules/analytics/pages/AnalyticsPage'));
+const AiPage = React.lazy(() => import('@/modules/ai/pages/AiPage'));
+const NotificationsPage = React.lazy(() => import('@/modules/notifications/pages/NotificationsPage'));
+const NotificationSettingsPage = React.lazy(() => import('@/modules/notifications/pages/NotificationSettingsPage'));
+const AdministrationDashboardPage = React.lazy(() => import('@/modules/administration/pages/AdministrationDashboardPage'));
+const UserManagementPage = React.lazy(() => import('@/modules/administration/pages/UserManagementPage'));
+const RoleManagementPage = React.lazy(() => import('@/modules/administration/pages/RoleManagementPage'));
+const SystemConfigPage = React.lazy(() => import('@/modules/administration/pages/SystemConfigPage'));
+const AuditLogPage = React.lazy(() => import('@/modules/administration/pages/AuditLogPage'));
+const SettingsPage = React.lazy(() => import('@/modules/settings/pages/SettingsPage'));
+
+// Generic suspense loader
+const PageLoader = () => (
+  <div className="flex-1 flex items-center justify-center p-8">
+    <div className="flex flex-col items-center gap-4">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+      <p className="text-sm text-muted-foreground">Loading module...</p>
+    </div>
+  </div>
+);
+
+const withSuspense = (Component: React.ComponentType) => (
+  <Suspense fallback={<PageLoader />}>
+    <Component />
+  </Suspense>
+);
 
 export const routes: RouteObject[] = [
   // Public Authentication Routes
   {
     element: <AuthLayout />,
     children: [
-      { path: 'login', element: <LoginPage /> },
-      { path: 'forgot-password', element: <ForgotPasswordPage /> },
-      { path: 'reset-password', element: <ResetPasswordPage /> },
+      { path: 'login', element: withSuspense(LoginPage) },
+      { path: 'forgot-password', element: withSuspense(ForgotPasswordPage) },
+      { path: 'reset-password', element: withSuspense(ResetPasswordPage) },
     ],
   },
 
   // System Error Pages
-  { path: 'unauthorized', element: <UnauthorizedPage /> },
+  { path: 'unauthorized', element: withSuspense(UnauthorizedPage) },
 
   // Protected SaaS Application Routes (MainLayout Shell)
   {
@@ -61,39 +83,46 @@ export const routes: RouteObject[] = [
     ),
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: 'dashboard', element: <DashboardPage /> },
+      { path: 'dashboard', element: withSuspense(DashboardPage) },
+      
       // Customers
-      { path: 'customers', element: <CustomersPage /> },
-      { path: 'customers/:id', element: <CustomerDetailsPage /> },
+      { path: 'customers', element: withSuspense(CustomersPage) },
+      { path: 'customers/:id', element: withSuspense(CustomerDetailsPage) },
 
       // Setup
       { path: 'setup', element: <div>Setup Page (Coming Soon)</div> },
-      { path: 'fleet', element: <FleetPage /> },
-      { path: 'fleet/:id', element: <VehicleDetailsPage /> },
-      { path: 'drivers', element: <DriversPage /> },
-      { path: 'drivers/:id', element: <DriverDetailsPage /> },
-      { path: 'trips', element: <TripsPage /> },
-      { path: 'trips/:id', element: <TripDetailsPage /> },
-      { path: 'dispatch', element: <DispatchPage /> },
-      { path: 'maintenance', element: <MaintenancePage /> },
-      { path: 'maintenance/:id', element: <MaintenanceDetailsPage /> },
-      { path: 'fuel', element: <FuelPage /> },
-      { path: 'fuel/:id', element: <FuelDetailsPage /> },
-      { path: 'expenses', element: <ExpensesPage /> },
-      { path: 'expenses/:id', element: <ExpenseDetailsPage /> },
-      { path: 'vendors', element: <VendorsPage /> },
-      { path: 'vendors/:id', element: <VendorDetailsPage /> },
-      { path: 'billing', element: <BillingPage /> },
-      { path: 'billing/:id', element: <InvoiceDetailsPage /> },
-      { path: 'reports', element: <ReportsPage /> },
-      { path: 'analytics', element: <AnalyticsPage /> },
-      { path: 'ai', element: <AiPage /> },
-      { path: 'notifications', element: <NotificationsPage /> },
-      { path: 'administration', element: <AdministrationPage /> },
-      { path: 'settings', element: <SettingsPage /> },
+      
+      { path: 'fleet', element: withSuspense(FleetPage) },
+      { path: 'fleet/:id', element: withSuspense(VehicleDetailsPage) },
+      { path: 'drivers', element: withSuspense(DriversPage) },
+      { path: 'drivers/:id', element: withSuspense(DriverDetailsPage) },
+      { path: 'trips', element: withSuspense(TripsPage) },
+      { path: 'trips/:id', element: withSuspense(TripDetailsPage) },
+      { path: 'dispatch', element: withSuspense(DispatchPage) },
+      { path: 'maintenance', element: withSuspense(MaintenancePage) },
+      { path: 'maintenance/:id', element: withSuspense(MaintenanceDetailsPage) },
+      { path: 'fuel', element: withSuspense(FuelPage) },
+      { path: 'fuel/:id', element: withSuspense(FuelDetailsPage) },
+      { path: 'expenses', element: withSuspense(ExpensesPage) },
+      { path: 'expenses/:id', element: withSuspense(ExpenseDetailsPage) },
+      { path: 'vendors', element: withSuspense(VendorsPage) },
+      { path: 'vendors/:id', element: withSuspense(VendorDetailsPage) },
+      { path: 'billing', element: withSuspense(BillingPage) },
+      { path: 'billing/:id', element: withSuspense(InvoiceDetailsPage) },
+      { path: 'reports', element: withSuspense(ReportsPage) },
+      { path: 'analytics', element: withSuspense(AnalyticsPage) },
+      { path: 'ai', element: withSuspense(AiPage) },
+      { path: 'notifications', element: withSuspense(NotificationsPage) },
+      { path: 'settings/notifications', element: withSuspense(NotificationSettingsPage) },
+      { path: 'admin', element: withSuspense(AdministrationDashboardPage) },
+      { path: 'admin/users', element: withSuspense(UserManagementPage) },
+      { path: 'admin/roles', element: withSuspense(RoleManagementPage) },
+      { path: 'admin/settings', element: withSuspense(SystemConfigPage) },
+      { path: 'admin/audit', element: withSuspense(AuditLogPage) },
+      { path: 'settings', element: withSuspense(SettingsPage) },
     ],
   },
 
   // 404 Catch-All Page
-  { path: '*', element: <NotFoundPage /> },
+  { path: '*', element: withSuspense(NotFoundPage) },
 ];

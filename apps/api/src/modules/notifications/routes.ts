@@ -1,18 +1,23 @@
 import { Router } from 'express';
+import { NotificationController } from './controller.js';
+import { authMiddleware } from '../../middlewares/index.js';
 
-/**
- * Notifications Routes
- *
- * Define API endpoints for the notifications module.
- */
 const router = Router();
+const controller = new NotificationController();
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+// All notification routes require authentication
+router.use(authMiddleware);
 
-export const notificationsRoutes = router;
+// Endpoints
+router.get('/', controller.getNotifications as any);
+router.post('/', controller.createNotification as any); // Allows triggering a notification for testing/internal
+router.patch('/read-all', controller.markAllAsRead as any);
+router.get('/preferences', controller.getPreferences as any);
+router.put('/preferences', controller.updatePreferences as any);
+
+// ID-based endpoints
+router.get('/:id', controller.getNotificationById as any);
+router.patch('/:id/read', controller.markAsRead as any);
+router.delete('/:id', controller.deleteNotification as any);
+
+export const notificationRoutes = router;
