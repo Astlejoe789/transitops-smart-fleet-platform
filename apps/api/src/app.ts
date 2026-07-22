@@ -47,6 +47,17 @@ export function createApp() {
     });
   });
 
+  // ---- Readiness Check (DB) ----
+  app.get('/readiness', async (_req, res) => {
+    try {
+      const { prisma } = await import('./database/prisma.js');
+      await prisma.$queryRaw`SELECT 1`;
+      res.status(200).json({ status: 'ready', database: 'connected' });
+    } catch (error) {
+      res.status(503).json({ status: 'not_ready', database: 'disconnected', error: String(error) });
+    }
+  });
+
   // ---- API Routes ----
   app.use('/api', apiRouter);
 
