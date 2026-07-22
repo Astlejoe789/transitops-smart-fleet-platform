@@ -8,4 +8,4 @@
 // export { ReportsController } from './controller.js';
 // export { ReportsService } from './service.js';
 // export { ReportsRepository } from './repository.js';
-// export { reportsRoutes } from './routes.js';
+export { reportsRoutes } from './routes.js';

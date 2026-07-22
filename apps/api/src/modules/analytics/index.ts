@@ -8,4 +8,4 @@
 // export { AnalyticsController } from './controller.js';
 // export { AnalyticsService } from './service.js';
 // export { AnalyticsRepository } from './repository.js';
-// export { analyticsRoutes } from './routes.js';
+export { analyticsRoutes } from './routes.js';

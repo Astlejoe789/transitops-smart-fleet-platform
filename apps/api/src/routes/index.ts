@@ -12,6 +12,13 @@ import { vendorRoutes } from '../modules/vendors/index.js';
 import { billingRoutes } from '../modules/billing/index.js';
 import { paymentRoutes } from '../modules/payments/index.js';
 
+import { reportsRoutes } from '../modules/reports/index.js';
+import { analyticsRoutes } from '../modules/analytics/index.js';
+// import { aiRoutes } from '../modules/ai/index.js';
+// import { notificationRoutes } from '../modules/notifications/index.js';
+// import { administrationRoutes } from '../modules/administration/index.js';
+// import { settingsRoutes } from '../modules/settings/index.js';
+
 export const apiRouter = Router();
 
 // ---- Module Routes ----
@@ -27,8 +34,8 @@ apiRouter.use('/customers', customerRoutes);
 apiRouter.use('/vendors', vendorRoutes);
 apiRouter.use('/invoices', billingRoutes);
 apiRouter.use('/payments', paymentRoutes);
-// apiRouter.use('/reports', reportRoutes);
-// apiRouter.use('/analytics', analyticsRoutes);
+apiRouter.use('/reports', reportsRoutes);
+apiRouter.use('/analytics', analyticsRoutes);
 // apiRouter.use('/ai', aiRoutes);
 // apiRouter.use('/notifications', notificationRoutes);
 // apiRouter.use('/admin', administrationRoutes);
