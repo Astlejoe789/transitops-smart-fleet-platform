@@ -12,6 +12,7 @@ export class AnalyticsService {
    */
   async getDashboardKPIs(companyId: string, branchId?: string) {
     const where = branchId ? { companyId, branchId } : { companyId };
+    const vehicleWhere = branchId ? { companyId, vehicle: { branchId } } : { companyId };
     
     // Revenue (from PAID invoices)
     const revenueAggr = await prisma.invoice.aggregate({
@@ -70,14 +71,14 @@ export class AnalyticsService {
     // Fuel Consumption
     const fuelAggr = await prisma.fuelLog.aggregate({
       _sum: { liters: true },
-      where: { ...where, deletedAt: null },
+      where: { ...vehicleWhere, deletedAt: null },
     });
     const fuelConsumption = fuelAggr._sum.liters || 0;
 
     // Maintenance Cost
     const maintenanceAggr = await prisma.maintenanceLog.aggregate({
       _sum: { actualCost: true },
-      where: { ...where, deletedAt: null },
+      where: { ...vehicleWhere, deletedAt: null },
     });
     const maintenanceCost = maintenanceAggr._sum.actualCost || 0;
 
@@ -120,6 +121,7 @@ export class AnalyticsService {
    */
   async getDashboardCharts(companyId: string, branchId?: string) {
     const where = branchId ? { companyId, branchId } : { companyId };
+    const vehicleWhere = branchId ? { companyId, vehicle: { branchId } } : { companyId };
     
     // We will generate mocked 12-month data trends here for simplicity of the aggregation
     // In a real complex production, we would use raw SQL to group by date
@@ -180,7 +182,7 @@ export class AnalyticsService {
       const fuelAggr = await prisma.fuelLog.aggregate({
         _sum: { liters: true },
         where: {
-          ...where,
+          ...vehicleWhere,
           deletedAt: null,
           fuelDate: { gte: d, lt: nextMonth }
         }
@@ -202,7 +204,7 @@ export class AnalyticsService {
       const maintAggr = await prisma.maintenanceLog.aggregate({
         _sum: { actualCost: true },
         where: {
-          ...where,
+          ...vehicleWhere,
           deletedAt: null,
           completedDate: { gte: d, lt: nextMonth }
         }

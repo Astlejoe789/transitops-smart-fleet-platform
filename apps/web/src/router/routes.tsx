@@ -1,47 +1,51 @@
 import React, { Suspense } from 'react';
 import { Navigate, type RouteObject } from 'react-router-dom';
-import { AuthLayout } from '@/components/layout/AuthLayout';
-import { MainLayout } from '@/components/layout/MainLayout';
+import { AuthLayout } from '@/layouts/AuthLayout';
+import { MainLayout } from '@/layouts/MainLayout';
 import { AuthGuard } from '@/guards/AuthGuard';
 
 // Code Splitting with React.lazy
-const LoginPage = React.lazy(() => import('@/modules/auth/pages/LoginPage'));
-const ForgotPasswordPage = React.lazy(() => import('@/modules/auth/pages/ForgotPasswordPage'));
-const ResetPasswordPage = React.lazy(() => import('@/modules/auth/pages/ResetPasswordPage'));
-const UnauthorizedPage = React.lazy(() => import('@/pages/UnauthorizedPage'));
-const NotFoundPage = React.lazy(() => import('@/pages/NotFoundPage'));
+// Utility to handle named exports dynamically by grabbing the first exported value
+const lazyNamed = (importPromise: Promise<any>) =>
+  React.lazy(() => importPromise.then((m) => ({ default: Object.values(m)[0] as React.ComponentType<any> })));
 
-const DashboardPage = React.lazy(() => import('@/modules/dashboard/pages/DashboardPage'));
-const FleetPage = React.lazy(() => import('@/modules/fleet/pages/FleetPage'));
-const VehicleDetailsPage = React.lazy(() => import('@/modules/fleet/pages/VehicleDetailsPage'));
-const DriversPage = React.lazy(() => import('@/modules/drivers/pages/DriversPage'));
-const DriverDetailsPage = React.lazy(() => import('@/modules/drivers/pages/DriverDetailsPage'));
-const TripsPage = React.lazy(() => import('@/modules/trips/pages/TripsPage'));
-const TripDetailsPage = React.lazy(() => import('@/modules/trips/pages/TripDetailsPage'));
-const DispatchPage = React.lazy(() => import('@/modules/trips/pages/DispatchPage'));
-const MaintenancePage = React.lazy(() => import('@/modules/maintenance/pages/MaintenancePage'));
-const MaintenanceDetailsPage = React.lazy(() => import('@/modules/maintenance/pages/MaintenanceDetailsPage'));
-const FuelPage = React.lazy(() => import('@/modules/fuel/pages/FuelPage'));
-const FuelDetailsPage = React.lazy(() => import('@/modules/fuel/pages/FuelDetailsPage'));
-const ExpensesPage = React.lazy(() => import('@/modules/expenses/pages/ExpensesPage'));
-const ExpenseDetailsPage = React.lazy(() => import('@/modules/expenses/pages/ExpenseDetailsPage'));
-const CustomersPage = React.lazy(() => import('@/modules/customers/pages/CustomersPage'));
-const CustomerDetailsPage = React.lazy(() => import('@/modules/customers/pages/CustomerDetailsPage'));
-const VendorsPage = React.lazy(() => import('@/modules/vendors/pages/VendorsPage'));
-const VendorDetailsPage = React.lazy(() => import('@/modules/vendors/pages/VendorDetailsPage'));
-const BillingPage = React.lazy(() => import('@/modules/billing/pages/BillingPage'));
-const InvoiceDetailsPage = React.lazy(() => import('@/modules/billing/pages/InvoiceDetailsPage'));
-const ReportsPage = React.lazy(() => import('@/modules/reports/pages/ReportsPage'));
-const AnalyticsPage = React.lazy(() => import('@/modules/analytics/pages/AnalyticsPage'));
-const AiPage = React.lazy(() => import('@/modules/ai/pages/AiPage'));
-const NotificationsPage = React.lazy(() => import('@/modules/notifications/pages/NotificationsPage'));
-const NotificationSettingsPage = React.lazy(() => import('@/modules/notifications/pages/NotificationSettingsPage'));
-const AdministrationDashboardPage = React.lazy(() => import('@/modules/administration/pages/AdministrationDashboardPage'));
-const UserManagementPage = React.lazy(() => import('@/modules/administration/pages/UserManagementPage'));
-const RoleManagementPage = React.lazy(() => import('@/modules/administration/pages/RoleManagementPage'));
-const SystemConfigPage = React.lazy(() => import('@/modules/administration/pages/SystemConfigPage'));
-const AuditLogPage = React.lazy(() => import('@/modules/administration/pages/AuditLogPage'));
-const SettingsPage = React.lazy(() => import('@/modules/settings/pages/SettingsPage'));
+const LoginPage = lazyNamed(import('@/modules/auth/pages/LoginPage'));
+const ForgotPasswordPage = lazyNamed(import('@/modules/auth/pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazyNamed(import('@/modules/auth/pages/ResetPasswordPage'));
+const UnauthorizedPage = lazyNamed(import('@/pages/UnauthorizedPage'));
+const NotFoundPage = lazyNamed(import('@/pages/NotFoundPage'));
+
+const DashboardPage = lazyNamed(import('@/modules/dashboard/pages/DashboardPage'));
+const FleetPage = lazyNamed(import('@/modules/fleet/pages/FleetPage'));
+const VehicleDetailsPage = lazyNamed(import('@/modules/fleet/pages/VehicleDetailsPage'));
+const DriversPage = lazyNamed(import('@/modules/drivers/pages/DriversPage'));
+const DriverDetailsPage = lazyNamed(import('@/modules/drivers/pages/DriverDetailsPage'));
+const TripsPage = lazyNamed(import('@/modules/trips/pages/TripsPage'));
+const TripDetailsPage = lazyNamed(import('@/modules/trips/pages/TripDetailsPage'));
+const DispatchPage = lazyNamed(import('@/modules/trips/pages/DispatchPage'));
+const MaintenancePage = lazyNamed(import('@/modules/maintenance/pages/MaintenancePage'));
+const MaintenanceDetailsPage = lazyNamed(import('@/modules/maintenance/pages/MaintenanceDetailsPage'));
+const FuelPage = lazyNamed(import('@/modules/fuel/pages/FuelPage'));
+const FuelDetailsPage = lazyNamed(import('@/modules/fuel/pages/FuelDetailsPage'));
+const ExpensesPage = lazyNamed(import('@/modules/expenses/pages/ExpensesPage'));
+const ExpenseDetailsPage = lazyNamed(import('@/modules/expenses/pages/ExpenseDetailsPage'));
+const CustomersPage = lazyNamed(import('@/modules/customers/pages/CustomersPage'));
+const CustomerDetailsPage = lazyNamed(import('@/modules/customers/pages/CustomerDetailsPage'));
+const VendorsPage = lazyNamed(import('@/modules/vendors/pages/VendorsPage'));
+const VendorDetailsPage = lazyNamed(import('@/modules/vendors/pages/VendorDetailsPage'));
+const BillingPage = lazyNamed(import('@/modules/billing/pages/BillingPage'));
+const InvoiceDetailsPage = lazyNamed(import('@/modules/billing/pages/InvoiceDetailsPage'));
+const ReportsPage = lazyNamed(import('@/modules/reports/pages/ReportsPage'));
+const AnalyticsPage = lazyNamed(import('@/modules/analytics/pages/AnalyticsPage'));
+const AiPage = lazyNamed(import('@/modules/ai/pages/AiPage'));
+const NotificationsPage = lazyNamed(import('@/modules/notifications/pages/NotificationsPage'));
+const NotificationSettingsPage = lazyNamed(import('@/modules/notifications/pages/NotificationSettingsPage'));
+const AdministrationDashboardPage = lazyNamed(import('@/modules/administration/pages/AdministrationDashboardPage'));
+const UserManagementPage = lazyNamed(import('@/modules/administration/pages/UserManagementPage'));
+const RoleManagementPage = lazyNamed(import('@/modules/administration/pages/RoleManagementPage'));
+const SystemConfigPage = lazyNamed(import('@/modules/administration/pages/SystemConfigPage'));
+const AuditLogPage = lazyNamed(import('@/modules/administration/pages/AuditLogPage'));
+const SettingsPage = lazyNamed(import('@/modules/settings/pages/SettingsPage'));
 
 // Generic suspense loader
 const PageLoader = () => (
