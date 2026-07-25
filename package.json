@@ -23,6 +23,7 @@
     "db:format": "prisma format --schema=database/prisma/schema.prisma",
     "db:migrate": "prisma migrate dev --schema=database/prisma/schema.prisma",
     "db:seed": "tsx database/seeds/seed.ts",
+    "db:init-production": "bash scripts/init-production-db.sh",
     "db:studio": "prisma studio --schema=database/prisma/schema.prisma",
     "clean": "rimraf apps/*/dist apps/*/node_modules node_modules",
     "prepare": "echo 'Ready'"
