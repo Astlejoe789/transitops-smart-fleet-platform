@@ -1,16 +1,33 @@
 import type { CorsOptions } from 'cors';
 
-const defaultOrigins = [
-  'https://transitops-smart-fleet-platform-web-roan.vercel.app',
+const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000'
 ];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
 
 /**
  * CORS configuration.
  */
 export const corsConfig: CorsOptions = {
-  origin: process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : defaultOrigins,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g., server-to-server or curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+
+    // Allow Vercel preview URLs for this specific project
+    if (origin.startsWith('https://transitops-smart-fleet-platform-web') && origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
