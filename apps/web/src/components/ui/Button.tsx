@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
@@ -31,9 +31,10 @@ export const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends Omit<HTMLMotionProps<"button">, "size">,
+  extends Omit<HTMLMotionProps<"button">, "size" | "children">,
     VariantProps<typeof buttonVariants> {
   isLoading?: boolean;
+  children?: React.ReactNode;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

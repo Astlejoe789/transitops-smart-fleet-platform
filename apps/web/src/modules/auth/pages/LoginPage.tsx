@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
-import { AlertCircle, ArrowLeft, Truck } from 'lucide-react';
+import { AlertCircle, Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const loginSchema = z.object({

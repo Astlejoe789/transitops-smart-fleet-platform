@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { motion } from 'framer-motion';
 import {
   Truck,
   LayoutDashboard,
@@ -16,8 +15,6 @@ import {
   BarChart3,
   TrendingUp,
   Sparkles,
-  Bell,
-  ShieldCheck,
   Settings,
   ChevronLeft,
   ChevronRight,

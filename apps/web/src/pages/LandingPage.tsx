@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
-  Truck, ArrowRight, Shield, Zap, Map, FileText, 
-  CreditCard, Activity, Users, Settings, Wrench, BarChart, Github 
+  Truck, Shield, Zap, Map, FileText, 
+  Activity, Users, Wrench, BarChart, Github 
 } from 'lucide-react';
 
 const FEATURES = [

@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Navigate, type RouteObject } from 'react-router-dom';
+import { type RouteObject } from 'react-router-dom';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthGuard } from '@/guards/AuthGuard';
