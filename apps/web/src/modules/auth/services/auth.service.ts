@@ -32,32 +32,32 @@ export interface AuthResponse {
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await apiClient.post<ApiResponse<AuthResponse>>('/auth/login', credentials);
+    const response = await apiClient.post<ApiResponse<AuthResponse>>('auth/login', credentials);
     return response.data.data;
   },
 
   async getCurrentUser(): Promise<UserProfileResponse> {
-    const response = await apiClient.get<ApiResponse<UserProfileResponse>>('/auth/me');
+    const response = await apiClient.get<ApiResponse<UserProfileResponse>>('auth/me');
     return response.data.data;
   },
 
   async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
     const response = await apiClient.post<ApiResponse<{ accessToken: string }>>(
-      '/auth/refresh-token',
+      'auth/refresh-token',
       { refreshToken },
     );
     return response.data.data;
   },
 
   async logout(): Promise<void> {
-    await apiClient.post('/auth/logout');
+    await apiClient.post('auth/logout');
   },
 
   async forgotPassword(email: string): Promise<void> {
-    await apiClient.post('/auth/forgot-password', { email });
+    await apiClient.post('auth/forgot-password', { email });
   },
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    await apiClient.post('/auth/reset-password', { token, newPassword });
+    await apiClient.post('auth/reset-password', { token, newPassword });
   },
 };
