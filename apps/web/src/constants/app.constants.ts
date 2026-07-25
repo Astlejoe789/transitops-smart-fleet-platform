@@ -1,12 +1,15 @@
 /**
  * Application-wide constants.
  */
+const rawApiUrl = import.meta.env.VITE_API_URL || '';
+const baseUrl = rawApiUrl ? (rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`) : '/api';
+
 export const APP_CONFIG = {
   name: 'TransitOps',
   version: '0.1.0',
   description: 'AI-powered Smart Fleet & Transport Operations Platform',
   api: {
-    baseUrl: import.meta.env.VITE_API_URL || '/api',
+    baseUrl,
     timeout: 15000,
   },
   pagination: {

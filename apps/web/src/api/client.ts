@@ -1,12 +1,14 @@
 import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
+import { APP_CONFIG } from '@/constants/app.constants';
+
 /**
  * Pre-configured Axios instance for all API calls.
- * Base URL is set from the VITE_API_URL environment variable.
+ * Base URL is set from APP_CONFIG.
  */
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: APP_CONFIG.api.baseUrl,
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
