@@ -14,6 +14,7 @@ const ForgotPasswordPage = lazyNamed(import('@/modules/auth/pages/ForgotPassword
 const ResetPasswordPage = lazyNamed(import('@/modules/auth/pages/ResetPasswordPage'));
 const UnauthorizedPage = lazyNamed(import('@/pages/UnauthorizedPage'));
 const NotFoundPage = lazyNamed(import('@/pages/NotFoundPage'));
+const LandingPage = lazyNamed(import('@/pages/LandingPage'));
 
 const DashboardPage = lazyNamed(import('@/modules/dashboard/pages/DashboardPage'));
 const FleetPage = lazyNamed(import('@/modules/fleet/pages/FleetPage'));
@@ -35,6 +36,7 @@ const VendorsPage = lazyNamed(import('@/modules/vendors/pages/VendorsPage'));
 const VendorDetailsPage = lazyNamed(import('@/modules/vendors/pages/VendorDetailsPage'));
 const BillingPage = lazyNamed(import('@/modules/billing/pages/BillingPage'));
 const InvoiceDetailsPage = lazyNamed(import('@/modules/billing/pages/InvoiceDetailsPage'));
+const PaymentsPage = lazyNamed(import('@/modules/payments/pages/PaymentsPage'));
 const ReportsPage = lazyNamed(import('@/modules/reports/pages/ReportsPage'));
 const AnalyticsPage = lazyNamed(import('@/modules/analytics/pages/AnalyticsPage'));
 const AiPage = lazyNamed(import('@/modules/ai/pages/AiPage'));
@@ -64,6 +66,12 @@ const withSuspense = (Component: React.ComponentType) => (
 );
 
 export const routes: RouteObject[] = [
+  // Public Landing Page
+  {
+    path: '/',
+    element: withSuspense(LandingPage),
+  },
+
   // Public Authentication Routes
   {
     element: <AuthLayout />,
@@ -79,14 +87,12 @@ export const routes: RouteObject[] = [
 
   // Protected SaaS Application Routes (MainLayout Shell)
   {
-    path: '/',
     element: (
       <AuthGuard>
         <MainLayout />
       </AuthGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: withSuspense(DashboardPage) },
       
       // Customers
@@ -113,6 +119,7 @@ export const routes: RouteObject[] = [
       { path: 'vendors/:id', element: withSuspense(VendorDetailsPage) },
       { path: 'billing', element: withSuspense(BillingPage) },
       { path: 'billing/:id', element: withSuspense(InvoiceDetailsPage) },
+      { path: 'payments', element: withSuspense(PaymentsPage) },
       { path: 'reports', element: withSuspense(ReportsPage) },
       { path: 'analytics', element: withSuspense(AnalyticsPage) },
       { path: 'ai', element: withSuspense(AiPage) },

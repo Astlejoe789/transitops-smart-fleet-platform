@@ -1,8 +1,3 @@
-// ============================================
-// TransitOps — Prisma Database Schema
-// AI-Powered Smart Fleet & Transport Operations
-// ============================================
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,9 +7,919 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ============================================
-// ENUMS
-// ============================================
+model Company {
+  id                      String                   @id @default(uuid())
+  name                    String
+  code                    String                   @unique
+  email                   String
+  phone                   String?
+  address                 String?
+  taxId                   String?
+  logoUrl                 String?
+  isVerified              Boolean                  @default(false)
+  isActive                Boolean                  @default(true)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+  deletedAt               DateTime?
+  auditLogs               AuditLog[]
+  branches                Branch[]
+  customers               Customer[]
+  drivers                 Driver[]
+  expenses                Expense[]
+  fuelLogs                FuelLog[]
+  invoices                Invoice[]
+  maintenanceLogs         MaintenanceLog[]
+  notificationGroups      NotificationGroup[]
+  notificationPreferences NotificationPreference[]
+  notificationTemplates   NotificationTemplate[]
+  notifications           Notification[]
+  payments                Payment[]
+  roles                   Role[]
+  settings                Setting[]
+  trips                   Trip[]
+  users                   User[]
+  vehicles                Vehicle[]
+  vendors                 Vendor[]
+
+  @@index([code])
+  @@index([deletedAt])
+  @@map("companies")
+}
+
+model Branch {
+  id        String    @id @default(uuid())
+  companyId String
+  name      String
+  code      String
+  phone     String?
+  address   String?
+  managerId String?
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  drivers   Driver[]
+  expenses  Expense[]
+  invoices  Invoice[]
+  trips     Trip[]
+  users     User[]
+  vehicles  Vehicle[]
+
+  @@unique([companyId, code])
+  @@index([companyId])
+  @@index([deletedAt])
+  @@map("branches")
+}
+
+model Role {
+  id              String           @id @default(uuid())
+  companyId       String?
+  name            String
+  description     String?
+  isSystem        Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  rolePermissions RolePermission[]
+  company         Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  users           User[]
+
+  @@unique([companyId, name])
+  @@index([companyId])
+  @@map("roles")
+}
+
+model Permission {
+  id              String           @id @default(uuid())
+  module          String
+  action          String
+  description     String?
+  createdAt       DateTime         @default(now())
+  rolePermissions RolePermission[]
+
+  @@unique([module, action])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  createdAt    DateTime   @default(now())
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model User {
+  id                     String                  @id @default(uuid())
+  companyId              String
+  branchId               String?
+  roleId                 String
+  email                  String                  @unique
+  passwordHash           String
+  firstName              String
+  lastName               String
+  phone                  String?
+  avatarUrl              String?
+  status                 UserStatus              @default(ACTIVE)
+  lastLoginAt            DateTime?
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  deletedAt              DateTime?
+  auditLogs              AuditLog[]
+  driverProfile          Driver?
+  approvedExpenses       Expense[]               @relation("ExpenseApprover")
+  createdExpenses        Expense[]               @relation("ExpenseCreator")
+  createdFuelLogs        FuelLog[]
+  maintenanceLogs        MaintenanceLog[]
+  notificationPreference NotificationPreference?
+  notificationRecipients NotificationRecipient[]
+  notifications          Notification[]
+  branch                 Branch?                 @relation(fields: [branchId], references: [id])
+  company                Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  role                   Role                    @relation(fields: [roleId], references: [id])
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([email])
+  @@index([roleId])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Vehicle {
+  id              String            @id @default(uuid())
+  companyId       String
+  branchId        String?
+  make            String
+  model           String
+  year            Int
+  vin             String            @unique
+  plateNumber     String            @unique
+  type            VehicleType
+  fuelType        FuelType
+  status          VehicleStatus     @default(AVAILABLE)
+  currentOdometer Float             @default(0)
+  fuelCapacity    Float?
+  payloadCapacity Float?
+  color           String?
+  purchaseDate    DateTime?
+  insuranceExpiry DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  deletedAt       DateTime?
+  assignedDrivers Driver[]          @relation("DriverAssignment")
+  expenses        Expense[]
+  fuelLogs        FuelLog[]
+  maintenanceLogs MaintenanceLog[]
+  trips           Trip[]
+  documents       VehicleDocument[]
+  branch          Branch?           @relation(fields: [branchId], references: [id])
+  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([status])
+  @@index([plateNumber])
+  @@index([deletedAt])
+  @@map("vehicles")
+}
+
+model VehicleDocument {
+  id           String    @id @default(uuid())
+  vehicleId    String
+  title        String
+  documentType String
+  fileUrl      String
+  issuedDate   DateTime?
+  expiryDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  vehicle      Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([expiryDate])
+  @@map("vehicle_documents")
+}
+
+model Driver {
+  id                       String           @id @default(uuid())
+  companyId                String
+  branchId                 String?
+  userId                   String           @unique
+  employeeId               String           @unique
+  photoUrl                 String?
+  phone                    String?
+  dateOfBirth              DateTime?
+  gender                   String?
+  bloodGroup               String?
+  nationality              String?
+  address                  String?
+  emergencyContactName     String?
+  emergencyContactPhone    String?
+  emergencyContactRelation String?
+  licenseNumber            String           @unique
+  licenseCategory          LicenseCategory
+  licenseIssuedDate        DateTime?
+  licenseExpiry            DateTime
+  licenseIssuingAuthority  String?
+  medicalCertificateUrl    String?
+  medicalExpiry            DateTime?
+  fitnessStatus            String?
+  healthNotes              String?
+  assignedVehicleId        String?
+  status                   DriverStatus     @default(AVAILABLE)
+  joinedDate               DateTime         @default(now())
+  createdAt                DateTime         @default(now())
+  updatedAt                DateTime         @updatedAt
+  deletedAt                DateTime?
+  documents                DriverDocument[]
+  assignedVehicle          Vehicle?         @relation("DriverAssignment", fields: [assignedVehicleId], references: [id])
+  branch                   Branch?          @relation(fields: [branchId], references: [id])
+  company                  Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user                     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses                 Expense[]
+  fuelLogs                 FuelLog[]
+  trips                    Trip[]
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([status])
+  @@index([licenseExpiry])
+  @@index([medicalExpiry])
+  @@index([employeeId])
+  @@index([deletedAt])
+  @@map("drivers")
+}
+
+model DriverDocument {
+  id           String    @id @default(uuid())
+  driverId     String
+  title        String
+  documentType String
+  fileUrl      String
+  issuedDate   DateTime?
+  expiryDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  driver       Driver    @relation(fields: [driverId], references: [id], onDelete: Cascade)
+
+  @@index([driverId])
+  @@index([expiryDate])
+  @@map("driver_documents")
+}
+
+model Trip {
+  id                String       @id @default(uuid())
+  companyId         String
+  branchId          String?
+  tripNumber        String       @unique
+  tripName          String?
+  tripType          String?
+  vehicleId         String?
+  driverId          String?
+  customerId        String?
+  origin            String
+  destination       String
+  intermediateStops Json?
+  status            TripStatus   @default(DRAFT)
+  priority          TripPriority @default(MEDIUM)
+  scheduledStart    DateTime
+  scheduledEnd      DateTime
+  actualStart       DateTime?
+  actualEnd         DateTime?
+  startOdometer     Float?
+  endOdometer       Float?
+  estimatedDistance Float?
+  actualDistance    Float?
+  estimatedDuration Int?
+  cargoDescription  String?
+  cargoWeight       Float?
+  notes             String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  deletedAt         DateTime?
+  expenses          Expense[]
+  fuelLogs          FuelLog[]
+  invoices          Invoice[]
+  branch            Branch?      @relation(fields: [branchId], references: [id])
+  company           Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer          Customer?    @relation(fields: [customerId], references: [id])
+  driver            Driver?      @relation(fields: [driverId], references: [id])
+  vehicle           Vehicle?     @relation(fields: [vehicleId], references: [id])
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@index([customerId])
+  @@index([status])
+  @@index([scheduledStart])
+  @@index([deletedAt])
+  @@map("trips")
+}
+
+model MaintenanceLog {
+  id                   String                @id @default(uuid())
+  companyId            String
+  vehicleId            String
+  vendorId             String?
+  assignedTechnicianId String?
+  maintenanceId        String                @unique
+  maintenanceType      MaintenanceType
+  priority             MaintenancePriority   @default(MEDIUM)
+  status               MaintenanceStatus     @default(SCHEDULED)
+  description          String
+  estimatedCost        Float                 @default(0)
+  actualCost           Float                 @default(0)
+  scheduledDate        DateTime
+  startDate            DateTime?
+  completedDate        DateTime?
+  estimatedDuration    Int?
+  actualDuration       Int?
+  odometerReading      Float?
+  warrantyStatus       String?
+  invoiceReference     String?
+  notes                String?
+  checklist            Json?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  deletedAt            DateTime?
+  expenses             Expense[]
+  documents            MaintenanceDocument[]
+  assignedTechnician   User?                 @relation(fields: [assignedTechnicianId], references: [id])
+  company              Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  vehicle              Vehicle               @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vendor               Vendor?               @relation(fields: [vendorId], references: [id])
+  parts                MaintenancePart[]
+
+  @@index([companyId])
+  @@index([vehicleId])
+  @@index([vendorId])
+  @@index([assignedTechnicianId])
+  @@index([status])
+  @@index([scheduledDate])
+  @@index([deletedAt])
+  @@map("maintenance_logs")
+}
+
+model MaintenancePart {
+  id               String         @id @default(uuid())
+  maintenanceLogId String
+  name             String
+  quantity         Float          @default(1)
+  unitCost         Float
+  totalCost        Float
+  supplierId       String?
+  warranty         String?
+  stockReference   String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  maintenanceLog   MaintenanceLog @relation(fields: [maintenanceLogId], references: [id], onDelete: Cascade)
+  supplier         Vendor?        @relation(fields: [supplierId], references: [id])
+
+  @@index([maintenanceLogId])
+  @@index([supplierId])
+  @@map("maintenance_parts")
+}
+
+model MaintenanceDocument {
+  id               String         @id @default(uuid())
+  maintenanceLogId String
+  title            String
+  documentType     String
+  fileUrl          String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  maintenanceLog   MaintenanceLog @relation(fields: [maintenanceLogId], references: [id], onDelete: Cascade)
+
+  @@index([maintenanceLogId])
+  @@map("maintenance_documents")
+}
+
+model FuelLog {
+  id              String        @id @default(uuid())
+  companyId       String
+  vehicleId       String
+  driverId        String
+  tripId          String?
+  fuelLogNumber   String        @unique
+  fuelType        FuelType
+  fuelGrade       String?
+  paymentMethod   PaymentMethod
+  fuelDate        DateTime      @default(now())
+  liters          Float
+  costPerLiter    Float
+  totalCost       Float
+  odometerReading Float
+  efficiency      Float?
+  stationName     String?
+  location        String?
+  receiptNumber   String?
+  receiptUrl      String?
+  remarks         String?
+  createdById     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+  expenses        Expense[]
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy       User?         @relation(fields: [createdById], references: [id])
+  driver          Driver        @relation(fields: [driverId], references: [id])
+  trip            Trip?         @relation(fields: [tripId], references: [id])
+  vehicle         Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@index([tripId])
+  @@index([fuelDate])
+  @@index([deletedAt])
+  @@map("fuel_logs")
+}
+
+model Expense {
+  id               String            @id @default(uuid())
+  companyId        String
+  branchId         String?
+  expenseNumber    String            @unique
+  category         ExpenseCategory
+  status           ExpenseStatus     @default(DRAFT)
+  vehicleId        String?
+  driverId         String?
+  tripId           String?
+  maintenanceLogId String?
+  fuelLogId        String?
+  amount           Float
+  currency         String            @default("USD")
+  expenseDate      DateTime          @default(now())
+  paymentMethod    PaymentMethod
+  vendorName       String?
+  description      String?
+  referenceNumber  String?
+  receiptNumber    String?
+  notes            String?
+  receiptUrl       String?
+  approvedById     String?
+  createdById      String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+  documents        ExpenseDocument[]
+  approvedBy       User?             @relation("ExpenseApprover", fields: [approvedById], references: [id])
+  branch           Branch?           @relation(fields: [branchId], references: [id])
+  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy        User?             @relation("ExpenseCreator", fields: [createdById], references: [id])
+  driver           Driver?           @relation(fields: [driverId], references: [id])
+  fuelLog          FuelLog?          @relation(fields: [fuelLogId], references: [id])
+  maintenanceLog   MaintenanceLog?   @relation(fields: [maintenanceLogId], references: [id])
+  trip             Trip?             @relation(fields: [tripId], references: [id])
+  vehicle          Vehicle?          @relation(fields: [vehicleId], references: [id])
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([tripId])
+  @@index([vehicleId])
+  @@index([driverId])
+  @@index([category])
+  @@index([status])
+  @@index([expenseDate])
+  @@index([deletedAt])
+  @@map("expenses")
+}
+
+model ExpenseDocument {
+  id           String   @id @default(uuid())
+  expenseId    String
+  title        String
+  documentType String
+  fileUrl      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  expense      Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([expenseId])
+  @@map("expense_documents")
+}
+
+model Customer {
+  id                 String             @id @default(uuid())
+  companyId          String
+  customerNumber     String             @unique
+  name               String
+  type               CustomerType       @default(CORPORATE)
+  industry           String?
+  taxId              String?
+  registrationNumber String?
+  email              String
+  phone              String?
+  mobile             String?
+  website            String?
+  billingAddress     String?
+  shippingAddress    String?
+  city               String?
+  state              String?
+  country            String?
+  postalCode         String?
+  creditLimit        Float?
+  paymentTerms       String?
+  status             CustomerStatus     @default(ACTIVE)
+  notes              String?
+  isActive           Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  deletedAt          DateTime?
+  contacts           CustomerContact[]
+  documents          CustomerDocument[]
+  company            Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoices           Invoice[]
+  trips              Trip[]
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("customers")
+}
+
+model CustomerContact {
+  id          String   @id @default(uuid())
+  customerId  String
+  name        String
+  designation String?
+  department  String?
+  email       String
+  phone       String?
+  mobile      String?
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@map("customer_contacts")
+}
+
+model CustomerDocument {
+  id           String    @id @default(uuid())
+  customerId   String
+  title        String
+  documentType String
+  fileUrl      String
+  expiryDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@map("customer_documents")
+}
+
+model Vendor {
+  id                 String            @id @default(uuid())
+  companyId          String
+  vendorNumber       String            @unique
+  name               String
+  type               VendorType        @default(OTHER)
+  taxId              String?
+  registrationNumber String?
+  email              String?
+  phone              String?
+  website            String?
+  address            String?
+  city               String?
+  state              String?
+  country            String?
+  postalCode         String?
+  status             VendorStatus      @default(ACTIVE)
+  paymentTerms       String?
+  bankDetails        String?
+  notes              String?
+  isActive           Boolean           @default(true)
+  category           String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  deletedAt          DateTime?
+  maintenanceLogs    MaintenanceLog[]
+  maintenanceParts   MaintenancePart[]
+  contacts           VendorContact[]
+  documents          VendorDocument[]
+  ratings            VendorRating[]
+  services           VendorService[]
+  company            Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([type])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("vendors")
+}
+
+model VendorContact {
+  id          String   @id @default(uuid())
+  vendorId    String
+  name        String
+  designation String?
+  department  String?
+  email       String
+  phone       String?
+  mobile      String?
+  isPrimary   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  vendor      Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@map("vendor_contacts")
+}
+
+model VendorDocument {
+  id           String    @id @default(uuid())
+  vendorId     String
+  title        String
+  documentType String
+  fileUrl      String
+  expiryDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  vendor       Vendor    @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@map("vendor_documents")
+}
+
+model VendorRating {
+  id            String   @id @default(uuid())
+  vendorId      String
+  overall       Float
+  quality       Float
+  cost          Float
+  timeliness    Float
+  communication Float
+  reliability   Float
+  reviewNotes   String?
+  createdById   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  vendor        Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@map("vendor_ratings")
+}
+
+model VendorService {
+  id              String    @id @default(uuid())
+  vendorId        String
+  serviceType     String
+  cost            Float?
+  lastServiceDate DateTime?
+  contractExpiry  DateTime?
+  frequency       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  vendor          Vendor    @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+  @@map("vendor_services")
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  companyId      String
+  branchId       String?
+  customerId     String
+  tripId         String?
+  invoiceNumber  String        @unique
+  status         InvoiceStatus @default(DRAFT)
+  issueDate      DateTime      @default(now())
+  dueDate        DateTime
+  subtotal       Float         @default(0)
+  taxAmount      Float         @default(0)
+  discountAmount Float         @default(0)
+  totalAmount    Float         @default(0)
+  notes          String?
+  invoiceDate    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  items          InvoiceItem[]
+  branch         Branch?       @relation(fields: [branchId], references: [id])
+  company        Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  trip           Trip?         @relation(fields: [tripId], references: [id])
+  payments       Payment[]
+
+  @@index([companyId])
+  @@index([branchId])
+  @@index([customerId])
+  @@index([tripId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([deletedAt])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  description String
+  quantity    Float    @default(1)
+  unitPrice   Float
+  totalPrice  Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  companyId       String
+  invoiceId       String
+  paymentNumber   String        @unique
+  amount          Float
+  paymentDate     DateTime      @default(now())
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(COMPLETED)
+  referenceNumber String?
+  receiptUrl      String?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  invoice         Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([invoiceId])
+  @@index([paymentStatus])
+  @@index([paymentDate])
+  @@map("payments")
+}
+
+model Notification {
+  id         String                  @id @default(uuid())
+  companyId  String
+  userId     String
+  type       NotificationType
+  category   NotificationCategory    @default(INFORMATION)
+  priority   NotificationPriority    @default(MEDIUM)
+  severity   NotificationSeverity    @default(INFO)
+  title      String
+  message    String
+  isRead     Boolean                 @default(false)
+  readAt     DateTime?
+  linkUrl    String?
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  deliveries NotificationDelivery[]
+  history    NotificationHistory[]
+  recipients NotificationRecipient[]
+  company    Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user       User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id                      String   @id @default(uuid())
+  companyId               String
+  userId                  String   @unique
+  enableNotifications     Boolean  @default(true)
+  enableEmail             Boolean  @default(true)
+  enableSMS               Boolean  @default(false)
+  enablePush              Boolean  @default(true)
+  enableAiAlerts          Boolean  @default(true)
+  enableBillingAlerts     Boolean  @default(true)
+  enableFleetAlerts       Boolean  @default(true)
+  enableMaintenanceAlerts Boolean  @default(true)
+  enableExpenseAlerts     Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  company                 Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user                    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("notification_preferences")
+}
+
+model NotificationTemplate {
+  id        String           @id @default(uuid())
+  companyId String
+  name      String
+  subject   String
+  body      String
+  type      NotificationType
+  variables Json?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  company   Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("notification_templates")
+}
+
+model NotificationDelivery {
+  id             String       @id @default(uuid())
+  notificationId String
+  channel        String
+  status         String
+  providerId     String?
+  errorMessage   String?
+  sentAt         DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@map("notification_deliveries")
+}
+
+model NotificationGroup {
+  id          String   @id @default(uuid())
+  companyId   String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("notification_groups")
+}
+
+model NotificationHistory {
+  id             String       @id @default(uuid())
+  notificationId String
+  action         String
+  details        String?
+  createdAt      DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@map("notification_history")
+}
+
+model NotificationRecipient {
+  id             String       @id @default(uuid())
+  notificationId String
+  userId         String
+  status         String
+  readAt         DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([notificationId])
+  @@index([userId])
+  @@map("notification_recipients")
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  companyId  String
+  userId     String?
+  action     AuditAction
+  entityType String
+  entityId   String?
+  oldValues  Json?
+  newValues  Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+  company    Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user       User?       @relation(fields: [userId], references: [id])
+
+  @@index([companyId])
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  companyId String
+  category  String
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, category, key])
+  @@index([companyId])
+  @@map("settings")
+}
 
 enum UserRole {
   SUPER_ADMIN
@@ -268,1009 +1173,4 @@ enum VendorStatus {
   ACTIVE
   INACTIVE
   BLACKLISTED
-}
-
-// ============================================
-// MODELS
-// ============================================
-
-// 1. Company (Tenant)
-model Company {
-  id         String    @id @default(uuid())
-  name       String
-  code       String    @unique
-  email      String
-  phone      String?
-  address    String?
-  taxId      String?
-  logoUrl    String?
-  isVerified Boolean   @default(false)
-  isActive   Boolean   @default(true)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  deletedAt  DateTime?
-
-  // Relationships
-  branches        Branch[]
-  roles           Role[]
-  users           User[]
-  vehicles        Vehicle[]
-  drivers         Driver[]
-  trips           Trip[]
-  maintenanceLogs MaintenanceLog[]
-  fuelLogs        FuelLog[]
-  expenses        Expense[]
-  customers       Customer[]
-  vendors         Vendor[]
-  invoices        Invoice[]
-  payments        Payment[]
-  notifications           Notification[]
-  notificationPreferences NotificationPreference[]
-  notificationTemplates   NotificationTemplate[]
-  notificationGroups      NotificationGroup[]
-  auditLogs               AuditLog[]
-  settings                Setting[]
-
-  @@index([code])
-  @@index([deletedAt])
-  @@map("companies")
-}
-
-// 2. Branch
-model Branch {
-  id        String    @id @default(uuid())
-  companyId String
-  name      String
-  code      String
-  phone     String?
-  address   String?
-  managerId String?
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  // Relationships
-  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  users    User[]
-  vehicles Vehicle[]
-  drivers  Driver[]
-  trips    Trip[]
-  expenses Expense[]
-  invoices Invoice[]
-
-  @@unique([companyId, code])
-  @@index([companyId])
-  @@index([deletedAt])
-  @@map("branches")
-}
-
-// 3. Role
-model Role {
-  id          String   @id @default(uuid())
-  companyId   String?
-  name        String
-  description String?
-  isSystem    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relationships
-  company         Company?         @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  users           User[]
-  rolePermissions RolePermission[]
-
-  @@unique([companyId, name])
-  @@index([companyId])
-  @@map("roles")
-}
-
-// 4. Permission
-model Permission {
-  id          String   @id @default(uuid())
-  module      String
-  action      String
-  description String?
-  createdAt   DateTime @default(now())
-
-  // Relationships
-  rolePermissions RolePermission[]
-
-  @@unique([module, action])
-  @@map("permissions")
-}
-
-// 5. RolePermission (Junction)
-model RolePermission {
-  roleId       String
-  permissionId String
-  createdAt    DateTime @default(now())
-
-  // Relationships
-  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-
-  @@id([roleId, permissionId])
-  @@map("role_permissions")
-}
-
-// 6. User
-model User {
-  id           String     @id @default(uuid())
-  companyId    String
-  branchId     String?
-  roleId       String
-  email        String     @unique
-  passwordHash String
-  firstName    String
-  lastName     String
-  phone        String?
-  avatarUrl    String?
-  status       UserStatus @default(ACTIVE)
-  lastLoginAt  DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deletedAt    DateTime?
-
-  // Relationships
-  company          Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch           Branch?          @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  role             Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
-  driverProfile    Driver?
-  notifications          Notification[]
-  notificationPreference NotificationPreference?
-  notificationRecipients NotificationRecipient[]
-  auditLogs              AuditLog[]
-  maintenanceLogs  MaintenanceLog[]
-  createdFuelLogs  FuelLog[]
-  createdExpenses  Expense[]        @relation("ExpenseCreator")
-  approvedExpenses Expense[]        @relation("ExpenseApprover")
-
-  @@index([companyId])
-  @@index([branchId])
-  @@index([email])
-  @@index([roleId])
-  @@index([deletedAt])
-  @@map("users")
-}
-
-// 7. Vehicle
-model Vehicle {
-  id              String        @id @default(uuid())
-  companyId       String
-  branchId        String?
-  make            String
-  model           String
-  year            Int
-  vin             String        @unique
-  plateNumber     String        @unique
-  type            VehicleType
-  fuelType        FuelType
-  status          VehicleStatus @default(AVAILABLE)
-  currentOdometer Float         @default(0)
-  fuelCapacity    Float?
-  payloadCapacity Float?
-  color           String?
-  purchaseDate    DateTime?
-  insuranceExpiry DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  deletedAt       DateTime?
-
-  // Relationships
-  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch          Branch?           @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  documents       VehicleDocument[]
-  trips           Trip[]
-  maintenanceLogs MaintenanceLog[]
-  fuelLogs        FuelLog[]
-  expenses        Expense[]
-  assignedDrivers Driver[]          @relation("DriverAssignment")
-
-  @@index([companyId])
-  @@index([branchId])
-  @@index([status])
-  @@index([plateNumber])
-  @@index([deletedAt])
-  @@map("vehicles")
-}
-
-// 8. VehicleDocument
-model VehicleDocument {
-  id           String    @id @default(uuid())
-  vehicleId    String
-  title        String
-  documentType String
-  fileUrl      String
-  issuedDate   DateTime?
-  expiryDate   DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  // Relationships
-  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-
-  @@index([vehicleId])
-  @@index([expiryDate])
-  @@map("vehicle_documents")
-}
-
-// 9. Driver
-model Driver {
-  id                       String          @id @default(uuid())
-  companyId                String
-  branchId                 String?
-  userId                   String          @unique
-  employeeId               String          @unique
-  photoUrl                 String?
-  phone                    String?
-  dateOfBirth              DateTime?
-  gender                   String?
-  bloodGroup               String?
-  nationality              String?
-  address                  String?
-  emergencyContactName     String?
-  emergencyContactPhone    String?
-  emergencyContactRelation String?
-  licenseNumber            String          @unique
-  licenseCategory          LicenseCategory
-  licenseIssuedDate        DateTime?
-  licenseExpiry            DateTime
-  licenseIssuingAuthority  String?
-  medicalCertificateUrl    String?
-  medicalExpiry            DateTime?
-  fitnessStatus            String?
-  healthNotes              String?
-  assignedVehicleId        String?
-  status                   DriverStatus    @default(AVAILABLE)
-  joinedDate               DateTime        @default(now())
-  createdAt                DateTime        @default(now())
-  updatedAt                DateTime        @updatedAt
-  deletedAt                DateTime?
-
-  // Relationships
-  company         Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch          Branch?          @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  assignedVehicle Vehicle?         @relation("DriverAssignment", fields: [assignedVehicleId], references: [id], onDelete: SetNull)
-  documents       DriverDocument[]
-  trips           Trip[]
-  fuelLogs        FuelLog[]
-  expenses        Expense[]
-
-  @@index([companyId])
-  @@index([branchId])
-  @@index([status])
-  @@index([licenseExpiry])
-  @@index([medicalExpiry])
-  @@index([employeeId])
-  @@index([deletedAt])
-  @@map("drivers")
-}
-
-// 10. DriverDocument
-model DriverDocument {
-  id           String    @id @default(uuid())
-  driverId     String
-  title        String
-  documentType String
-  fileUrl      String
-  issuedDate   DateTime?
-  expiryDate   DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  // Relationships
-  driver Driver @relation(fields: [driverId], references: [id], onDelete: Cascade)
-
-  @@index([driverId])
-  @@index([expiryDate])
-  @@map("driver_documents")
-}
-
-// 11. Trip
-model Trip {
-  id                String       @id @default(uuid())
-  companyId         String
-  branchId          String?
-  tripNumber        String       @unique
-  tripName          String?
-  tripType          String?
-  vehicleId         String?
-  driverId          String?
-  customerId        String?
-  origin            String
-  destination       String
-  intermediateStops Json?
-  status            TripStatus   @default(DRAFT)
-  priority          TripPriority @default(MEDIUM)
-  scheduledStart    DateTime
-  scheduledEnd      DateTime
-  actualStart       DateTime?
-  actualEnd         DateTime?
-  startOdometer     Float?
-  endOdometer       Float?
-  estimatedDistance Float?
-  actualDistance    Float?
-  estimatedDuration Int?
-  cargoDescription  String?
-  cargoWeight       Float?
-  notes             String?
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  deletedAt         DateTime?
-
-  // Relationships
-  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch   Branch?   @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  vehicle  Vehicle?  @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
-  driver   Driver?   @relation(fields: [driverId], references: [id], onDelete: SetNull)
-  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  fuelLogs FuelLog[]
-  expenses Expense[]
-  invoices Invoice[]
-
-  @@index([companyId])
-  @@index([branchId])
-  @@index([vehicleId])
-  @@index([driverId])
-  @@index([customerId])
-  @@index([status])
-  @@index([scheduledStart])
-  @@index([deletedAt])
-  @@map("trips")
-}
-
-// 12. MaintenanceLog
-model MaintenanceLog {
-  id                   String              @id @default(uuid())
-  companyId            String
-  vehicleId            String
-  vendorId             String?
-  assignedTechnicianId String?
-  maintenanceId        String              @unique
-  maintenanceType      MaintenanceType
-  priority             MaintenancePriority @default(MEDIUM)
-  status               MaintenanceStatus   @default(SCHEDULED)
-  description          String
-  estimatedCost        Float               @default(0)
-  actualCost           Float               @default(0)
-  scheduledDate        DateTime
-  startDate            DateTime?
-  completedDate        DateTime?
-  estimatedDuration    Int?
-  actualDuration       Int?
-  odometerReading      Float?
-  warrantyStatus       String?
-  invoiceReference     String?
-  notes                String?
-  checklist            Json?
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  deletedAt            DateTime?
-
-  // Relationships
-  company            Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  vehicle            Vehicle               @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  vendor             Vendor?               @relation(fields: [vendorId], references: [id], onDelete: SetNull)
-  assignedTechnician User?                 @relation(fields: [assignedTechnicianId], references: [id], onDelete: SetNull)
-  parts              MaintenancePart[]
-  documents          MaintenanceDocument[]
-  expenses           Expense[]
-
-  @@index([companyId])
-  @@index([vehicleId])
-  @@index([vendorId])
-  @@index([assignedTechnicianId])
-  @@index([status])
-  @@index([scheduledDate])
-  @@index([deletedAt])
-  @@map("maintenance_logs")
-}
-
-// 12a. MaintenancePart
-model MaintenancePart {
-  id               String   @id @default(uuid())
-  maintenanceLogId String
-  name             String
-  quantity         Float    @default(1)
-  unitCost         Float
-  totalCost        Float
-  supplierId       String?
-  warranty         String?
-  stockReference   String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  // Relationships
-  maintenanceLog MaintenanceLog @relation(fields: [maintenanceLogId], references: [id], onDelete: Cascade)
-  supplier       Vendor?        @relation(fields: [supplierId], references: [id], onDelete: SetNull)
-
-  @@index([maintenanceLogId])
-  @@index([supplierId])
-  @@map("maintenance_parts")
-}
-
-// 12b. MaintenanceDocument
-model MaintenanceDocument {
-  id               String   @id @default(uuid())
-  maintenanceLogId String
-  title            String
-  documentType     String
-  fileUrl          String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  // Relationships
-  maintenanceLog MaintenanceLog @relation(fields: [maintenanceLogId], references: [id], onDelete: Cascade)
-
-  @@index([maintenanceLogId])
-  @@map("maintenance_documents")
-}
-
-model FuelLog {
-  id              String        @id @default(uuid())
-  companyId       String
-  vehicleId       String
-  driverId        String
-  tripId          String?
-  fuelLogNumber   String        @unique
-  fuelType        FuelType
-  fuelGrade       String?
-  paymentMethod   PaymentMethod
-  fuelDate        DateTime      @default(now())
-  liters          Float
-  costPerLiter    Float
-  totalCost       Float
-  odometerReading Float
-  efficiency      Float?
-  stationName     String?
-  location        String?
-  receiptNumber   String?
-  receiptUrl      String?
-  remarks         String?
-  createdById     String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  deletedAt       DateTime?
-
-  // Relationships
-  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  vehicle   Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  driver    Driver    @relation(fields: [driverId], references: [id], onDelete: Restrict)
-  trip      Trip?     @relation(fields: [tripId], references: [id], onDelete: SetNull)
-  createdBy User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  expenses  Expense[]
-
-  @@index([companyId])
-  @@index([vehicleId])
-  @@index([driverId])
-  @@index([tripId])
-  @@index([fuelDate])
-  @@index([deletedAt])
-  @@map("fuel_logs")
-}
-
-// 14. Expense
-model Expense {
-  id               String          @id @default(uuid())
-  companyId        String
-  branchId         String?
-  expenseNumber    String          @unique
-  category         ExpenseCategory
-  status           ExpenseStatus   @default(DRAFT)
-  vehicleId        String?
-  driverId         String?
-  tripId           String?
-  maintenanceLogId String?
-  fuelLogId        String?
-  amount           Float
-  currency         String          @default("USD")
-  expenseDate      DateTime        @default(now())
-  paymentMethod    PaymentMethod
-  vendorName       String?
-  description      String?
-  referenceNumber  String?
-  receiptNumber    String?
-  notes            String?
-  receiptUrl       String?
-  approvedById     String?
-  createdById      String?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  deletedAt        DateTime?
-
-  // Relationships
-  company        Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch         Branch?           @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  trip           Trip?             @relation(fields: [tripId], references: [id], onDelete: SetNull)
-  vehicle        Vehicle?          @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
-  driver         Driver?           @relation(fields: [driverId], references: [id], onDelete: SetNull)
-  maintenanceLog MaintenanceLog?   @relation(fields: [maintenanceLogId], references: [id], onDelete: SetNull)
-  fuelLog        FuelLog?          @relation(fields: [fuelLogId], references: [id], onDelete: SetNull)
-  approvedBy     User?             @relation("ExpenseApprover", fields: [approvedById], references: [id], onDelete: SetNull)
-  createdBy      User?             @relation("ExpenseCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  documents      ExpenseDocument[]
-
-  @@index([companyId])
-  @@index([branchId])
-  @@index([tripId])
-  @@index([vehicleId])
-  @@index([driverId])
-  @@index([category])
-  @@index([status])
-  @@index([expenseDate])
-  @@index([deletedAt])
-  @@map("expenses")
-}
-
-// 14a. ExpenseDocument
-model ExpenseDocument {
-  id           String   @id @default(uuid())
-  expenseId    String
-  title        String
-  documentType String
-  fileUrl      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relationships
-  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-
-  @@index([expenseId])
-  @@map("expense_documents")
-}
-
-// 15. Customer
-model Customer {
-  id                 String         @id @default(uuid())
-  companyId          String
-  customerNumber     String         @unique
-  name               String
-  type               CustomerType   @default(CORPORATE)
-  industry           String?
-  taxId              String?
-  registrationNumber String?
-  email              String
-  phone              String?
-  mobile             String?
-  website            String?
-  billingAddress     String?
-  shippingAddress    String?
-  city               String?
-  state              String?
-  country            String?
-  postalCode         String?
-  creditLimit        Float?
-  paymentTerms       String?
-  status             CustomerStatus @default(ACTIVE)
-  notes              String?
-  isActive           Boolean        @default(true) // Legacy field
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  deletedAt          DateTime?
-
-  // Relationships
-  company   Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  contacts  CustomerContact[]
-  documents CustomerDocument[]
-  trips     Trip[]
-  invoices  Invoice[]
-
-  @@unique([companyId, email])
-  @@index([companyId])
-  @@index([status])
-  @@index([deletedAt])
-  @@map("customers")
-}
-
-model CustomerContact {
-  id          String   @id @default(uuid())
-  customerId  String
-  name        String
-  designation String?
-  department  String?
-  email       String
-  phone       String?
-  mobile      String?
-  isPrimary   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  @@index([customerId])
-  @@map("customer_contacts")
-}
-
-model CustomerDocument {
-  id           String    @id @default(uuid())
-  customerId   String
-  title        String
-  documentType String
-  fileUrl      String
-  expiryDate   DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  @@index([customerId])
-  @@map("customer_documents")
-}
-
-// 16. Vendor
-model Vendor {
-  id                 String       @id @default(uuid())
-  companyId          String
-  vendorNumber       String       @unique
-  name               String
-  type               VendorType   @default(OTHER)
-  taxId              String?
-  registrationNumber String?
-  email              String?
-  phone              String?
-  website            String?
-  address            String?
-  city               String?
-  state              String?
-  country            String?
-  postalCode         String?
-  status             VendorStatus @default(ACTIVE)
-  paymentTerms       String?
-  bankDetails        String?
-  notes              String?
-  isActive           Boolean      @default(true) // Legacy field
-  category           String? // Legacy field
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
-  deletedAt          DateTime?
-
-  // Relationships
-  company          Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  contacts         VendorContact[]
-  documents        VendorDocument[]
-  ratings          VendorRating[]
-  services         VendorService[]
-  maintenanceLogs  MaintenanceLog[]
-  maintenanceParts MaintenancePart[]
-
-  @@index([companyId])
-  @@index([type])
-  @@index([status])
-  @@index([deletedAt])
-  @@map("vendors")
-}
-
-model VendorContact {
-  id          String   @id @default(uuid())
-  vendorId    String
-  name        String
-  designation String?
-  department  String?
-  email       String
-  phone       String?
-  mobile      String?
-  isPrimary   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-
-  @@index([vendorId])
-  @@map("vendor_contacts")
-}
-
-model VendorDocument {
-  id           String    @id @default(uuid())
-  vendorId     String
-  title        String
-  documentType String
-  fileUrl      String
-  expiryDate   DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-
-  @@index([vendorId])
-  @@map("vendor_documents")
-}
-
-model VendorRating {
-  id            String   @id @default(uuid())
-  vendorId      String
-  overall       Float
-  quality       Float
-  cost          Float
-  timeliness    Float
-  communication Float
-  reliability   Float
-  reviewNotes   String?
-  createdById   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-
-  @@index([vendorId])
-  @@map("vendor_ratings")
-}
-
-model VendorService {
-  id              String    @id @default(uuid())
-  vendorId        String
-  serviceType     String
-  cost            Float?
-  lastServiceDate DateTime?
-  contractExpiry  DateTime?
-  frequency       String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-
-  @@index([vendorId])
-  @@map("vendor_services")
-}
-
-// 17. Invoice
-model Invoice {
-  id            String        @id @default(uuid())
-  companyId     String
-  branchId      String?
-  customerId    String
-  tripId        String?
-  invoiceNumber String        @unique
-  status        InvoiceStatus @default(DRAFT)
-  issueDate     DateTime      @default(now())
-  dueDate       DateTime
-  subtotal      Float         @default(0)
-  taxAmount     Float         @default(0)
-  discountAmount Float        @default(0)
-  totalAmount   Float         @default(0)
-  notes         String?
-  invoiceDate   DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  deletedAt     DateTime?
-
-  // Relationships
-  company  Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  branch   Branch?       @relation(fields: [branchId], references: [id], onDelete: SetNull)
-  customer Customer      @relation(fields: [customerId], references: [id], onDelete: Restrict)
-  trip     Trip?         @relation(fields: [tripId], references: [id], onDelete: SetNull)
-  items    InvoiceItem[]
-  payments Payment[]
-
-  @@index([companyId])
-  @@index([branchId])
-  @@index([customerId])
-  @@index([tripId])
-  @@index([status])
-  @@index([dueDate])
-  @@index([deletedAt])
-  @@map("invoices")
-}
-
-// 18. InvoiceItem
-model InvoiceItem {
-  id          String   @id @default(uuid())
-  invoiceId   String
-  description String
-  quantity    Float    @default(1)
-  unitPrice   Float
-  totalPrice  Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relationships
-  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-
-  @@index([invoiceId])
-  @@map("invoice_items")
-}
-
-// 19. Payment
-model Payment {
-  id              String        @id @default(uuid())
-  companyId       String
-  invoiceId       String
-  paymentNumber   String        @unique
-  amount          Float
-  paymentDate     DateTime      @default(now())
-  paymentMethod   PaymentMethod
-  paymentStatus   PaymentStatus @default(COMPLETED)
-  referenceNumber String?
-  receiptUrl      String?
-  notes           String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  // Relationships
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-
-  @@index([companyId])
-  @@index([invoiceId])
-  @@index([paymentStatus])
-  @@index([paymentDate])
-  @@map("payments")
-}
-
-// 20. Notification
-// 20. Notification
-model Notification {
-  id        String               @id @default(uuid())
-  companyId String
-  userId    String
-  type      NotificationType
-  category  NotificationCategory @default(INFORMATION)
-  priority  NotificationPriority @default(MEDIUM)
-  severity  NotificationSeverity @default(INFO) // Legacy
-  title     String
-  message   String
-  isRead    Boolean              @default(false)
-  readAt    DateTime?
-  linkUrl   String?
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
-
-  // Relationships
-  company         Company                 @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  deliveries      NotificationDelivery[]
-  history         NotificationHistory[]
-  recipients      NotificationRecipient[]
-
-  @@index([companyId])
-  @@index([userId])
-  @@index([isRead])
-  @@index([createdAt])
-  @@map("notifications")
-}
-
-model NotificationPreference {
-  id                    String   @id @default(uuid())
-  companyId             String
-  userId                String   @unique
-  enableNotifications   Boolean  @default(true)
-  enableEmail           Boolean  @default(true)
-  enableSMS             Boolean  @default(false)
-  enablePush            Boolean  @default(true)
-  enableAiAlerts        Boolean  @default(true)
-  enableBillingAlerts   Boolean  @default(true)
-  enableFleetAlerts     Boolean  @default(true)
-  enableMaintenanceAlerts Boolean @default(true)
-  enableExpenseAlerts   Boolean  @default(true)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
-
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([companyId])
-  @@map("notification_preferences")
-}
-
-model NotificationTemplate {
-  id          String   @id @default(uuid())
-  companyId   String
-  name        String
-  subject     String
-  body        String   @db.Text
-  type        NotificationType
-  variables   Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@index([companyId])
-  @@map("notification_templates")
-}
-
-model NotificationDelivery {
-  id             String   @id @default(uuid())
-  notificationId String
-  channel        String   // EMAIL, SMS, PUSH, WEBHOOK
-  status         String   // PENDING, SENT, FAILED
-  providerId     String?
-  errorMessage   String?
-  sentAt         DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
-
-  @@index([notificationId])
-  @@map("notification_deliveries")
-}
-
-model NotificationGroup {
-  id          String   @id @default(uuid())
-  companyId   String
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@index([companyId])
-  @@map("notification_groups")
-}
-
-model NotificationHistory {
-  id             String   @id @default(uuid())
-  notificationId String
-  action         String
-  details        String?
-  createdAt      DateTime @default(now())
-
-  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
-
-  @@index([notificationId])
-  @@map("notification_history")
-}
-
-model NotificationRecipient {
-  id             String   @id @default(uuid())
-  notificationId String
-  userId         String
-  status         String   // DELIVERED, READ, DISMISSED
-  readAt         DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([notificationId])
-  @@index([userId])
-  @@map("notification_recipients")
-}
-
-// 21. AuditLog
-model AuditLog {
-  id         String      @id @default(uuid())
-  companyId  String
-  userId     String?
-  action     AuditAction
-  entityType String
-  entityId   String?
-  oldValues  Json?
-  newValues  Json?
-  ipAddress  String?
-  userAgent  String?
-  createdAt  DateTime    @default(now())
-
-  // Relationships
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([companyId])
-  @@index([userId])
-  @@index([entityType, entityId])
-  @@index([action])
-  @@index([createdAt])
-  @@map("audit_logs")
-}
-
-// 22. Setting
-model Setting {
-  id        String   @id @default(uuid())
-  companyId String
-  category  String
-  key       String
-  value     Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relationships
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-
-  @@unique([companyId, category, key])
-  @@index([companyId])
-  @@map("settings")
 }

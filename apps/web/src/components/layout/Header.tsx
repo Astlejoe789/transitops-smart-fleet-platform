@@ -1,13 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useTheme, type ThemeMode } from '@/hooks/useTheme';
 import {
   Menu,
   Search,
-  Sun,
-  Moon,
-  Laptop,
   ChevronDown,
   User as UserIcon,
   Settings,
@@ -18,28 +14,20 @@ import {
 import { NotificationBell } from '@/modules/notifications/components/NotificationBell';
 
 interface HeaderProps {
-  onOpenMobileDrawer: () => void;
+  onOpenMobileDrawer?: () => void;
 }
 
 export function Header({ onOpenMobileDrawer }: HeaderProps) {
   const { user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
   const location = useLocation();
-
   const [profileOpen, setProfileOpen] = useState(false);
-  const [themeOpen, setThemeOpen] = useState(false);
-
   const profileRef = useRef<HTMLDivElement>(null);
-  const themeRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setProfileOpen(false);
-      }
-      if (themeRef.current && !themeRef.current.contains(e.target as Node)) {
-        setThemeOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -53,22 +41,24 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
     : 'Dashboard';
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 w-full items-center justify-between border-b border-surface-200 dark:border-surface-800 bg-white/80 dark:bg-surface-900/80 px-4 sm:px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-10 flex h-[72px] w-full items-center justify-between border-b border-surface-800 bg-[#09090B] px-8">
       {/* Left Section: Mobile Toggle & Breadcrumb */}
       <div className="flex items-center gap-3">
-        <button
-          onClick={onOpenMobileDrawer}
-          className="flex h-10 w-10 items-center justify-center rounded-lg border border-surface-200 dark:border-surface-800 text-surface-600 dark:text-surface-300 lg:hidden hover:bg-surface-100 dark:hover:bg-surface-800"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        {onOpenMobileDrawer && (
+          <button
+            onClick={onOpenMobileDrawer}
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-surface-800 text-surface-400 lg:hidden hover:bg-surface-850 hover:text-white"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        )}
 
-        <div className="hidden sm:flex items-center text-xs font-medium text-surface-400">
-          <Link to="/dashboard" className="hover:text-surface-900 dark:hover:text-white transition-colors">
+        <div className="hidden sm:flex items-center text-[15px] font-medium text-surface-400">
+          <Link to="/dashboard" className="hover:text-white transition-colors">
             TransitOps
           </Link>
-          <ChevronRight className="h-3.5 w-3.5 mx-1.5 text-surface-400" />
-          <span className="font-semibold text-surface-900 dark:text-white">{formattedBreadcrumb}</span>
+          <ChevronRight className="h-4 w-4 mx-2 text-surface-500" />
+          <span className="font-semibold text-white">{formattedBreadcrumb}</span>
         </div>
       </div>
 
@@ -76,115 +66,81 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
       <div className="hidden md:flex flex-1 max-w-md mx-6">
         <div className="relative w-full">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className="h-4 w-4 text-surface-400" />
+            <Search className="h-5 w-5 text-surface-500" />
           </div>
           <input
             type="text"
-            placeholder="Search vehicles, drivers, trips, invoices... (Press ⌘K)"
-            className="w-full rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-950 py-2 pl-9 pr-4 text-xs text-surface-900 dark:text-white placeholder-surface-400 focus:border-primary-500 focus:outline-none transition-colors"
+            placeholder="Search... (Press ⌘K)"
+            className="w-full h-[44px] rounded-[10px] border border-surface-800 bg-surface-900 py-2 pl-10 pr-4 text-[15px] text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none transition-colors"
           />
         </div>
       </div>
 
-      {/* Right Section: Actions, Theme Toggle, Profile Menu */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      {/* Right Section: Actions, Profile Menu */}
+      <div className="flex items-center gap-4">
+        {/* Quick Action Button */}
+        <button className="hidden sm:flex h-[44px] items-center justify-center rounded-[10px] bg-primary-500 px-4 text-[15px] font-semibold text-white hover:bg-primary-600 transition-colors">
+          Create New
+        </button>
+
         {/* Notifications Dropdown */}
-        <NotificationBell />
-
-        {/* Theme Selector Dropdown */}
-        <div className="relative" ref={themeRef}>
-          <button
-            onClick={() => setThemeOpen(!themeOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-surface-200 dark:border-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
-          >
-            {theme === 'dark' && <Moon className="h-4.5 w-4.5 text-primary-400" />}
-            {theme === 'light' && <Sun className="h-4.5 w-4.5 text-warning-500" />}
-            {theme === 'system' && <Laptop className="h-4.5 w-4.5 text-surface-400" />}
-          </button>
-
-          {themeOpen && (
-            <div className="absolute right-0 mt-2 w-36 rounded-xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 p-1.5 shadow-xl z-30 space-y-1">
-              {[
-                { mode: 'light' as ThemeMode, label: 'Light', icon: Sun },
-                { mode: 'dark' as ThemeMode, label: 'Dark', icon: Moon },
-                { mode: 'system' as ThemeMode, label: 'System', icon: Laptop },
-              ].map(({ mode, label, icon: Icon }) => (
-                <button
-                  key={mode}
-                  onClick={() => {
-                    setTheme(mode);
-                    setThemeOpen(false);
-                  }}
-                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
-                    theme === mode
-                      ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 font-semibold'
-                      : 'text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{label}</span>
-                </button>
-              ))}
-            </div>
-          )}
+        <div className="flex items-center justify-center h-[44px] w-[44px] rounded-[10px] border border-surface-800 hover:bg-surface-850 transition-colors">
+          <NotificationBell />
         </div>
 
         {/* User Profile Dropdown Menu */}
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-2 rounded-xl border border-surface-200 dark:border-surface-800 p-1.5 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+            className="flex items-center gap-2 rounded-[10px] border border-surface-800 h-[44px] px-2 hover:bg-surface-850 transition-colors"
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-600 text-xs font-bold text-white uppercase">
+            <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-surface-800 text-[12px] font-bold text-white uppercase border border-surface-700">
               {user ? `${user.firstName[0]}${user.lastName[0]}` : 'U'}
             </div>
-            <span className="hidden sm:inline-block text-xs font-semibold text-surface-900 dark:text-white max-w-[100px] truncate">
+            <span className="hidden sm:inline-block text-[14px] font-medium text-white max-w-[100px] truncate">
               {user?.firstName || 'User'}
             </span>
-            <ChevronDown className="h-3.5 w-3.5 text-surface-400" />
+            <ChevronDown className="h-4 w-4 text-surface-400" />
           </button>
 
           {profileOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 p-2 shadow-xl z-30 space-y-1">
-              <div className="px-3 py-2 border-b border-surface-200 dark:border-surface-800">
-                <p className="text-xs font-bold text-surface-900 dark:text-white">
+            <div className="absolute right-0 mt-2 w-56 rounded-[16px] border border-surface-800 bg-surface-900 p-2 shadow-xl z-30 space-y-1">
+              <div className="px-3 py-3 border-b border-surface-800">
+                <p className="text-[15px] font-semibold text-white">
                   {user ? `${user.firstName} ${user.lastName}` : 'User'}
                 </p>
-                <p className="text-[11px] text-surface-400 truncate">{user?.email}</p>
-                <span className="mt-1.5 inline-block rounded-full bg-primary-500/10 px-2 py-0.5 text-[10px] font-bold text-primary-500 uppercase">
-                  {user?.role || 'Role'}
-                </span>
+                <p className="text-[12px] text-surface-400 truncate mt-1">{user?.email}</p>
               </div>
 
               <Link
                 to="/settings"
                 onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800"
+                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
               >
                 <UserIcon className="h-4 w-4" /> Profile & Account
               </Link>
               <Link
                 to="/settings"
                 onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800"
+                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
               >
                 <Settings className="h-4 w-4" /> System Settings
               </Link>
               <a
                 href="#help"
                 onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-800"
+                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
               >
-                <HelpCircle className="h-4 w-4" /> Documentation & Help
+                <HelpCircle className="h-4 w-4" /> Documentation
               </a>
 
-              <div className="border-t border-surface-200 dark:border-surface-800 pt-1">
+              <div className="border-t border-surface-800 pt-1 mt-1">
                 <button
                   onClick={() => {
                     setProfileOpen(false);
                     logout();
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-semibold text-danger-500 hover:bg-danger-500/10 transition-colors"
+                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-semibold text-danger-500 hover:bg-surface-850"
                 >
                   <LogOut className="h-4 w-4" /> Sign Out
                 </button>

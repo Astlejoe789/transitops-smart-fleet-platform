@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { motion } from 'framer-motion';
 import {
   Truck,
   LayoutDashboard,
@@ -69,14 +70,6 @@ export const NAV_GROUPS: NavGroup[] = [
       { name: 'AI Insights', path: '/ai', icon: Sparkles, badge: 'AI' },
     ],
   },
-  {
-    category: 'SYSTEM',
-    items: [
-      { name: 'Notifications', path: '/notifications', icon: Bell },
-      { name: 'Administration', path: '/administration', icon: ShieldCheck },
-      { name: 'Settings', path: '/settings', icon: Settings },
-    ],
-  },
 ];
 
 interface SidebarProps {
@@ -89,44 +82,38 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
 
   return (
     <aside
-      className={`hidden lg:flex flex-col justify-between border-r border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 transition-all duration-300 z-20 ${
-        collapsed ? 'w-20' : 'w-64'
+      className={`hidden lg:flex flex-col justify-between border-r border-surface-800 bg-surface-950 transition-all duration-300 z-20 ${
+        collapsed ? 'w-20' : 'w-[280px]'
       }`}
     >
       {/* Top Section: Brand & Collapse Toggle */}
       <div>
-        <div className="flex h-16 items-center justify-between px-4 border-b border-surface-200 dark:border-surface-800">
+        <div className="flex h-[72px] items-center justify-between px-6 border-b border-surface-800">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-primary-600 to-primary-400 shadow-md shadow-primary-500/20 text-white">
-              <Truck className="h-6 w-6" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-primary-500 text-white shadow-sm">
+              <Truck className="h-5 w-5" />
             </div>
             {!collapsed && (
-              <div className="flex flex-col">
-                <span className="text-base font-bold tracking-tight text-surface-900 dark:text-white">
-                  TransitOps
-                </span>
-                <span className="text-[10px] font-semibold tracking-wider text-surface-400 uppercase">
-                  Operations Suite
-                </span>
-              </div>
+              <span className="text-[16px] font-bold tracking-tight text-white">
+                TransitOps
+              </span>
             )}
           </div>
 
           <button
             onClick={onToggleCollapse}
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-surface-200 dark:border-surface-800 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-800 hover:text-surface-900 dark:hover:text-white transition-colors"
-            title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 hover:text-white transition-colors"
           >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
           </button>
         </div>
 
         {/* Navigation Group Items */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 max-h-[calc(100vh-10rem)]">
+        <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 max-h-[calc(100vh-140px)]">
           {NAV_GROUPS.map((group) => (
-            <div key={group.category} className="space-y-1">
+            <div key={group.category} className="space-y-2">
               {!collapsed && (
-                <h3 className="px-3 text-[10px] font-bold tracking-wider text-surface-400 uppercase">
+                <h3 className="px-3 text-[12px] font-semibold tracking-wider text-surface-500 uppercase">
                   {group.category}
                 </h3>
               )}
@@ -139,17 +126,17 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                     to={item.path}
                     title={collapsed ? item.name : undefined}
                     className={({ isActive }) =>
-                      `group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+                      `group flex items-center gap-3 rounded-[10px] px-3 h-[44px] text-[15px] font-medium transition-all ${
                         isActive
-                          ? 'bg-primary-500/10 text-primary-600 dark:text-primary-400 border-l-4 border-primary-500 font-semibold'
-                          : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800/60 hover:text-surface-900 dark:hover:text-white'
+                          ? 'bg-primary-500 text-white shadow-sm'
+                          : 'text-surface-400 hover:bg-surface-850 hover:text-white'
                       }`
                     }
                   >
                     <Icon className="h-5 w-5 shrink-0" />
                     {!collapsed && <span className="truncate">{item.name}</span>}
                     {!collapsed && item.badge && (
-                      <span className="ml-auto rounded-full bg-accent-500/20 px-2 py-0.5 text-[10px] font-bold text-accent-600 dark:text-accent-400">
+                      <span className="ml-auto rounded-full bg-surface-800 px-2 py-0.5 text-[10px] font-bold text-white">
                         {item.badge}
                       </span>
                     )}
@@ -162,23 +149,37 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
       </div>
 
       {/* Bottom User Info & Logout */}
-      <div className="p-3 border-t border-surface-200 dark:border-surface-800">
-        <div
-          className={`flex items-center gap-3 rounded-xl bg-surface-50 dark:bg-surface-800/50 p-2.5 ${
-            collapsed ? 'justify-center' : 'justify-between'
-          }`}
-        >
+      <div className="p-4 border-t border-surface-800 bg-surface-950">
+        {!collapsed && (
+          <div className="space-y-1 mb-4">
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                `group flex items-center gap-3 rounded-[10px] px-3 h-[44px] text-[15px] font-medium transition-all ${
+                  isActive
+                    ? 'bg-primary-500 text-white shadow-sm'
+                    : 'text-surface-400 hover:bg-surface-850 hover:text-white'
+                }`
+              }
+            >
+              <Settings className="h-5 w-5 shrink-0" />
+              <span>Settings</span>
+            </NavLink>
+          </div>
+        )}
+        
+        <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : 'justify-between'}`}>
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white uppercase shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-surface-800 text-[14px] font-semibold text-white uppercase border border-surface-700">
               {user ? `${user.firstName[0]}${user.lastName[0]}` : 'U'}
             </div>
             {!collapsed && (
               <div className="flex flex-col overflow-hidden">
-                <span className="truncate text-xs font-semibold text-surface-900 dark:text-white">
+                <span className="truncate text-[15px] font-semibold text-white">
                   {user ? `${user.firstName} ${user.lastName}` : 'Guest User'}
                 </span>
-                <span className="truncate text-[10px] text-surface-400 uppercase font-medium">
-                  {user?.role || 'User'}
+                <span className="truncate text-[12px] text-surface-400 font-medium">
+                  {user?.email || 'user@example.com'}
                 </span>
               </div>
             )}
@@ -188,9 +189,9 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
             <button
               onClick={logout}
               title="Logout"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-surface-400 hover:bg-danger-500/10 hover:text-danger-500 transition-colors"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-surface-400 hover:bg-surface-850 hover:text-white transition-colors"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-5 w-5" />
             </button>
           )}
         </div>

@@ -23,16 +23,16 @@ export interface AiInsight {
 export const aiApi = {
   getDashboardMetrics: async (): Promise<DashboardMetrics> => {
     const response = await apiClient.get('/ai/dashboard');
-    return response.data;
+    return response.data.data;
   },
 
   getInsights: async (): Promise<AiInsight[]> => {
     const response = await apiClient.get('/ai/insights');
-    return response.data;
+    return response.data.data;
   },
 
   askQuestion: async (question: string): Promise<{ answer: string; timestamp: string }> => {
     const response = await apiClient.post('/ai/chat', { question });
-    return response.data;
+    return response.data.data;
   }
 };
