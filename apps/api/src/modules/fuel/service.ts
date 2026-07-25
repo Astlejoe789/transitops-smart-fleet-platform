@@ -1,5 +1,5 @@
 import { prisma } from '../../database/prisma.js';
-import { FuelType, PaymentMethod, AuditAction, Prisma } from '@prisma/client';
+import type { FuelType, PaymentMethod, AuditAction, Prisma } from '@prisma/client';
 import { HttpException } from '../../shared/exceptions/http.exception.js';
 
 export class FuelService {
@@ -269,7 +269,7 @@ export class FuelService {
 
     let totalLiters = 0;
     let totalCost = 0;
-    let validEfficiencies: number[] = [];
+    const validEfficiencies: number[] = [];
     const typeDistribution: Record<string, number> = {};
     const vehicleCosts: Record<string, number> = {};
     
@@ -327,7 +327,7 @@ export class FuelService {
 
     let monthlyCost = 0;
     let monthlyLiters = 0;
-    let validEfficiencies: number[] = [];
+    const validEfficiencies: number[] = [];
 
     monthLogs.forEach(log => {
       monthlyCost += log.totalCost;

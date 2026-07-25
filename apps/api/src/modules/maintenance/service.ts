@@ -1,5 +1,5 @@
 import { prisma } from '../../database/prisma.js';
-import { MaintenanceStatus, MaintenancePriority, AuditAction, Prisma } from '@prisma/client';
+import type { MaintenanceStatus, MaintenancePriority, AuditAction, Prisma } from '@prisma/client';
 import { HttpException } from '../../shared/exceptions/http.exception.js';
 
 export class MaintenanceService {

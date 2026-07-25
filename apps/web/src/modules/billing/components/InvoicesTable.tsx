@@ -9,7 +9,7 @@ import {
 import { Eye, Send, Ban, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/Badge';
-import { Invoice, InvoiceStatus } from '../types';
+import type { Invoice, InvoiceStatus } from '../types';
 
 const columnHelper = createColumnHelper<Invoice>();
 

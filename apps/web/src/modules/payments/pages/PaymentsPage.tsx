@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { usePayments, usePaymentSummary, useRefundPayment } from '../../billing/hooks/usePayments';
-import { PaymentStatus, PaymentMethod, Payment } from '../../billing/types';
+import type { PaymentMethod, Payment } from '../../billing/types';
+import { PaymentStatus } from '../../billing/types';
 import { format } from 'date-fns';
 
 function formatCurrency(amount: number) {

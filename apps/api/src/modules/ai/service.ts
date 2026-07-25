@@ -5,7 +5,7 @@
  */
 import { prisma } from '../../database/index.js';
 import { LocalAiProvider } from './providers/local.provider.js';
-import { IAiProvider } from './providers/ai-provider.interface.js';
+import type { IAiProvider } from './providers/ai-provider.interface.js';
 
 export class AiService {
   private aiProvider: IAiProvider;

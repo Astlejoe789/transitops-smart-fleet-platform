@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/Button';
-import { Notification } from '../services/notificationsApi';
+import type { Notification } from '../services/notificationsApi';
 import { formatDistanceToNow } from 'date-fns';
 import { Bell, Info, AlertTriangle, CheckCircle, XCircle, X } from 'lucide-react';
 import { notificationsApi } from '../services/notificationsApi';

@@ -16,7 +16,7 @@ import {
 import { useRecordPayment } from '../hooks/usePayments';
 import { RecordPaymentModal } from '../components/RecordPaymentModal';
 import { InvoiceWorkflowTimeline } from '../components/InvoiceWorkflowTimeline';
-import { InvoiceStatus, PaymentStatus, PaymentMethod } from '../types';
+import type { InvoiceStatus, PaymentStatus, PaymentMethod } from '../types';
 
 function formatCurrency(n: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(n);

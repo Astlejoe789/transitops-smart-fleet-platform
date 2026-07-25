@@ -1,5 +1,6 @@
-import { PrismaClient, ExpenseStatus, Prisma } from '@prisma/client';
-import { CreateExpenseDTO, GetExpensesQuery, UpdateExpenseDTO } from './types.js';
+import type { Prisma } from '@prisma/client';
+import { PrismaClient, ExpenseStatus } from '@prisma/client';
+import type { CreateExpenseDTO, GetExpensesQuery, UpdateExpenseDTO } from './types.js';
 import { HttpException } from '../../shared/exceptions/http.exception.js';
 import { StatusCodes } from 'http-status-codes';
 

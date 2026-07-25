@@ -1,5 +1,6 @@
-import { PrismaClient, VendorStatus, Prisma } from '@prisma/client';
-import { CreateVendorDTO, GetVendorsQuery, UpdateVendorDTO } from './types.js';
+import type { VendorStatus, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { CreateVendorDTO, GetVendorsQuery, UpdateVendorDTO } from './types.js';
 import { HttpException } from '../../shared/exceptions/http.exception.js';
 import { StatusCodes } from 'http-status-codes';
 

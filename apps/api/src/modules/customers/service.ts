@@ -1,5 +1,6 @@
-import { PrismaClient, CustomerStatus, Prisma } from '@prisma/client';
-import { CreateCustomerDTO, GetCustomersQuery, UpdateCustomerDTO } from './types.js';
+import type { CustomerStatus, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { CreateCustomerDTO, GetCustomersQuery, UpdateCustomerDTO } from './types.js';
 import { HttpException } from '../../shared/exceptions/http.exception.js';
 import { StatusCodes } from 'http-status-codes';
 

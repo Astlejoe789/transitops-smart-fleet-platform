@@ -9,7 +9,7 @@ import { FileText, Edit2, CheckCircle, Clock, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import type { Expense } from '../types';
-import { ExpenseStatus } from '../types';
+import type { ExpenseStatus } from '../types';
 import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '@/lib/utils';
 

@@ -1,4 +1,4 @@
-import { CustomerType, CustomerStatus } from '@prisma/client';
+import type { CustomerType, CustomerStatus } from '@prisma/client';
 
 export interface CreateCustomerDTO {
   name: string;
@@ -23,7 +23,7 @@ export interface CreateCustomerDTO {
   isActive?: boolean;
 }
 
-export interface UpdateCustomerDTO extends Partial<CreateCustomerDTO> {}
+export type UpdateCustomerDTO = Partial<CreateCustomerDTO>;
 
 export interface CreateCustomerContactDTO {
   name: string;

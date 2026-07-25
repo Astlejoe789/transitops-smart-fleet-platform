@@ -16,7 +16,8 @@ import {
   useDeleteInvoice,
 } from '../hooks/useInvoices';
 import { useRecordPayment } from '../hooks/usePayments';
-import { Invoice, InvoiceStatus } from '../types';
+import type { Invoice} from '../types';
+import { InvoiceStatus } from '../types';
 
 export function BillingPage() {
   const [activeTab, setActiveTab] = useState<'invoices' | 'revenue'>('invoices');

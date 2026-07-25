@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { VendorService } from './service.js';
 import { createVendorSchema, updateVendorSchema } from './validation.js';
-import { AuthenticatedRequest } from '../../middlewares/auth.middleware.js';
+import type { AuthenticatedRequest } from '../../middlewares/auth.middleware.js';
 import { ApiResponse } from '../../shared/responses/api.response.js';
 
 export class VendorController {

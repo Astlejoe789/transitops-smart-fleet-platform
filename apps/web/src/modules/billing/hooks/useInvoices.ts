@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/api/client';
-import { Invoice, InvoiceSummary, LedgerEntry, RevenueData } from '../types';
+import type { Invoice, InvoiceSummary, LedgerEntry, RevenueData } from '../types';
 
 interface InvoicesResponse {
   data: Invoice[];

@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import {
+import type {
   ColumnDef,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState} from '@tanstack/react-table';
+import {
   flexRender,
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
-  getFilteredRowModel,
-  ColumnFiltersState,
-  VisibilityState,
+  getFilteredRowModel
 } from '@tanstack/react-table';
 import { ChevronDown, ChevronUp, ChevronsUpDown, Search } from 'lucide-react';
 import { Input } from './Input';

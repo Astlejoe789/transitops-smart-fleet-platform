@@ -1,9 +1,10 @@
+import type {
+  ColumnDef} from '@tanstack/react-table';
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
-  getPaginationRowModel,
-  ColumnDef,
+  getPaginationRowModel
 } from '@tanstack/react-table';
 import {
   Table,

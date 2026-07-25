@@ -3,9 +3,9 @@
  *
  * Handles HTTP requests for the AI Insights and Predictive Intelligence module.
  */
-import { Response } from 'express';
+import type { Response } from 'express';
 import { AiService } from './service.js';
-import { AuthenticatedRequest } from '../../middlewares/index.js';
+import type { AuthenticatedRequest } from '../../middlewares/index.js';
 
 export class AiController {
   private aiService: AiService;

@@ -1,9 +1,9 @@
 /**
  * Analytics Controller
  */
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { AnalyticsService } from './service.js';
-import { AuthenticatedRequest } from '../../middlewares/index.js';
+import type { AuthenticatedRequest } from '../../middlewares/index.js';
 
 const analyticsService = new AnalyticsService();
 

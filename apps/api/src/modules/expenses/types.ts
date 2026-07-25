@@ -1,4 +1,4 @@
-import { ExpenseCategory, ExpenseStatus, PaymentMethod } from '@prisma/client';
+import type { ExpenseCategory, ExpenseStatus, PaymentMethod } from '@prisma/client';
 
 export interface GetExpensesQuery {
   page?: number;

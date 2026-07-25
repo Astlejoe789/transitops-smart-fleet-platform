@@ -1,4 +1,4 @@
-import { AiForecast, AiInsight, IAiProvider } from './ai-provider.interface.js';
+import type { AiForecast, AiInsight, IAiProvider } from './ai-provider.interface.js';
 
 export class GeminiProvider implements IAiProvider {
   initialize(_config: Record<string, any>): void {

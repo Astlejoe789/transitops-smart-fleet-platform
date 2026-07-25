@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notificationsApi, NotificationPreferences } from '../services/notificationsApi';
+import type { NotificationPreferences } from '../services/notificationsApi';
+import { notificationsApi } from '../services/notificationsApi';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Bell, Mail, Smartphone, Radio, Settings } from 'lucide-react';
 

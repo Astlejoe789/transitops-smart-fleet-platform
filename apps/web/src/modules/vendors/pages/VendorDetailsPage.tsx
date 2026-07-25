@@ -150,7 +150,7 @@ export function VendorDetailsPage() {
                       <span className="text-xs text-surface-500">{new Date(rating.createdAt).toLocaleDateString()}</span>
                     </div>
                     {rating.reviewNotes && (
-                      <p className="text-sm text-surface-600 dark:text-surface-400 mt-2">"{rating.reviewNotes}"</p>
+                      <p className="text-sm text-surface-600 dark:text-surface-400 mt-2">&quot;{rating.reviewNotes}&quot;</p>
                     )}
                   </div>
                 ))}

@@ -4,7 +4,7 @@
  * Business logic for the reports module.
  */
 import { prisma } from '../../database/index.js';
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 export class ReportsService {
   /**

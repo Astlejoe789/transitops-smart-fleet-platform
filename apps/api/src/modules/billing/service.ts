@@ -1,5 +1,6 @@
-import { PrismaClient, InvoiceStatus, Prisma } from '@prisma/client';
-import { CreateInvoiceDTO, GetInvoicesQuery, UpdateInvoiceDTO } from './types.js';
+import type { InvoiceStatus, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { CreateInvoiceDTO, GetInvoicesQuery, UpdateInvoiceDTO } from './types.js';
 import { HttpException } from '../../shared/exceptions/http.exception.js';
 import { StatusCodes } from 'http-status-codes';
 

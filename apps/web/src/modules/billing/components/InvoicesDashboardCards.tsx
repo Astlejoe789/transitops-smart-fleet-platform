@@ -1,5 +1,5 @@
 import { DollarSign, AlertCircle, TrendingUp, FileText } from 'lucide-react';
-import { InvoiceSummary } from '../types';
+import type { InvoiceSummary } from '../types';
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);

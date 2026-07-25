@@ -1,5 +1,5 @@
 import { prisma } from '../../database/prisma.js';
-import { VehicleStatus } from '@prisma/client';
+import type { VehicleStatus } from '@prisma/client';
 
 export class DashboardService {
   /**

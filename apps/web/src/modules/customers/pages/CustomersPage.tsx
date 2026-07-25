@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/Input';
 import { CustomersTable } from '../components/CustomersTable';
 import { CustomerFormModal } from '../components/CustomerFormModal';
 import { useCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer } from '../hooks/useCustomers';
-import { Customer } from '../types';
+import type { Customer } from '../types';
 
 export function CustomersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

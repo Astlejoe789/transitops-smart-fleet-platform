@@ -1,78 +1,95 @@
-# TransitOps Enterprise - Smart Fleet & Transport Operations Platform
+# TransitOps Smart Fleet Platform
 
-TransitOps Enterprise is an AI-powered logistics, fleet, and transportation management platform designed for scale.
+TransitOps is an AI-powered Smart Fleet & Transport Operations Platform designed for logistics companies to manage vehicles, drivers, trips, maintenance, and expenses seamlessly.
 
-## Architecture Overview
-TransitOps is designed as a modern enterprise monorepo workspace containing:
-- **`apps/api`**: Node.js & Express REST API Backend.
-- **`apps/web`**: React & Vite Frontend (shadcn/ui + Tailwind).
-- **`database`**: Prisma schema and migration configurations.
+## Project Overview
 
-### Key Technologies:
-- **Frontend**: React, TypeScript, TailwindCSS, Vite, TanStack Query.
-- **Backend**: Node.js, Express, TypeScript, Zod, Prisma ORM.
-- **Database**: PostgreSQL (via Docker Compose).
-- **Security**: Helmet, Express Rate Limit, CORS.
-- **Testing**: Vitest, React Testing Library, Supertest.
+This monorepo contains the following workspace packages:
+- **`apps/api`**: Node.js + Express backend powering the REST API.
+- **`apps/web`**: React + Vite frontend dashboard for operations management.
+- **`database`**: Prisma schema, migrations, and seed scripts.
 
-## Project Structure
+## Tech Stack
+
+- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, Shadcn UI, Lucide Icons, Framer Motion, Axios, React Router, Recharts.
+- **Backend**: Node.js, Express, TypeScript, Zod (validation), Prisma ORM, JSON Web Tokens (JWT), Bcrypt, Helmet, CORS, Express Rate Limit.
+- **Database**: PostgreSQL (Neon Serverless).
+- **Deployment**:
+  - Frontend: Vercel
+  - Backend: Railway
+
+## Features
+
+- **Fleet Management**: Vehicle tracking, document management, lifecycle status.
+- **Driver Management**: Driver profiles, license tracking, assignments.
+- **Trip Operations**: Dispatch board, route planning, trip lifecycle (Draft -> Scheduled -> In Transit -> Completed).
+- **Maintenance**: Maintenance logs, scheduled servicing, parts inventory.
+- **Financials**: Fuel logging, expense tracking, invoicing, payments.
+- **CRM & Vendors**: Manage customers and third-party service vendors.
+- **Role-Based Access Control**: Granular permissions (Super Admin, Company Admin, Fleet Manager, Dispatcher, Driver, Finance, Viewer).
+
+## Architecture
+
+The backend follows a modular, service-oriented architecture (`Controller -> Service -> Repository / ORM`).
+The frontend follows a feature-module architecture, grouping components, hooks, services, and pages by domain (e.g., `modules/fleet`, `modules/trips`).
+
+## Installation & Local Development
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+
+### 1. Clone the repository
+`git clone https://github.com/Astlejoe789/transitops-smart-fleet-platform.git`
+`cd transitops-smart-fleet-platform`
+
+### 2. Install dependencies
+`npm install`
+
+### 3. Environment Variables
+Create a `.env` file in the root directory:
+```env
+DATABASE_URL="postgresql://user:pass@localhost:5432/transitops?schema=public"
+PORT=3000
+NODE_ENV=development
+JWT_SECRET="your-super-secret-key-change-in-prod"
+JWT_REFRESH_SECRET="your-refresh-secret-key"
+JWT_ACCESS_EXPIRATION="15m"
+JWT_REFRESH_EXPIRATION="7d"
+VITE_API_URL="http://localhost:3000/api"
 ```
-TransitOps/
-├── apps/
-│   ├── api/          # Express API (Controllers, Middlewares, Services)
-│   └── web/          # React Frontend (Modules, Components, Layouts)
-├── database/         # Prisma Schema and DB Seeds
-├── docker-compose.yml# Production & local orchestrator
-├── .github/          # CI/CD Workflows
-└── package.json      # Root Workspace Configuration
-```
 
-## Quick Start (Docker)
-To run the platform via Docker without installing local dependencies:
+### 4. Database Setup
+`npm run db:push`
+`npm run db:generate`
+`npm run db:seed`
 
-1. Copy the environment variables:
-   ```bash
-   cp .env.example .env
-   ```
-2. Spin up the containers (PostgreSQL, Backend API, NGINX Frontend):
-   ```bash
-   docker-compose up --build -d
-   ```
-3. Access the platform at `http://localhost`.
+### 5. Run the Application
+`npm run dev`
 
-## Development Workflow (Local)
-To run the application locally for development:
+## Production Deployment
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Start the local database (if using Docker Compose just for DB):
-   ```bash
-   docker-compose up postgres -d
-   ```
-3. Run Prisma Migrations:
-   ```bash
-   npm run db:migrate --workspace=@transitops/api
-   ```
-4. Start Development Servers:
-   ```bash
-   npm run dev
-   ```
+### Frontend (Vercel)
+1. Import the repository into Vercel.
+2. Set the Root Directory to `apps/web`.
+3. Configure the Build Command: `npm run build`
+4. Set the Output Directory: `dist`
+5. Add Environment Variable: `VITE_API_URL` pointing to the production Railway URL.
 
-## Environment Variables
-See `.env.example` for all required keys.
-- **`DATABASE_URL`**: Your PostgreSQL connection string.
-- **`JWT_SECRET`**: Required for secure authentication sessions.
-- **`VITE_API_URL`**: Used by the frontend to point to the backend API.
+### Backend (Railway)
+1. Import the repository into Railway.
+2. Set the Root Directory to `apps/api`.
+3. Add a PostgreSQL database in Railway and copy the `DATABASE_URL`.
+4. Set Environment Variables: `DATABASE_URL`, `JWT_SECRET`, `NODE_ENV=production`, `FRONTEND_URL`.
 
-## Testing & CI/CD
-- **Unit & Integration Tests**: `npm run test`
-- **Build Verification**: `npm run build`
-- CI/CD automatically runs linting, tests, and builds via GitHub Actions on PRs to `main`.
+### Running Prisma Migrations in Production
+Prisma migrations do not run automatically on Railway by default. After deploying the backend, you must run the following commands against the production database:
+`npx prisma migrate deploy --schema=database/prisma/schema.prisma`
+`npm run db:seed`
 
-## Deployment Guide
-1. Pull the repository onto your target production environment.
-2. Configure your `.env` securely.
-3. Build and launch with `docker-compose -f docker-compose.yml up --build -d`.
-4. Ensure a Reverse Proxy (like Cloudflare or another NGINX layer) handles SSL termination.
+## Demo Credentials
+
+After running the seed script, the following demo accounts are available:
+- **Company Admin**: `admin@transitops.com` / `Admin@123456`
+- **Fleet Manager**: `fleet@transitops.com` / `Fleet@123456`
+- **Dispatcher**: `dispatcher@transitops.com` / `Dispatch@123456`

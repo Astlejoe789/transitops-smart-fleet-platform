@@ -9,7 +9,7 @@ export class FleetController {
       const companyId = (req as any).user?.companyId;
       const data = await fleetService.getVehicles(companyId, req.query);
       res.json(data);
-    } catch (error) {
+    } catch {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Failed to fetch vehicles' });
     }
   }

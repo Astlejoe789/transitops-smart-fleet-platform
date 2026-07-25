@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/Input';
 import { VendorsTable } from '../components/VendorsTable';
 import { VendorFormModal } from '../components/VendorFormModal';
 import { useVendors, useCreateVendor, useUpdateVendor, useDeleteVendor } from '../hooks/useVendors';
-import { Vendor } from '../types';
+import type { Vendor } from '../types';
 
 export function VendorsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

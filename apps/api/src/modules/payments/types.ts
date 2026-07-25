@@ -1,4 +1,4 @@
-import { PaymentMethod } from '@prisma/client';
+import type { PaymentMethod } from '@prisma/client';
 
 export interface RecordPaymentDTO {
   invoiceId: string;

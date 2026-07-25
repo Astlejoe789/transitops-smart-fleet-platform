@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { PaymentService } from './service.js';
 import { recordPaymentSchema } from './validation.js';
-import { AuthenticatedRequest } from '../../middlewares/auth.middleware.js';
+import type { AuthenticatedRequest } from '../../middlewares/auth.middleware.js';
 import { ApiResponse } from '../../shared/responses/api.response.js';
 
 export class PaymentController {

@@ -4,7 +4,8 @@ import { z } from 'zod';
 import { X, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Invoice, PaymentMethod } from '../types';
+import type { Invoice} from '../types';
+import { PaymentMethod } from '../types';
 
 const paymentSchema = z.object({
   amount: z.coerce.number().positive('Amount must be positive'),

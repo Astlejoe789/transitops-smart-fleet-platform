@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
+import type {
   ColumnDef,
+  SortingState,
+  RowSelectionState} from '@tanstack/react-table';
+import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getSortedRowModel,
-  SortingState,
-  RowSelectionState,
+  getSortedRowModel
 } from '@tanstack/react-table';
 import {
   Eye,

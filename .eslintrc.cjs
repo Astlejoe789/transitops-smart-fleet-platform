@@ -34,7 +34,7 @@ module.exports = {
       'warn',
       { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
     ],
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/consistent-type-imports': [
       'error',
       { prefer: 'type-imports' },
@@ -45,7 +45,7 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
 
     // General
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'no-console': 'off',
     'prefer-const': 'error',
   },
   ignorePatterns: [

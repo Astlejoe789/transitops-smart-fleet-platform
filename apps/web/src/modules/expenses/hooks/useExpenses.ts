@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/api/client';
-import { Expense, GetExpensesQuery, ExpenseDashboardData, ExpenseAnalyticsData } from '../types';
+import type { Expense, GetExpensesQuery, ExpenseDashboardData, ExpenseAnalyticsData } from '../types';
 
 interface ExpensesResponse {
   data: Expense[];

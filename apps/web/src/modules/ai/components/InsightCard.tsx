@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AiInsight } from '../services/aiApi';
+import type { AiInsight } from '../services/aiApi';
 
 export function InsightCard({ insight, className }: { insight: AiInsight, className?: string }) {
   const isWarning = insight.type === 'WARNING';

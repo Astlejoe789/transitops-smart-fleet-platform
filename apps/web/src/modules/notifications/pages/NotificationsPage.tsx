@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { notificationsApi, Notification } from '../services/notificationsApi';
+import type { Notification } from '../services/notificationsApi';
+import { notificationsApi } from '../services/notificationsApi';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { Bell, Info, AlertTriangle, CheckCircle, XCircle, Trash2, Check, Settings } from 'lucide-react';
@@ -67,7 +68,7 @@ export default function NotificationsPage() {
           {notifications.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground flex flex-col items-center">
               <Bell className="h-12 w-12 mb-4 opacity-20" />
-              <p>You're all caught up!</p>
+              <p>You don&apos;t have any notifications right now.</p>
             </div>
           ) : (
             <div className="divide-y">

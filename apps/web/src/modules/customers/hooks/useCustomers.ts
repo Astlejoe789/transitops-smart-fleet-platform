@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/api/client';
-import { Customer } from '../types';
+import type { Customer } from '../types';
 
 interface CustomersResponse {
   data: Customer[];

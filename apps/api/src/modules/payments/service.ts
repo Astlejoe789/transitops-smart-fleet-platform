@@ -1,5 +1,6 @@
-import { PrismaClient, PaymentStatus, Prisma } from '@prisma/client';
-import { RecordPaymentDTO, GetPaymentsQuery } from './types.js';
+import type { PaymentStatus, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { RecordPaymentDTO, GetPaymentsQuery } from './types.js';
 import { BillingService } from '../billing/service.js';
 import { HttpException } from '../../shared/exceptions/http.exception.js';
 import { StatusCodes } from 'http-status-codes';

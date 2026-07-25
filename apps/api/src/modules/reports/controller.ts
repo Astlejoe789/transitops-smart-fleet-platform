@@ -4,9 +4,9 @@
  * Handles HTTP requests for the reports module.
  * Keep controllers thin — delegate logic to the service layer.
  */
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { ReportsService } from './service.js';
-import { AuthenticatedRequest } from '../../middlewares/index.js';
+import type { AuthenticatedRequest } from '../../middlewares/index.js';
 
 const reportsService = new ReportsService();
 

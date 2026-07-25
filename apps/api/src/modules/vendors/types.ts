@@ -1,4 +1,4 @@
-import { VendorType, VendorStatus } from '@prisma/client';
+import type { VendorType, VendorStatus } from '@prisma/client';
 
 export interface CreateVendorDTO {
   name: string;
@@ -20,7 +20,7 @@ export interface CreateVendorDTO {
   isActive?: boolean;
 }
 
-export interface UpdateVendorDTO extends Partial<CreateVendorDTO> {}
+export type UpdateVendorDTO = Partial<CreateVendorDTO>;
 
 export interface CreateVendorContactDTO {
   name: string;

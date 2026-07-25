@@ -9,7 +9,7 @@ import {
 import { Eye, Edit, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/Badge';
-import { Vendor, VendorStatus } from '../types';
+import type { Vendor, VendorStatus } from '../types';
 
 const columnHelper = createColumnHelper<Vendor>();
 
