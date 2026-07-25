@@ -19,6 +19,8 @@ export function createApp() {
   app.use(helmet());
   app.use(cors(corsConfig));
   
+  app.set('trust proxy', 1);
+  
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     limit: 1000, // higher limit for enterprise API
