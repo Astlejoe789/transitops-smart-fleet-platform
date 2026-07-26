@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/DataTable';
 import { formatDistanceToNow } from 'date-fns';
 import { Badge } from '@/components/ui/Badge';
-import { PageTitle } from '@/components/ui/Typography';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function AuditLogPage() {
   const { data: auditData, isLoading } = useQuery({
@@ -21,11 +21,10 @@ export default function AuditLogPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <PageTitle>Audit Center</PageTitle>
-        <p className="text-muted-foreground mt-2">Comprehensive enterprise audit trail of all actions in the system.</p>
-      </div>
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="Audit Center"
+                />
 
       <Card>
         <CardContent className="p-0">
@@ -36,6 +35,6 @@ export default function AuditLogPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </PageContainer>
   );
 }

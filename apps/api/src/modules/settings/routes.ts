@@ -1,18 +1,21 @@
 import { Router } from 'express';
+import { settingsController } from './controller.js';
+import { authMiddleware } from '../../middlewares/auth.middleware.js';
+import { requirePermission } from '../../middlewares/permission.middleware.js';
 
-/**
- * Settings Routes
- *
- * Define API endpoints for the settings module.
- */
 const router = Router();
+router.use(authMiddleware);
 
-// TODO: Add route definitions
-// Example:
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getById);
-// router.post('/', validate(createSchema), controller.create);
-// router.put('/:id', validate(updateSchema), controller.update);
-// router.delete('/:id', controller.delete);
+router.get(
+  '/',
+  requirePermission('settings', 'read'),
+  settingsController.getSettings
+);
+
+router.put(
+  '/:category',
+  requirePermission('settings', 'update'),
+  settingsController.updateSettings
+);
 
 export const settingsRoutes = router;

@@ -12,7 +12,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        "rounded-[16px] border border-surface-800 bg-surface-900 text-white shadow-card transition-shadow hover:shadow-xl",
+        "rounded-2xl border border-white/5 bg-surface-900/60 backdrop-blur-2xl text-white shadow-card transition-all hover:shadow-2xl hover:border-white/10",
         className
       )}
       {...props}

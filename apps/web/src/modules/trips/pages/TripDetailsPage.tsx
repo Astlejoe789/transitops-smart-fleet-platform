@@ -5,9 +5,9 @@ import {
   MapPin, Activity, FileText, Receipt, Wrench, Package, Navigation, Map
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle } from '@/components/ui/Typography';
-import { Badge } from '@/components/ui/Badge';
+
 import { useTrip, useUpdateTripStatus } from '../hooks/useTrips';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function TripDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -51,7 +51,7 @@ export default function TripDetailsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
+    <PageContainer>
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
@@ -60,27 +60,28 @@ export default function TripDetailsPage() {
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <div className="flex-1 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <PageTitle>{trip.tripNumber}</PageTitle>
-            <Badge variant="outline">{trip.status.replace(/_/g, ' ')}</Badge>
-          </div>
-          <div className="flex items-center gap-2">
-            {trip.status === 'READY_FOR_DISPATCH' && (
-              <Button size="sm" onClick={() => handleStatusChange('IN_PROGRESS')} isLoading={updateStatus.isPending}>
-                <Play className="mr-2 h-4 w-4" /> Start Trip
-              </Button>
-            )}
-            {trip.status === 'IN_PROGRESS' && (
-              <Button size="sm" variant="outline" onClick={() => handleStatusChange('COMPLETED')} isLoading={updateStatus.isPending}>
-                <CheckCircle className="mr-2 h-4 w-4 text-emerald-500" /> Complete Trip
-              </Button>
-            )}
-            <Button size="sm" variant="outline">
-              <Edit2 className="mr-2 h-4 w-4" /> Edit
-            </Button>
-          </div>
-        </div>
+        <PageHeader 
+                      title={trip.tripNumber}
+                      actions={<>
+                        
+              {trip.status === 'READY_FOR_DISPATCH' && (
+                            <Button size="sm" onClick={() => handleStatusChange('IN_PROGRESS')} isLoading={updateStatus.isPending}>
+                              <Play className="mr-2 h-4 w-4" /> Start Trip
+                            </Button>
+                          )}
+
+              {trip.status === 'IN_PROGRESS' && (
+                            <Button size="sm" variant="outline" onClick={() => handleStatusChange('COMPLETED')} isLoading={updateStatus.isPending}>
+                              <CheckCircle className="mr-2 h-4 w-4 text-emerald-500" /> Complete Trip
+                            </Button>
+                          )}
+
+              <Button size="sm" variant="outline">
+                            <Edit2 className="mr-2 h-4 w-4" /> Edit
+                          </Button>
+
+                      </>}
+                    />
       </div>
 
       {/* Main Content */}
@@ -268,6 +269,6 @@ export default function TripDetailsPage() {
           )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

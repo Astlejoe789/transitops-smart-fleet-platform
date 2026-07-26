@@ -3,9 +3,9 @@ import { adminApi } from '../services/adminApi';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { PageTitle } from '@/components/ui/Typography';
 import { useState, useEffect } from 'react';
 import { Save, Bot, Lock, Server } from 'lucide-react';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 function SettingSection({ title, icon: Icon, description, category }: any) {
   const queryClient = useQueryClient();
@@ -105,11 +105,10 @@ export default function SystemConfigPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <PageTitle>System Configuration</PageTitle>
-        <p className="text-muted-foreground mt-2">Manage global platform settings and integrations.</p>
-      </div>
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="System Configuration"
+                />
 
       <div className="flex gap-4 border-b">
         {tabs.map(tab => (
@@ -130,6 +129,6 @@ export default function SystemConfigPage() {
         {activeTab === 'SECURITY' && <SettingSection title="Security Center" description="Manage session policies and authentication rules." category="SECURITY" icon={Lock} />}
         {activeTab === 'INTEGRATIONS' && <SettingSection title="Integrations" description="Manage 3rd party API keys (Stripe, SendGrid, Twilio, Google Maps)." category="INTEGRATIONS" icon={Server} />}
       </div>
-    </div>
+    </PageContainer>
   );
 }

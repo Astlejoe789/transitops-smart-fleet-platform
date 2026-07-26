@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { PageContainer, PageHeader } from '@/components/layout';
 import { useFuelLog, useDeleteFuelLog } from '../hooks/useFuel';
 import { Button } from '@/components/ui/Button';
 import { format } from 'date-fns';
-import { ArrowLeft, Droplet, Truck, User, MapPin, Receipt, Trash2 } from 'lucide-react';
+import { Droplet, Truck, User, MapPin, Receipt, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 
@@ -27,28 +28,20 @@ export function FuelDetailsPage() {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate('/fuel')}>
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white flex items-center gap-3">
-              Fuel Log {log.fuelLogNumber}
-              <Badge>{log.fuelType}</Badge>
-            </h1>
-            <p className="mt-1 text-sm text-surface-500">
-              Logged on {format(new Date(log.fuelDate), 'PPP')}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="destructive" onClick={handleDelete}>
-            <Trash2 className="w-4 h-4 mr-2" /> Delete
-          </Button>
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title={`Fuel Log ${log.fuelLogNumber}`}
+        subtitle={`Logged on ${format(new Date(log.fuelDate), 'PPP')}`}
+        backHref="/fuel"
+        actions={
+          <>
+            <Badge variant="outline">{log.fuelType}</Badge>
+            <Button variant="destructive" onClick={handleDelete}>
+              <Trash2 className="w-4 h-4 mr-2" /> Delete
+            </Button>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 md:col-span-2 space-y-6 bg-white shadow-sm border border-surface-200 dark:border-surface-800 dark:bg-surface-900 rounded-xl">
@@ -133,6 +126,6 @@ export function FuelDetailsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

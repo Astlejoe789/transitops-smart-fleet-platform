@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { TripFilters } from '../components/TripFilters';
 import { TripTable } from '../components/TripTable';
 import { TripFormModal } from '../components/TripFormModal';
 import { useTrips } from '../hooks/useTrips';
 import { useNavigate } from 'react-router-dom';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function TripsPage() {
   const navigate = useNavigate();
@@ -23,21 +23,19 @@ export default function TripsPage() {
   });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <PageTitle>Trips</PageTitle>
-          <PageSubtitle>
-            Manage your fleet trips, routes, and assignments.
-          </PageSubtitle>
-        </div>
-        <div className="flex items-center gap-3">
+    <PageContainer>
+      <PageHeader 
+                  title="Trips"
+                  subtitle="Manage your fleet trips, routes, and assignments."
+                  actions={<>
+                    
           <Button onClick={() => setIsFormOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Trip
-          </Button>
-        </div>
-      </div>
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Trip
+                    </Button>
+
+                  </>}
+                />
 
       <div className="bg-white dark:bg-surface-900 rounded-xl shadow-sm border border-surface-200 dark:border-surface-800 p-6">
         <TripFilters
@@ -80,6 +78,6 @@ export default function TripsPage() {
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
       />
-    </div>
+    </PageContainer>
   );
 }

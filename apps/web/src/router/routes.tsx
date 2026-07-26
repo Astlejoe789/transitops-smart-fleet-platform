@@ -15,6 +15,7 @@ const ResetPasswordPage = lazyNamed(import('@/modules/auth/pages/ResetPasswordPa
 const UnauthorizedPage = lazyNamed(import('@/pages/UnauthorizedPage'));
 const NotFoundPage = lazyNamed(import('@/pages/NotFoundPage'));
 const LandingPage = lazyNamed(import('@/pages/LandingPage'));
+const SetupPage = lazyNamed(import('@/pages/SetupPage'));
 
 const DashboardPage = lazyNamed(import('@/modules/dashboard/pages/DashboardPage'));
 const FleetPage = lazyNamed(import('@/modules/fleet/pages/FleetPage'));
@@ -100,7 +101,7 @@ export const routes: RouteObject[] = [
       { path: 'customers/:id', element: withSuspense(CustomerDetailsPage) },
 
       // Setup
-      { path: 'setup', element: <div>Setup Page (Coming Soon)</div> },
+      { path: 'setup', element: withSuspense(SetupPage) },
       
       { path: 'fleet', element: withSuspense(FleetPage) },
       { path: 'fleet/:id', element: withSuspense(VehicleDetailsPage) },

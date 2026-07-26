@@ -8,7 +8,8 @@ import {
   Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { DriverTable } from '../components/DriverTable';
 import { DriverFilters } from '../components/DriverFilters';
 import { DriverFormModal } from '../components/DriverFormModal';
@@ -138,20 +139,18 @@ export default function DriversPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl pb-8">
+    <PageContainer>
       {/* Page Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <PageTitle>Driver Management</PageTitle>
-          <PageSubtitle>
-            Manage driver profiles, licenses, medical certificates, and vehicle assignments.
-          </PageSubtitle>
-        </div>
-        <Button onClick={() => setIsFormOpen(true)} id="add-driver-btn">
-          <Plus className="mr-2 h-4 w-4" />
-          Add Driver
-        </Button>
-      </div>
+      <PageHeader
+        title="Driver Management"
+        subtitle="Manage driver profiles, licenses, medical certificates, and vehicle assignments."
+        actions={
+          <Button onClick={() => setIsFormOpen(true)} id="add-driver-btn">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Driver
+          </Button>
+        }
+      />
 
       {/* Stats Bar */}
       <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
@@ -220,13 +219,12 @@ export default function DriversPage() {
         driver={editingDriver}
       />
 
-      {/* Delete Confirmation */}
       <ConfirmDeleteModal
         driver={deletingDriver}
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeletingDriver(null)}
         isLoading={deleteMutation.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

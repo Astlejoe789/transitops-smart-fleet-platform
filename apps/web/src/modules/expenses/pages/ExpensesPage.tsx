@@ -4,10 +4,10 @@ import { ExpensesTable } from '../components/ExpensesTable';
 import { ExpenseFormModal } from '../components/ExpenseFormModal';
 import { useExpenses, useCreateExpense, useUpdateExpense } from '../hooks/useExpenses';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { Plus, Search, Filter } from 'lucide-react';
 import type { Expense } from '../types';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,19 +37,19 @@ export function ExpensesPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <PageTitle>Expense Management</PageTitle>
-          <PageSubtitle>Track and manage operational fleet expenses</PageSubtitle>
-        </div>
-        <div className="flex items-center gap-3">
+    <PageContainer className="p-6 space-y-6">
+      <PageHeader 
+                  title="Expense Management"
+                  subtitle="Track and manage operational fleet expenses"
+                  actions={<>
+                    
           <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Expense
-          </Button>
-        </div>
-      </div>
+                      <Plus className="w-4 h-4 mr-2" />
+                      New Expense
+                    </Button>
+
+                  </>}
+                />
 
       <ExpensesDashboard />
 
@@ -85,6 +85,6 @@ export function ExpensesPage() {
         onSubmit={handleSubmit}
         initialData={editingExpense}
       />
-    </div>
+    </PageContainer>
   );
 }

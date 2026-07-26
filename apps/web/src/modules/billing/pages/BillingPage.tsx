@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Plus, Search, Filter, Download } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { InvoicesDashboardCards } from '../components/InvoicesDashboardCards';
 import { InvoicesTable } from '../components/InvoicesTable';
@@ -19,6 +18,7 @@ import {
 import { useRecordPayment } from '../hooks/usePayments';
 import type { Invoice} from '../types';
 import { InvoiceStatus } from '../types';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export function BillingPage() {
   const [activeTab, setActiveTab] = useState<'invoices' | 'revenue'>('invoices');
@@ -75,24 +75,25 @@ export function BillingPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <PageTitle>Billing & Payments</PageTitle>
-          <PageSubtitle>Create invoices, track payments, and manage receivables</PageSubtitle>
-        </div>
-        <div className="flex items-center gap-3">
+      <PageHeader 
+                  title="Billing & Payments"
+                  subtitle="Create invoices, track payments, and manage receivables"
+                  actions={<>
+                    
           <Button variant="outline" className="flex items-center gap-2" onClick={handleExportCSV}>
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
+                      <Download className="h-4 w-4" />
+                      Export
+                    </Button>
+
           <Button className="flex items-center gap-2" onClick={() => setIsCreateOpen(true)}>
-            <Plus className="h-4 w-4" />
-            New Invoice
-          </Button>
-        </div>
-      </div>
+                      <Plus className="h-4 w-4" />
+                      New Invoice
+                    </Button>
+
+                  </>}
+                />
 
       {/* Tabs */}
       <div className="border-b border-surface-200 dark:border-surface-800">
@@ -185,6 +186,6 @@ export function BillingPage() {
         onSubmit={handleRecordPayment}
         isLoading={recordPayment.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

@@ -3,6 +3,7 @@ import type { NotificationPreferences } from '../services/notificationsApi';
 import { notificationsApi } from '../services/notificationsApi';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Bell, Mail, Smartphone, Radio, Settings } from 'lucide-react';
+import { PageContainer } from "@/components/layout";
 
 export default function NotificationSettingsPage() {
   const queryClient = useQueryClient();
@@ -24,7 +25,7 @@ export default function NotificationSettingsPage() {
   if (isLoading) return <div className="p-8 text-center">Loading preferences...</div>;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <PageContainer className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Notification Settings</h1>
         <p className="text-muted-foreground mt-2">Manage how and when you receive operational alerts.</p>
@@ -129,6 +130,6 @@ export default function NotificationSettingsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

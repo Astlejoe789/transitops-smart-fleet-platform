@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
+
 import { MaintenanceFilters } from '../components/MaintenanceFilters';
 import { MaintenanceTable } from '../components/MaintenanceTable';
 import { MaintenanceFormModal } from '../components/MaintenanceFormModal';
 import { useMaintenance } from '../hooks/useMaintenance';
 import type { MaintenanceLog } from '../types';
+import { PageHeader } from "@/components/layout";
 
 export default function MaintenancePage() {
   const [filters, setFilters] = useState({
@@ -27,23 +28,23 @@ export default function MaintenancePage() {
     setIsFormOpen(true);
   };
 
-  const handleCreate = () => {
+  const _handleCreate = () => {
     setEditData(null);
     setIsFormOpen(true);
   };
 
   return (
     <div className="flex flex-col h-full bg-surface-50 dark:bg-surface-950">
-      <div className="flex items-center justify-between px-8 py-6 bg-white dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800">
-        <div>
-          <PageTitle>Maintenance</PageTitle>
-          <PageSubtitle>Manage vehicle service and repair logs.</PageSubtitle>
-        </div>
-        <Button onClick={handleCreate}>
-          <Plus className="w-4 h-4 mr-2" />
-          Schedule Service
-        </Button>
-      </div>
+      <PageHeader 
+                  title="Maintenance"
+                  subtitle="Manage vehicle service and repair logs."
+                  actions={
+                    <Button onClick={_handleCreate}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Schedule Service
+                    </Button>
+                  }
+                />
 
       <MaintenanceFilters filters={filters} onChange={setFilters} />
 

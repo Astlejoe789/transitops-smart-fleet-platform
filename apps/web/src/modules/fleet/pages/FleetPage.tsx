@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { VehicleTable } from '../components/VehicleTable';
 import { VehicleFilters } from '../components/VehicleFilters';
 import { VehicleFormModal } from '../components/VehicleFormModal';
@@ -36,21 +37,18 @@ export default function FleetPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl pb-8">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <PageTitle>Fleet Management</PageTitle>
-          <PageSubtitle>
-            Manage your vehicles, documents, and lifecycle status.
-          </PageSubtitle>
-        </div>
-        <Button onClick={() => setIsFormOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Vehicle
-        </Button>
-      </div>
-
-      <div className="rounded-xl border border-surface-200 bg-white p-6 shadow-sm dark:border-surface-800 dark:bg-surface-900">
+    <PageContainer>
+      <PageHeader 
+        title="Fleet Management"
+        subtitle="Manage your vehicles, documents, and lifecycle status."
+        actions={
+          <Button onClick={() => setIsFormOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Vehicle
+          </Button>
+        }
+      />
+      <div className="rounded-xl border border-surface-200 bg-white p-6 shadow-sm dark:border-surface-800 dark:bg-surface-900 mt-6">
         <VehicleFilters onFiltersChange={(newFilters) => setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }))} />
         
         <VehicleTable
@@ -66,6 +64,6 @@ export default function FleetPage() {
         onClose={closeForm}
         vehicle={editingVehicle}
       />
-    </div>
+    </PageContainer>
   );
 }

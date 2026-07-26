@@ -26,7 +26,7 @@ import { TripsChart } from '../components/charts/TripsChart';
 import { FinancialOverviewChart } from '../components/charts/FinancialOverviewChart';
 import { RecentActivityFeed } from '../components/RecentActivityFeed';
 import { NotificationsPanel } from '../components/NotificationsPanel';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function DashboardPage() {
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
@@ -37,16 +37,12 @@ export default function DashboardPage() {
   const { data: notifications, isLoading: isLoadingNotifications } = useDashboardNotifications();
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-8">
+    <PageContainer>
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <PageTitle>Operations Dashboard</PageTitle>
-          <PageSubtitle>
-            Real-time overview of your fleet, trips, and financial metrics.
-          </PageSubtitle>
-        </div>
-      </div>
+      <PageHeader 
+                  title="Operations Dashboard"
+                  subtitle="Real-time overview of your fleet, trips, and financial metrics."
+                />
 
       {/* Summary KPI Cards Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -176,6 +172,6 @@ export default function DashboardPage() {
         <RecentActivityFeed activities={activities} isLoading={isLoadingActivities} />
         <NotificationsPanel notifications={notifications} isLoading={isLoadingNotifications} />
       </div>
-    </div>
+    </PageContainer>
   );
 }

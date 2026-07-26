@@ -1,133 +1,103 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/truck.svg" alt="TransitOps Logo" width="120" height="120" />
-  <h1>?? TransitOps Smart Fleet Platform</h1>
-  <p><strong>AI-powered Smart Fleet & Transport Operations Platform for Modern Logistics</strong></p>
-
-  <p>
-    <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-18-blue?logo=react&logoColor=white" alt="React" /></a>
-    <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-18+-green?logo=node.js&logoColor=white" alt="Node.js" /></a>
-    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.5-blue?logo=typescript&logoColor=white" alt="TypeScript" /></a>
-    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css&logoColor=white" alt="Tailwind CSS" /></a>
-    <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-Neon-336791?logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
-    <a href="https://www.prisma.io/"><img src="https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma&logoColor=white" alt="Prisma" /></a>
-  </p>
+  <h1>🚛 TransitOps Smart Fleet Platform</h1>
+  <p>An enterprise-grade fleet and transport operations management system.</p>
 </div>
 
-<hr />
+## 📖 Project Overview
+TransitOps is a comprehensive web platform built to modernize transport and logistics operations. From tracking fleet health and driver certifications to managing dispatch multi-stop routing and generating financial invoices, TransitOps unifies disconnected transport silos into a single, intuitive dashboard. 
 
-## ?? Project Overview
+## ✨ Features
+- **Intelligent Dispatch & Trips**: End-to-end trip planning, real-time dispatch assignment, and multi-stop support.
+- **Complete Fleet Lifecycle**: Vehicle tracking, preventive maintenance schedules, and fuel logging.
+- **Driver Management**: Comprehensive driver profiles, license expiry tracking, and vehicle assignment histories.
+- **Financial Suite**: Vendor management, cost tracking, invoice generation, and full CRUD for payments/billing.
+- **Global Theme & UI**: Stunning, responsive interface powered by Shadcn UI and Tailwind CSS v4, complete with Dark/Light modes.
+- **Enterprise Security**: Role-based access control (RBAC), JWT authentication, and secure API architecture.
 
-**TransitOps** is an enterprise-grade, full-stack logistics and fleet management solution designed to streamline the lifecycle of transport operations. It provides role-based dashboards to manage vehicles, dispatch drivers, track expenses, schedule maintenance, and invoice customers seamlessly.
+## 🏗️ Architecture
+TransitOps employs a modern modular monolith architecture. The frontend is a React 18 Single Page Application (SPA), while the backend is an Express-powered REST API communicating with a PostgreSQL database via Prisma ORM.
 
-This repository is built as a highly scalable **Monorepo** (using npm workspaces) separating concerns cleanly between the API, the Web dashboard, and the database schema.
+## 🛠️ Technology Stack
+### Frontend (`apps/web`)
+- **Framework**: React 18 (Vite)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4 + Shadcn UI
+- **State/Data**: TanStack React Query + React Router v6
 
----
+### Backend (`apps/api`)
+- **Framework**: Node.js + Express
+- **Language**: TypeScript
+- **Database ORM**: Prisma
+- **Validation**: Zod
+- **Database**: PostgreSQL
 
-## ? Key Features
-
-- ?? **Comprehensive Fleet Management:** Track vehicle lifecycles, maintenance logs, and document expiries.
-- ????? **Driver & HR Operations:** Manage driver profiles, licenses, and assignments seamlessly.
-- ?? **Intelligent Dispatch & Trips:** Plan routes, assign vehicles, and track trip statuses from draft to completion.
-- ?? **Preventative Maintenance:** Schedule vehicle servicing and track inventory parts.
-- ?? **Financial Engine:** Log fuel, approve expenses, and generate robust customer invoices.
-- ?? **Granular RBAC:** Enterprise-ready Role-Based Access Control (`Super Admin`, `Company Admin`, `Dispatcher`, `Fleet Manager`, etc.).
-
----
-
-## ??? Architecture
-
-```mermaid
-graph TD
-    Client[Web Dashboard - React/Vite] -->|REST API - Axios| Gateway(API Gateway/Express)
-    Gateway --> Auth[Auth Service / JWT]
-    Gateway --> Services[Domain Services]
-    Services --> DB[Prisma ORM]
-    DB --> Neon[(Neon PostgreSQL)]
+## 📂 Folder Structure
+```text
+transitops/
+├── apps/
+│   ├── api/          # Express Backend (Modules, Services, Controllers)
+│   └── web/          # React Frontend (Pages, Components, API Clients)
+├── database/         # Prisma Schemas & Seed Data
+├── docs/             # Portfolio & Interview Preparation Assets
+└── scripts/          # Automation and Generator Utilities
 ```
 
-### Monorepo Structure
-- ?? **`apps/api`**: Node.js + Express backend powering the robust REST API.
-- ?? **`apps/web`**: React + Vite frontend dashboard featuring `Shadcn UI` and `Framer Motion`.
-- ?? **`database`**: Centralized Prisma schema, migrations, and seed scripts.
-
----
-
-## ??? Tech Stack & Decisions
-
-| Layer | Technology | Rationale |
-| --- | --- | --- |
-| **Frontend** | React 18, Vite, Tailwind CSS | Fast HMR, highly customizable utility classes, modern hooks ecosystem. |
-| **UI Components**| Shadcn UI, Radix Primitives | Accessible, unstyled primitives offering full control over component design. |
-| **Backend** | Node.js, Express, TypeScript | High-performance asynchronous API with strict type safety across boundaries. |
-| **Database** | PostgreSQL, Prisma ORM | Relational integrity with a strongly typed query builder and schema management. |
-| **Security** | JWT, Bcrypt, Helmet, Zod | Robust payload validation, secure hashing, and HTTP header protection. |
-
----
-
-## ?? Getting Started
-
+## 🚀 Installation Guide
 ### Prerequisites
-- [Node.js](https://nodejs.org/en/download/) (v18 or higher)
-- [PostgreSQL](https://www.postgresql.org/) running locally or via a cloud provider like Neon.
+- Node.js >= 18
+- PostgreSQL
 
-### 1. Installation
-Clone the repository and install dependencies:
+### 1. Clone the repository
 ```bash
 git clone https://github.com/Astlejoe789/transitops-smart-fleet-platform.git
 cd transitops-smart-fleet-platform
+```
+
+### 2. Install Dependencies
+```bash
 npm install
 ```
 
-### 2. Environment Variables
-Create a `.env` file in the root directory:
+### 3. Environment Variables
+Create `.env` in `apps/api/`:
 ```env
-DATABASE_URL="postgresql://user:pass@localhost:5432/transitops?schema=public"
 PORT=3000
-NODE_ENV=development
-JWT_SECRET="your-super-secret-key-change-in-prod"
-JWT_REFRESH_SECRET="your-refresh-secret-key"
-JWT_ACCESS_EXPIRATION="15m"
-JWT_REFRESH_EXPIRATION="7d"
+DATABASE_URL="postgresql://user:password@localhost:5432/transitops"
+JWT_SECRET="super-secret-jwt-key"
+FRONTEND_URL="http://localhost:5173"
+NODE_ENV="development"
+```
+Create `.env` in `apps/web/`:
+```env
 VITE_API_URL="http://localhost:3000/api"
 ```
 
-### 3. Database Initialization
-Push the schema to your database and seed demo data:
+### 4. Database Setup
 ```bash
-npm run db:push
 npm run db:generate
+npm run db:migrate
 npm run db:seed
 ```
+*Note: The seed script provides demo credentials (`admin@transitops.com` / `Admin@123456`).*
 
-### 4. Run the Platform
+### 5. Run Locally
+Start both backend and frontend concurrently:
 ```bash
-# Starts both frontend and backend concurrently
 npm run dev
 ```
 
----
+## 🌍 Deployment Guide
+The project is configured for cloud deployment:
+- **Frontend (Vercel)**: Connect the GitHub repository to Vercel. Ensure the Framework Preset is Vite. The included `vercel.json` handles React Router rewrites.
+- **Backend & Database (Railway)**: Connect the GitHub repository to Railway. The included `railway.json` utilizes Nixpacks to automatically build and run the Express API. Add a PostgreSQL plugin and link the `DATABASE_URL`.
 
-## ?? Demo Credentials
+## 🔮 Future Roadmap
+- [ ] Automated weekly PDF report generation for dispatchers.
+- [ ] E2E Test suite using Cypress/Playwright.
+- [ ] Live WebSocket integration for real-time map GPS tracking.
 
-After running the seed script, log in with these roles to explore the platform:
+## 📄 License
+This project is licensed under the MIT License.
 
-| Role | Email | Password |
-| --- | --- | --- |
-| **Admin** | `admin@transitops.com` | `Admin@123456` |
-| **Fleet Manager**| `fleet@transitops.com` | `Fleet@123456` |
-| **Dispatcher** | `dispatcher@transitops.com` | `Dispatch@123456` |
-
----
-
-## ?? Production Deployment
-
-- **Frontend (`apps/web`)**: Optimized for **Vercel**. Set root directory to `apps/web`, build command `npm run build`, and output to `dist`.
-- **Backend (`apps/api`)**: Optimized for **Railway** or Docker. 
-  - *Note on Migrations*: Run `npx prisma migrate deploy --schema=database/prisma/schema.prisma` against your production database after deployment.
-
----
-
-<div align="center">
-  <p>Built with ?? for modern logistics operations.</p>
-</div>
-
+## ✍️ Author
+Designed and engineered by **Astlejoe789**.

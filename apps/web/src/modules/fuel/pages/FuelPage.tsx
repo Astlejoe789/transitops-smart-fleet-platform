@@ -4,10 +4,10 @@ import { FuelTable } from '../components/FuelTable';
 import { FuelFormModal } from '../components/FuelFormModal';
 import { useFuelLogs, useCreateFuelLog, useUpdateFuelLog } from '../hooks/useFuel';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { Plus, Search, Filter } from 'lucide-react';
 import type { FuelLog } from '../types';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export function FuelPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,19 +37,19 @@ export function FuelPage() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <PageTitle>Fuel Management</PageTitle>
-          <PageSubtitle>Monitor fuel consumption and costs</PageSubtitle>
-        </div>
-        <div className="flex items-center gap-3">
+    <PageContainer className="p-6 space-y-6">
+      <PageHeader 
+                  title="Fuel Management"
+                  subtitle="Monitor fuel consumption and costs"
+                  actions={<>
+                    
           <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Log Fuel Entry
-          </Button>
-        </div>
-      </div>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Log Fuel Entry
+                    </Button>
+
+                  </>}
+                />
 
       <FuelDashboard />
 
@@ -85,6 +85,6 @@ export function FuelPage() {
         onSubmit={handleSubmit}
         initialData={editingLog}
       />
-    </div>
+    </PageContainer>
   );
 }

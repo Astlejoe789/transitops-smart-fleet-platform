@@ -10,7 +10,7 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, 
   Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
-import { PageTitle } from '@/components/ui/Typography';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function AnalyticsPage() {
   const { data: kpis, isLoading: isKpisLoading } = useQuery({
@@ -28,10 +28,10 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <PageTitle>Executive Dashboard</PageTitle>
-      </div>
+    <PageContainer className="p-6 space-y-6">
+      <PageHeader 
+                  title="Executive Dashboard"
+                />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <KPICard title="Total Revenue" value={`$${kpis?.totalRevenue?.toLocaleString() || 0}`} icon={DollarSign} />
@@ -106,6 +106,6 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         </ChartCard>
       </div>
-    </div>
+    </PageContainer>
   );
 }

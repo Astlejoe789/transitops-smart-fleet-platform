@@ -5,7 +5,7 @@ import { ForecastWidget } from '../components/ForecastWidget';
 import { AiChatPanel } from '../components/AiChatPanel';
 import { Sparkles, Activity, ShieldAlert, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function AiPage() {
   const { data: dashboard, isLoading: isDashboardLoading } = useQuery({
@@ -26,13 +26,11 @@ export default function AiPage() {
   const forecasts = dashboard?.forecasts;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <PageTitle>AI Insights & Predictive Intelligence</PageTitle>
-        <PageSubtitle>
-          Harness the power of machine learning to predict trends, identify risks, and optimize your fleet operations.
-        </PageSubtitle>
-      </div>
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="AI Insights & Predictive Intelligence"
+                  subtitle="Harness the power of machine learning to predict trends, identify risks, and optimize your fleet operations."
+                />
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
@@ -93,6 +91,6 @@ export default function AiPage() {
           <AiChatPanel />
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

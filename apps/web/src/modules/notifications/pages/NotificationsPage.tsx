@@ -3,11 +3,11 @@ import type { Notification } from '../services/notificationsApi';
 import { notificationsApi } from '../services/notificationsApi';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Bell, Info, AlertTriangle, CheckCircle, XCircle, Trash2, Check, Settings } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 const CategoryIcon = ({ category }: { category: string }) => {
   switch (category) {
@@ -48,21 +48,22 @@ export default function NotificationsPage() {
   const notifications = data?.notifications || [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <PageTitle>Notification Center</PageTitle>
-          <PageSubtitle>Manage all your operational alerts and messages.</PageSubtitle>
-        </div>
-        <div className="flex gap-2">
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="Notification Center"
+                  subtitle="Manage all your operational alerts and messages."
+                  actions={<>
+                    
           <Button variant="outline" onClick={() => markAllMutation.mutate()}>
-            <Check className="mr-2 h-4 w-4" /> Mark all read
-          </Button>
+                      <Check className="mr-2 h-4 w-4" /> Mark all read
+                    </Button>
+
           <Button variant="default" onClick={() => navigate('/dashboard/settings/notifications')}>
-            <Settings className="mr-2 h-4 w-4" /> Preferences
-          </Button>
-        </div>
-      </div>
+                      <Settings className="mr-2 h-4 w-4" /> Preferences
+                    </Button>
+
+                  </>}
+                />
 
       <Card>
         <CardContent className="p-0">
@@ -107,6 +108,6 @@ export default function NotificationsPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </PageContainer>
   );
 }

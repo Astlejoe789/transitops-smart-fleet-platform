@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Mail, Phone, MapPin, Briefcase, Star, Wrench } from 'lucide-react';
 import { useVendor } from '../hooks/useVendors';
 import { Badge } from '@/components/ui/Badge';
+import { PageContainer } from "@/components/layout";
 
 export function VendorDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -27,7 +28,7 @@ export function VendorDetailsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <PageContainer className="space-y-6 max-w-5xl mx-auto">
       <div className="flex items-center gap-4">
         <Link 
           to="/vendors" 
@@ -161,6 +162,6 @@ export function VendorDetailsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

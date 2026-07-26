@@ -4,9 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { DataTable } from '@/components/ui/DataTable';
-import { PageTitle } from '@/components/ui/Typography';
 import { UserCheck, UserX, UserMinus } from 'lucide-react';
 import { useState } from 'react';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function UserManagementPage() {
   const queryClient = useQueryClient();
@@ -61,14 +61,13 @@ export default function UserManagementPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <PageTitle>User Management</PageTitle>
-          <p className="text-muted-foreground mt-2">Manage all enterprise users, roles, and access statuses.</p>
-        </div>
-        <Button>Invite User</Button>
-      </div>
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="User Management"
+                  actions={<>
+                    Invite User
+                  </>}
+                />
 
       <Card>
         <CardContent className="p-0">
@@ -88,6 +87,6 @@ export default function UserManagementPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </PageContainer>
   );
 }

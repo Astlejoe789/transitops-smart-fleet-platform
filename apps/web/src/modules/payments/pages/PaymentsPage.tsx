@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Search, Filter, Download, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { usePayments, usePaymentSummary, useRefundPayment } from '../../billing/hooks/usePayments';
 import type { PaymentMethod, Payment } from '../../billing/types';
 import { PaymentStatus } from '../../billing/types';
 import { format } from 'date-fns';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
@@ -55,20 +55,20 @@ export default function PaymentsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <PageContainer className="space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <PageTitle>Payments</PageTitle>
-          <PageSubtitle>Track and manage all incoming payments and refunds.</PageSubtitle>
-        </div>
-        <div className="flex items-center gap-3">
+      <PageHeader 
+                  title="Payments"
+                  subtitle="Track and manage all incoming payments and refunds."
+                  actions={<>
+                    
           <Button variant="outline" className="flex items-center gap-2" onClick={handleExportCSV}>
-            <Download className="h-4 w-4" />
-            Export CSV
-          </Button>
-        </div>
-      </div>
+                      <Download className="h-4 w-4" />
+                      Export CSV
+                    </Button>
+
+                  </>}
+                />
 
       {/* KPI Cards */}
       {!summaryLoading && summary && (
@@ -218,6 +218,6 @@ export default function PaymentsPage() {
           </div>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 }

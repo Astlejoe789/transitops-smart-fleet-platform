@@ -17,7 +17,7 @@ import { analyticsRoutes } from '../modules/analytics/index.js';
 import { aiRoutes } from '../modules/ai/index.js';
 import { notificationRoutes } from '../modules/notifications/index.js';
 import { administrationRoutes } from '../modules/administration/index.js';
-// import { settingsRoutes } from '../modules/settings/index.js';
+import { settingsRoutes } from '../modules/settings/index.js';
 
 export const apiRouter = Router();
 
@@ -39,7 +39,7 @@ apiRouter.use('/analytics', analyticsRoutes);
 apiRouter.use('/ai', aiRoutes);
 apiRouter.use('/notifications', notificationRoutes);
 apiRouter.use('/admin', administrationRoutes);
-// apiRouter.use('/settings', settingsRoutes);
+apiRouter.use('/settings', settingsRoutes);
 
 // Default API info endpoint
 apiRouter.get('/', (_req: Request, res: Response) => {

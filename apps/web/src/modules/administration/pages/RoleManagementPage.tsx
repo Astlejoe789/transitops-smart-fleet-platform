@@ -2,9 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../services/adminApi';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
-import { PageTitle } from '@/components/ui/Typography';
 import { useState } from 'react';
 import { Shield, Check } from 'lucide-react';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function RoleManagementPage() {
   const queryClient = useQueryClient();
@@ -55,14 +55,12 @@ export default function RoleManagementPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <PageTitle>Role & Permission Matrix</PageTitle>
-          <p className="text-muted-foreground mt-2">Configure precise granular access control via RBAC.</p>
-        </div>
-        <Button>Create Role</Button>
-      </div>
+    <PageContainer className="space-y-6">
+      <PageHeader 
+        title="Role & Permission Matrix"
+        subtitle="Configure precise granular access control via RBAC."
+        actions={<Button>Create Role</Button>}
+      />
 
       <div className="grid lg:grid-cols-4 gap-6">
         <div className="space-y-4">
@@ -131,6 +129,6 @@ export default function RoleManagementPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

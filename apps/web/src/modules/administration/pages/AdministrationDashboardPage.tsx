@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../services/adminApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Users, Shield, Server, Activity, Database, CheckCircle, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export default function AdministrationDashboardPage() {
   const { data: healthData, isLoading } = useQuery({
@@ -16,11 +16,11 @@ export default function AdministrationDashboardPage() {
   const { stats, health } = healthData || {};
 
   return (
-    <div className="space-y-6">
-      <div>
-        <PageTitle>Administration Console</PageTitle>
-        <PageSubtitle>Enterprise portal for system management, security, and configuration.</PageSubtitle>
-      </div>
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="Administration Console"
+                  subtitle="Enterprise portal for system management, security, and configuration."
+                />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Link to="/dashboard/admin/users">
@@ -141,6 +141,6 @@ export default function AdministrationDashboardPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { useTheme } from 'next-themes';
 import { useAuth } from '@/hooks/useAuth';
 import {
   Menu,
@@ -10,6 +11,8 @@ import {
   HelpCircle,
   LogOut,
   ChevronRight,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { NotificationBell } from '@/modules/notifications/components/NotificationBell';
 
@@ -20,6 +23,7 @@ interface HeaderProps {
 export function Header({ onOpenMobileDrawer }: HeaderProps) {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +85,14 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
         {/* Quick Action Button */}
         <button className="hidden sm:flex h-[44px] items-center justify-center rounded-[10px] bg-primary-500 px-4 text-[length:var(--text-body)] font-semibold text-white hover:bg-primary-600 transition-colors">
           Create New
+        </button>
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="flex items-center justify-center h-[44px] w-[44px] rounded-[10px] border border-surface-800 hover:bg-surface-850 transition-colors text-surface-400 hover:text-white"
+        >
+          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
 
         {/* Notifications Dropdown */}

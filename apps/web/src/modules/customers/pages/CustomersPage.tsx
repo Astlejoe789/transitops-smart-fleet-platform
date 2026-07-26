@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Plus, Search, Filter, Download } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { CustomersTable } from '../components/CustomersTable';
 import { CustomerFormModal } from '../components/CustomerFormModal';
 import { useCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer } from '../hooks/useCustomers';
 import type { Customer } from '../types';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export function CustomersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,29 +43,30 @@ export function CustomersPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <PageTitle>Customers</PageTitle>
-          <PageSubtitle>Manage your clients and corporate partners</PageSubtitle>
-        </div>
-        <div className="flex items-center gap-3">
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="Customers"
+                  subtitle="Manage your clients and corporate partners"
+                  actions={<>
+                    
           <Button variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
+                      <Download className="h-4 w-4" />
+                      Export
+                    </Button>
+
           <Button 
-            className="flex items-center gap-2"
-            onClick={() => {
-              setSelectedCustomer(null);
-              setIsModalOpen(true);
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            Add Customer
-          </Button>
-        </div>
-      </div>
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        setSelectedCustomer(null);
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Customer
+                    </Button>
+
+                  </>}
+                />
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative w-full sm:w-96">
@@ -107,6 +108,6 @@ export function CustomersPage() {
         initialData={selectedCustomer}
         isLoading={createCustomer.isPending || updateCustomer.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

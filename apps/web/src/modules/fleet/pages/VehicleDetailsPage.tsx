@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Truck, Activity, Wrench, Fuel, FileText, Clock, File } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle } from '@/components/ui/Typography';
-import { Badge } from '@/components/ui/Badge';
+
 import { useVehicle } from '../hooks/useFleet';
 import { DocumentList } from '../components/DocumentList';
 import { format } from 'date-fns';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 export default function VehicleDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,12 +25,12 @@ export default function VehicleDetailsPage() {
 
   if (!vehicle) {
     return (
-      <div className="flex h-64 flex-col items-center justify-center space-y-4">
+      <PageContainer className="flex h-64 flex-col items-center justify-center space-y-4">
         <h2 className="text-xl font-semibold">Vehicle not found</h2>
         <Button onClick={() => navigate('/fleet')} variant="outline">
           Back to Fleet
         </Button>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -44,25 +45,20 @@ export default function VehicleDetailsPage() {
   ];
 
   return (
-    <div className="mx-auto max-w-7xl pb-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/fleet')} className="-ml-2">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <div className="flex items-center space-x-3">
-              <PageTitle>{vehicle.plateNumber}</PageTitle>
-              <Badge variant={vehicle.status === 'AVAILABLE' ? 'success' : 'secondary'}>
-                {vehicle.status.replace('_', ' ')}
-              </Badge>
-            </div>
-            <p className="mt-1 text-sm text-surface-500">
-              {vehicle.year} {vehicle.make} {vehicle.model} • VIN: {vehicle.vin}
-            </p>
-          </div>
-        </div>
+    <PageContainer>
+      <div className="mb-6">
+        <Button variant="ghost" onClick={() => navigate('/fleet')} className="mb-4 -ml-4">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Fleet
+        </Button>
+        <PageHeader 
+          title={vehicle.plateNumber}
+          subtitle={`${vehicle.year} ${vehicle.make} ${vehicle.model} • VIN: ${vehicle.vin}`}
+          actions={
+            <Button>
+              <Wrench className="mr-2 h-4 w-4" /> Edit Vehicle
+            </Button>
+          }
+        />
       </div>
 
       {/* Tabs */}
@@ -135,6 +131,6 @@ export default function VehicleDetailsPage() {
           </div>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 }

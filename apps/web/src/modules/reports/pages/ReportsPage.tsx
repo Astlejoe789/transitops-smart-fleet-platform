@@ -5,7 +5,7 @@ import { AnalyticsTable } from '@/components/analytics/AnalyticsTable';
 import { FilterPanel } from '@/components/analytics/FilterPanel';
 import { ExportButton } from '@/components/analytics/ExportButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PageTitle } from '@/components/ui/Typography';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 const REPORT_TYPES = [
   { id: 'fleet', label: 'Fleet Status' },
@@ -68,23 +68,24 @@ export default function ReportsPage() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <PageTitle>Operational Reports</PageTitle>
-        
-        <div className="flex items-center space-x-2">
-          <select 
-            value={reportType}
-            onChange={(e) => setReportType(e.target.value)}
-            className="flex h-9 w-[200px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
-          >
-            {REPORT_TYPES.map(rt => (
-              <option key={rt.id} value={rt.id}>{rt.label}</option>
-            ))}
-          </select>
-          <ExportButton data={reportData || []} filename={`${reportType}-report.csv`} />
-        </div>
-      </div>
+    <PageContainer className="p-6 space-y-6">
+      <PageHeader 
+        title="Operational Reports"
+        actions={
+          <>
+            <select 
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
+              className="flex h-9 w-[200px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
+            >
+              {REPORT_TYPES.map(rt => (
+                <option key={rt.id} value={rt.id}>{rt.label}</option>
+              ))}
+            </select>
+            <ExportButton data={reportData || []} filename={`${reportType}-report.csv`} />
+          </>
+        }
+      />
 
       <Card>
         <CardHeader>
@@ -114,6 +115,6 @@ export default function ReportsPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </PageContainer>
   );
 }

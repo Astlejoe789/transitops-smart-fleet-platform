@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Plus, Search, Filter, Download } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { VendorsTable } from '../components/VendorsTable';
 import { VendorFormModal } from '../components/VendorFormModal';
 import { useVendors, useCreateVendor, useUpdateVendor, useDeleteVendor } from '../hooks/useVendors';
 import type { Vendor } from '../types';
+import { PageContainer, PageHeader } from "@/components/layout";
 
 export function VendorsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,29 +43,30 @@ export function VendorsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <PageTitle>Vendors</PageTitle>
-          <PageSubtitle>Manage your suppliers and service providers</PageSubtitle>
-        </div>
-        <div className="flex items-center gap-3">
+    <PageContainer className="space-y-6">
+      <PageHeader 
+                  title="Vendors"
+                  subtitle="Manage your suppliers and service providers"
+                  actions={<>
+                    
           <Button variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
+                      <Download className="h-4 w-4" />
+                      Export
+                    </Button>
+
           <Button 
-            className="flex items-center gap-2"
-            onClick={() => {
-              setSelectedVendor(null);
-              setIsModalOpen(true);
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            Add Vendor
-          </Button>
-        </div>
-      </div>
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        setSelectedVendor(null);
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Vendor
+                    </Button>
+
+                  </>}
+                />
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="relative w-full sm:w-96">
@@ -107,6 +108,6 @@ export function VendorsPage() {
         initialData={selectedVendor}
         isLoading={createVendor.isPending || updateVendor.isPending}
       />
-    </div>
+    </PageContainer>
   );
 }

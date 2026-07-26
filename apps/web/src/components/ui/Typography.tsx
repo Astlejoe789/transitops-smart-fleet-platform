@@ -13,7 +13,7 @@ export const PageTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadi
     <h1
       ref={ref}
       className={cn(
-        'text-[length:var(--text-h1)] leading-[var(--leading-h1)] font-bold tracking-tight text-surface-900 dark:text-white',
+        'text-[length:var(--text-h1)] leading-[var(--leading-h1)] font-bold tracking-tight bg-gradient-to-r from-surface-900 to-surface-600 dark:from-white dark:to-surface-400 bg-clip-text text-transparent',
         className,
       )}
       {...props}
