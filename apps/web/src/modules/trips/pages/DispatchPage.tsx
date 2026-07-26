@@ -1,5 +1,6 @@
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { DispatchBoard } from '../components/DispatchBoard';
 import { useDispatchBoard } from '../hooks/useTrips';
 
@@ -10,12 +11,10 @@ export default function DispatchPage() {
     <div className="space-y-6 max-w-[1600px] mx-auto pb-8 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white sm:text-3xl">
-            Dispatch Board
-          </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <PageTitle>Dispatch Board</PageTitle>
+          <PageSubtitle>
             Live operational view of all active and pending assignments.
-          </p>
+          </PageSubtitle>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={() => refetch()} isLoading={isRefetching}>

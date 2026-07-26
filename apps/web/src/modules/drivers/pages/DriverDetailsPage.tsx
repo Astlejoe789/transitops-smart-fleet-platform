@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/Button';
+import { PageTitle } from '@/components/ui/Typography';
 import { Badge } from '@/components/ui/Badge';
 import { useDriver, useDeleteDriver, useRestoreDriver } from '../hooks/useDrivers';
 import { DriverDocuments } from '../components/DriverDocuments';
@@ -183,9 +184,7 @@ export default function DriverDetailsPage() {
 
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">
-                  {fullName}
-                </h1>
+                <PageTitle>{fullName}</PageTitle>
                 <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
                 {driver.deletedAt && <Badge variant="outline">Deleted</Badge>}
               </div>

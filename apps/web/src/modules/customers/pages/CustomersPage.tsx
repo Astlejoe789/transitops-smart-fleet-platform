@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Filter, Download } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { CustomersTable } from '../components/CustomersTable';
 import { CustomerFormModal } from '../components/CustomerFormModal';
@@ -45,8 +46,8 @@ export function CustomersPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Customers</h1>
-          <p className="text-sm text-surface-500 mt-1">Manage your clients and corporate partners</p>
+          <PageTitle>Customers</PageTitle>
+          <PageSubtitle>Manage your clients and corporate partners</PageSubtitle>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" className="flex items-center gap-2">

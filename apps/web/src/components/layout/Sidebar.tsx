@@ -91,7 +91,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
               <Truck className="h-5 w-5" />
             </div>
             {!collapsed && (
-              <span className="text-[16px] font-bold tracking-tight text-white">
+              <span className="text-[length:var(--text-body)] font-bold tracking-tight text-white">
                 TransitOps
               </span>
             )}
@@ -110,7 +110,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
           {NAV_GROUPS.map((group) => (
             <div key={group.category} className="space-y-2">
               {!collapsed && (
-                <h3 className="px-3 text-[12px] font-semibold tracking-wider text-surface-500 uppercase">
+                <h3 className="px-3 text-[length:var(--text-caption)] font-semibold tracking-wider text-surface-500 uppercase">
                   {group.category}
                 </h3>
               )}
@@ -123,7 +123,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                     to={item.path}
                     title={collapsed ? item.name : undefined}
                     className={({ isActive }) =>
-                      `group flex items-center gap-3 rounded-[10px] px-3 h-[44px] text-[15px] font-medium transition-all ${
+                      `group flex items-center gap-3 rounded-[10px] px-3 h-[44px] text-[length:var(--text-body)] font-medium transition-all ${
                         isActive
                           ? 'bg-primary-500 text-white shadow-sm'
                           : 'text-surface-400 hover:bg-surface-850 hover:text-white'
@@ -133,7 +133,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
                     <Icon className="h-5 w-5 shrink-0" />
                     {!collapsed && <span className="truncate">{item.name}</span>}
                     {!collapsed && item.badge && (
-                      <span className="ml-auto rounded-full bg-surface-800 px-2 py-0.5 text-[10px] font-bold text-white">
+                      <span className="ml-auto rounded-full bg-surface-800 px-2 py-0.5 text-[length:var(--text-caption)] font-bold text-white">
                         {item.badge}
                       </span>
                     )}
@@ -152,7 +152,7 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
             <NavLink
               to="/settings"
               className={({ isActive }) =>
-                `group flex items-center gap-3 rounded-[10px] px-3 h-[44px] text-[15px] font-medium transition-all ${
+                `group flex items-center gap-3 rounded-[10px] px-3 h-[44px] text-[length:var(--text-body)] font-medium transition-all ${
                   isActive
                     ? 'bg-primary-500 text-white shadow-sm'
                     : 'text-surface-400 hover:bg-surface-850 hover:text-white'
@@ -167,15 +167,15 @@ export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
         
         <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : 'justify-between'}`}>
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-surface-800 text-[14px] font-semibold text-white uppercase border border-surface-700">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-surface-800 text-[length:var(--text-body-sm)] font-semibold text-white uppercase border border-surface-700">
               {user ? `${user.firstName[0]}${user.lastName[0]}` : 'U'}
             </div>
             {!collapsed && (
               <div className="flex flex-col overflow-hidden">
-                <span className="truncate text-[15px] font-semibold text-white">
+                <span className="truncate text-[length:var(--text-body)] font-semibold text-white">
                   {user ? `${user.firstName} ${user.lastName}` : 'Guest User'}
                 </span>
-                <span className="truncate text-[12px] text-surface-400 font-medium">
+                <span className="truncate text-[length:var(--text-caption)] text-surface-400 font-medium">
                   {user?.email || 'user@example.com'}
                 </span>
               </div>

@@ -3,6 +3,7 @@ import type { Notification } from '../services/notificationsApi';
 import { notificationsApi } from '../services/notificationsApi';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Bell, Info, AlertTriangle, CheckCircle, XCircle, Trash2, Check, Settings } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -50,8 +51,8 @@ export default function NotificationsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Notification Center</h1>
-          <p className="text-muted-foreground mt-2">Manage all your operational alerts and messages.</p>
+          <PageTitle>Notification Center</PageTitle>
+          <PageSubtitle>Manage all your operational alerts and messages.</PageSubtitle>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => markAllMutation.mutate()}>

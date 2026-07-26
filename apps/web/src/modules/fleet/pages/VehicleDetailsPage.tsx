@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Truck, Activity, Wrench, Fuel, FileText, Clock, File } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle } from '@/components/ui/Typography';
 import { Badge } from '@/components/ui/Badge';
 import { useVehicle } from '../hooks/useFleet';
 import { DocumentList } from '../components/DocumentList';
@@ -52,9 +53,7 @@ export default function VehicleDetailsPage() {
           </Button>
           <div>
             <div className="flex items-center space-x-3">
-              <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white">
-                {vehicle.plateNumber}
-              </h1>
+              <PageTitle>{vehicle.plateNumber}</PageTitle>
               <Badge variant={vehicle.status === 'AVAILABLE' ? 'success' : 'secondary'}>
                 {vehicle.status.replace('_', ' ')}
               </Badge>

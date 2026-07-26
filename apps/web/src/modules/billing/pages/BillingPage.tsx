@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Search, Filter, Download } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { InvoicesDashboardCards } from '../components/InvoicesDashboardCards';
 import { InvoicesTable } from '../components/InvoicesTable';
@@ -78,8 +79,8 @@ export function BillingPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Billing & Payments</h1>
-          <p className="text-sm text-surface-500 mt-1">Create invoices, track payments, and manage receivables</p>
+          <PageTitle>Billing & Payments</PageTitle>
+          <PageSubtitle>Create invoices, track payments, and manage receivables</PageSubtitle>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" className="flex items-center gap-2" onClick={handleExportCSV}>

@@ -10,6 +10,7 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, 
   Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
+import { PageTitle } from '@/components/ui/Typography';
 
 export default function AnalyticsPage() {
   const { data: kpis, isLoading: isKpisLoading } = useQuery({
@@ -29,7 +30,7 @@ export default function AnalyticsPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Executive Dashboard</h1>
+        <PageTitle>Executive Dashboard</PageTitle>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

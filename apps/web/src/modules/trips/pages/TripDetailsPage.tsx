@@ -5,6 +5,7 @@ import {
   MapPin, Activity, FileText, Receipt, Wrench, Package, Navigation, Map
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle } from '@/components/ui/Typography';
 import { Badge } from '@/components/ui/Badge';
 import { useTrip, useUpdateTripStatus } from '../hooks/useTrips';
 
@@ -61,9 +62,7 @@ export default function TripDetailsPage() {
         </Link>
         <div className="flex-1 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white sm:text-3xl">
-              {trip.tripNumber}
-            </h1>
+            <PageTitle>{trip.tripNumber}</PageTitle>
             <Badge variant="outline">{trip.status.replace(/_/g, ' ')}</Badge>
           </div>
           <div className="flex items-center gap-2">

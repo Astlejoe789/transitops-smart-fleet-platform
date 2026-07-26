@@ -3,6 +3,7 @@ import { adminApi } from '../services/adminApi';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PageTitle } from '@/components/ui/Typography';
 import { useState, useEffect } from 'react';
 import { Save, Bot, Lock, Server } from 'lucide-react';
 
@@ -106,7 +107,7 @@ export default function SystemConfigPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">System Configuration</h1>
+        <PageTitle>System Configuration</PageTitle>
         <p className="text-muted-foreground mt-2">Manage global platform settings and integrations.</p>
       </div>
 

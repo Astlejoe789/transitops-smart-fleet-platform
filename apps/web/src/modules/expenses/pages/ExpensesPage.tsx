@@ -4,6 +4,7 @@ import { ExpensesTable } from '../components/ExpensesTable';
 import { ExpenseFormModal } from '../components/ExpenseFormModal';
 import { useExpenses, useCreateExpense, useUpdateExpense } from '../hooks/useExpenses';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Input } from '@/components/ui/Input';
 import { Plus, Search, Filter } from 'lucide-react';
 import type { Expense } from '../types';
@@ -39,8 +40,8 @@ export function ExpensesPage() {
     <div className="p-6 space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Expense Management</h1>
-          <p className="mt-1 text-sm text-surface-500">Track and manage operational fleet expenses</p>
+          <PageTitle>Expense Management</PageTitle>
+          <PageSubtitle>Track and manage operational fleet expenses</PageSubtitle>
         </div>
         <div className="flex items-center gap-3">
           <Button onClick={() => setIsModalOpen(true)}>

@@ -1,5 +1,6 @@
 import { type LucideIcon, Sparkles, Clock, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { PageTitle } from '@/components/ui/Typography';
 
 interface ModulePlaceholderPageProps {
   moduleName: string;
@@ -28,9 +29,7 @@ export function ModulePlaceholderPage({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white sm:text-3xl">
-                {moduleName}
-              </h1>
+              <PageTitle>{moduleName}</PageTitle>
               <span className="rounded-full bg-primary-500/10 px-2.5 py-0.5 text-xs font-bold text-primary-600 dark:text-primary-400 uppercase">
                 {category}
               </span>

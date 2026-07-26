@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { DataTable } from '@/components/ui/DataTable';
+import { PageTitle } from '@/components/ui/Typography';
 import { UserCheck, UserX, UserMinus } from 'lucide-react';
 import { useState } from 'react';
 
@@ -63,7 +64,7 @@ export default function UserManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
+          <PageTitle>User Management</PageTitle>
           <p className="text-muted-foreground mt-2">Manage all enterprise users, roles, and access statuses.</p>
         </div>
         <Button>Invite User</Button>

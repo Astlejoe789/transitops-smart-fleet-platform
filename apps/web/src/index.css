@@ -8,6 +8,23 @@
   /* ---- Typography ---- */
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
+  /* ---- Type Scale ---- */
+  --text-display: 2.25rem;    /* 36px — landing hero */
+  --text-h1: 1.875rem;        /* 30px — page titles */
+  --text-h2: 1.5rem;          /* 24px — section titles */
+  --text-h3: 1.25rem;         /* 20px — card titles */
+  --text-body: 0.9375rem;     /* 15px — default body / nav */
+  --text-body-sm: 0.875rem;   /* 14px — secondary text */
+  --text-caption: 0.75rem;    /* 12px — labels, badges */
+
+  --leading-display: 2.5rem;
+  --leading-h1: 2.25rem;
+  --leading-h2: 2rem;
+  --leading-h3: 1.75rem;
+  --leading-body: 1.5rem;
+  --leading-body-sm: 1.25rem;
+  --leading-caption: 1rem;
+
   /* ---- Brand Colors ---- */
   --color-primary-50: #fff7ed;
   --color-primary-100: #ffedd5;

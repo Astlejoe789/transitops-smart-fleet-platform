@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { MaintenanceFilters } from '../components/MaintenanceFilters';
 import { MaintenanceTable } from '../components/MaintenanceTable';
 import { MaintenanceFormModal } from '../components/MaintenanceFormModal';
@@ -35,8 +36,8 @@ export default function MaintenancePage() {
     <div className="flex flex-col h-full bg-surface-50 dark:bg-surface-950">
       <div className="flex items-center justify-between px-8 py-6 bg-white dark:bg-surface-900 border-b border-surface-200 dark:border-surface-800">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Maintenance</h1>
-          <p className="text-sm text-surface-500">Manage vehicle service and repair logs.</p>
+          <PageTitle>Maintenance</PageTitle>
+          <PageSubtitle>Manage vehicle service and repair logs.</PageSubtitle>
         </div>
         <Button onClick={handleCreate}>
           <Plus className="w-4 h-4 mr-2" />

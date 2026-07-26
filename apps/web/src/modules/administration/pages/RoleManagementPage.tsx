@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../services/adminApi';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/Button';
+import { PageTitle } from '@/components/ui/Typography';
 import { useState } from 'react';
 import { Shield, Check } from 'lucide-react';
 
@@ -57,7 +58,7 @@ export default function RoleManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Role & Permission Matrix</h1>
+          <PageTitle>Role & Permission Matrix</PageTitle>
           <p className="text-muted-foreground mt-2">Configure precise granular access control via RBAC.</p>
         </div>
         <Button>Create Role</Button>

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '../services/adminApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { Users, Shield, Server, Activity, Database, CheckCircle, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -17,8 +18,8 @@ export default function AdministrationDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Administration Console</h1>
-        <p className="text-muted-foreground mt-2">Enterprise portal for system management, security, and configuration.</p>
+        <PageTitle>Administration Console</PageTitle>
+        <PageSubtitle>Enterprise portal for system management, security, and configuration.</PageSubtitle>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">

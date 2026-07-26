@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { VehicleTable } from '../components/VehicleTable';
 import { VehicleFilters } from '../components/VehicleFilters';
 import { VehicleFormModal } from '../components/VehicleFormModal';
@@ -38,12 +39,10 @@ export default function FleetPage() {
     <div className="mx-auto max-w-7xl pb-8">
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white sm:text-3xl">
-            Fleet Management
-          </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <PageTitle>Fleet Management</PageTitle>
+          <PageSubtitle>
             Manage your vehicles, documents, and lifecycle status.
-          </p>
+          </PageSubtitle>
         </div>
         <Button onClick={() => setIsFormOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />

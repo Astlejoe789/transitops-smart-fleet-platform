@@ -53,7 +53,7 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
           </button>
         )}
 
-        <div className="hidden sm:flex items-center text-[15px] font-medium text-surface-400">
+        <div className="hidden sm:flex items-center text-[length:var(--text-body)] font-medium text-surface-400">
           <Link to="/dashboard" className="hover:text-white transition-colors">
             TransitOps
           </Link>
@@ -71,7 +71,7 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
           <input
             type="text"
             placeholder="Search... (Press ⌘K)"
-            className="w-full h-[44px] rounded-[10px] border border-surface-800 bg-surface-900 py-2 pl-10 pr-4 text-[15px] text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none transition-colors"
+            className="w-full h-[44px] rounded-[10px] border border-surface-800 bg-surface-900 py-2 pl-10 pr-4 text-[length:var(--text-body)] text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none transition-colors"
           />
         </div>
       </div>
@@ -79,7 +79,7 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
       {/* Right Section: Actions, Profile Menu */}
       <div className="flex items-center gap-4">
         {/* Quick Action Button */}
-        <button className="hidden sm:flex h-[44px] items-center justify-center rounded-[10px] bg-primary-500 px-4 text-[15px] font-semibold text-white hover:bg-primary-600 transition-colors">
+        <button className="hidden sm:flex h-[44px] items-center justify-center rounded-[10px] bg-primary-500 px-4 text-[length:var(--text-body)] font-semibold text-white hover:bg-primary-600 transition-colors">
           Create New
         </button>
 
@@ -94,10 +94,10 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center gap-2 rounded-[10px] border border-surface-800 h-[44px] px-2 hover:bg-surface-850 transition-colors"
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-surface-800 text-[12px] font-bold text-white uppercase border border-surface-700">
+            <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-surface-800 text-[length:var(--text-caption)] font-bold text-white uppercase border border-surface-700">
               {user ? `${user.firstName[0]}${user.lastName[0]}` : 'U'}
             </div>
-            <span className="hidden sm:inline-block text-[14px] font-medium text-white max-w-[100px] truncate">
+            <span className="hidden sm:inline-block text-[length:var(--text-body-sm)] font-medium text-white max-w-[100px] truncate">
               {user?.firstName || 'User'}
             </span>
             <ChevronDown className="h-4 w-4 text-surface-400" />
@@ -106,30 +106,30 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
           {profileOpen && (
             <div className="absolute right-0 mt-2 w-56 rounded-[16px] border border-surface-800 bg-surface-900 p-2 shadow-xl z-30 space-y-1">
               <div className="px-3 py-3 border-b border-surface-800">
-                <p className="text-[15px] font-semibold text-white">
+                <p className="text-[length:var(--text-body)] font-semibold text-white">
                   {user ? `${user.firstName} ${user.lastName}` : 'User'}
                 </p>
-                <p className="text-[12px] text-surface-400 truncate mt-1">{user?.email}</p>
+                <p className="text-[length:var(--text-caption)] text-surface-400 truncate mt-1">{user?.email}</p>
               </div>
 
               <Link
                 to="/settings"
                 onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
+                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
               >
                 <UserIcon className="h-4 w-4" /> Profile & Account
               </Link>
               <Link
                 to="/settings"
                 onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
+                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
               >
                 <Settings className="h-4 w-4" /> System Settings
               </Link>
               <a
                 href="#help"
                 onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
+                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
               >
                 <HelpCircle className="h-4 w-4" /> Documentation
               </a>
@@ -140,7 +140,7 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
                     setProfileOpen(false);
                     logout();
                   }}
-                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2 text-[14px] font-semibold text-danger-500 hover:bg-surface-850"
+                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-semibold text-danger-500 hover:bg-surface-850"
                 >
                   <LogOut className="h-4 w-4" /> Sign Out
                 </button>

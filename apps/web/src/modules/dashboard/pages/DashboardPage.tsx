@@ -26,6 +26,7 @@ import { TripsChart } from '../components/charts/TripsChart';
 import { FinancialOverviewChart } from '../components/charts/FinancialOverviewChart';
 import { RecentActivityFeed } from '../components/RecentActivityFeed';
 import { NotificationsPanel } from '../components/NotificationsPanel';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 
 export default function DashboardPage() {
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
@@ -40,12 +41,10 @@ export default function DashboardPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white sm:text-3xl">
-            Operations Dashboard
-          </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <PageTitle>Operations Dashboard</PageTitle>
+          <PageSubtitle>
             Real-time overview of your fleet, trips, and financial metrics.
-          </p>
+          </PageSubtitle>
         </div>
       </div>
 

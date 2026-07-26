@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { TripFilters } from '../components/TripFilters';
 import { TripTable } from '../components/TripTable';
 import { TripFormModal } from '../components/TripFormModal';
@@ -25,12 +26,10 @@ export default function TripsPage() {
     <div className="space-y-6 max-w-7xl mx-auto pb-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white sm:text-3xl">
-            Trips
-          </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <PageTitle>Trips</PageTitle>
+          <PageSubtitle>
             Manage your fleet trips, routes, and assignments.
-          </p>
+          </PageSubtitle>
         </div>
         <div className="flex items-center gap-3">
           <Button onClick={() => setIsFormOpen(true)}>

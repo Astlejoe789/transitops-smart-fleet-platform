@@ -8,6 +8,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PageTitle, PageSubtitle } from '@/components/ui/Typography';
 import { DriverTable } from '../components/DriverTable';
 import { DriverFilters } from '../components/DriverFilters';
 import { DriverFormModal } from '../components/DriverFormModal';
@@ -141,12 +142,10 @@ export default function DriversPage() {
       {/* Page Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-surface-900 dark:text-white sm:text-3xl">
-            Driver Management
-          </h1>
-          <p className="mt-1 text-sm text-surface-500 dark:text-surface-400">
+          <PageTitle>Driver Management</PageTitle>
+          <PageSubtitle>
             Manage driver profiles, licenses, medical certificates, and vehicle assignments.
-          </p>
+          </PageSubtitle>
         </div>
         <Button onClick={() => setIsFormOpen(true)} id="add-driver-btn">
           <Plus className="mr-2 h-4 w-4" />

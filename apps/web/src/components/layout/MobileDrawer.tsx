@@ -44,7 +44,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
           {NAV_GROUPS.map((group) => (
             <div key={group.category} className="space-y-1">
-              <h3 className="px-3 text-[10px] font-bold tracking-wider text-surface-400 uppercase">
+              <h3 className="px-3 text-[length:var(--text-caption)] font-bold tracking-wider text-surface-400 uppercase">
                 {group.category}
               </h3>
               {group.items.map((item) => {
@@ -82,7 +82,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                 <span className="truncate text-xs font-semibold text-surface-900 dark:text-white">
                   {user ? `${user.firstName} ${user.lastName}` : 'User'}
                 </span>
-                <span className="truncate text-[10px] text-surface-400 uppercase font-medium">
+                <span className="truncate text-[length:var(--text-caption)] text-surface-400 uppercase font-medium">
                   {user?.role}
                 </span>
               </div>

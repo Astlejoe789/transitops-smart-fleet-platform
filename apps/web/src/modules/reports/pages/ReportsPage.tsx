@@ -5,6 +5,7 @@ import { AnalyticsTable } from '@/components/analytics/AnalyticsTable';
 import { FilterPanel } from '@/components/analytics/FilterPanel';
 import { ExportButton } from '@/components/analytics/ExportButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { PageTitle } from '@/components/ui/Typography';
 
 const REPORT_TYPES = [
   { id: 'fleet', label: 'Fleet Status' },
@@ -69,7 +70,7 @@ export default function ReportsPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <h1 className="text-3xl font-bold tracking-tight">Operational Reports</h1>
+        <PageTitle>Operational Reports</PageTitle>
         
         <div className="flex items-center space-x-2">
           <select 
