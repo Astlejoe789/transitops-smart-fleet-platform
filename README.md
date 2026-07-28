@@ -1,103 +1,83 @@
-<div align="center">
-  <h1>🚛 TransitOps Smart Fleet Platform</h1>
-  <p>An enterprise-grade fleet and transport operations management system.</p>
-</div>
+## 🚀 Next Evolution: TransitOps AI
 
-## 📖 Project Overview
-TransitOps is a comprehensive web platform built to modernize transport and logistics operations. From tracking fleet health and driver certifications to managing dispatch multi-stop routing and generating financial invoices, TransitOps unifies disconnected transport silos into a single, intuitive dashboard. 
+TransitOps is evolving from a full-stack fleet management platform into an AI-powered intelligent transport operations system. The next version focuses on integrating Machine Learning, Predictive Analytics, and Generative AI to help fleet managers make smarter operational decisions.
 
-## ✨ Features
-- **Intelligent Dispatch & Trips**: End-to-end trip planning, real-time dispatch assignment, and multi-stop support.
-- **Complete Fleet Lifecycle**: Vehicle tracking, preventive maintenance schedules, and fuel logging.
-- **Driver Management**: Comprehensive driver profiles, license expiry tracking, and vehicle assignment histories.
-- **Financial Suite**: Vendor management, cost tracking, invoice generation, and full CRUD for payments/billing.
-- **Global Theme & UI**: Stunning, responsive interface powered by Shadcn UI and Tailwind CSS v4, complete with Dark/Light modes.
-- **Enterprise Security**: Role-based access control (RBAC), JWT authentication, and secure API architecture.
+### 🤖 AI & Machine Learning Roadmap
 
-## 🏗️ Architecture
-TransitOps employs a modern modular monolith architecture. The frontend is a React 18 Single Page Application (SPA), while the backend is an Express-powered REST API communicating with a PostgreSQL database via Prisma ORM.
+#### Phase 1 – AI Foundation
+- [ ] Create a dedicated AI module (Frontend + Backend)
+- [ ] Develop a Python FastAPI AI microservice
+- [ ] Connect Express API with AI services
+- [ ] Design AI database schema for predictions and model history
 
-## 🛠️ Technology Stack
-### Frontend (`apps/web`)
-- **Framework**: React 18 (Vite)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4 + Shadcn UI
-- **State/Data**: TanStack React Query + React Router v6
+#### Phase 2 – Predictive Maintenance
+- [ ] Train ML models using vehicle maintenance history
+- [ ] Predict maintenance requirements before failures occur
+- [ ] Display maintenance risk scores and recommendations
+- [ ] Explain predictions using feature importance
 
-### Backend (`apps/api`)
-- **Framework**: Node.js + Express
-- **Language**: TypeScript
-- **Database ORM**: Prisma
-- **Validation**: Zod
-- **Database**: PostgreSQL
+#### Phase 3 – Fuel Consumption Prediction
+- [ ] Forecast vehicle fuel usage
+- [ ] Compare expected vs actual fuel consumption
+- [ ] Detect abnormal fuel usage patterns
 
-## 📂 Folder Structure
-```text
-transitops/
-├── apps/
-│   ├── api/          # Express Backend (Modules, Services, Controllers)
-│   └── web/          # React Frontend (Pages, Components, API Clients)
-├── database/         # Prisma Schemas & Seed Data
-├── docs/             # Portfolio & Interview Preparation Assets
-└── scripts/          # Automation and Generator Utilities
-```
+#### Phase 4 – Driver Intelligence
+- [ ] Generate AI-based driver safety scores
+- [ ] Analyze driving behaviour
+- [ ] Rank drivers based on performance metrics
 
-## 🚀 Installation Guide
-### Prerequisites
-- Node.js >= 18
-- PostgreSQL
+#### Phase 5 – Fleet Intelligence Dashboard
+- [ ] AI Insights Dashboard
+- [ ] Fleet Health Score
+- [ ] Maintenance Forecast Charts
+- [ ] Fuel Forecast Dashboard
+- [ ] Driver Performance Analytics
+- [ ] Intelligent operational recommendations
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/Astlejoe789/transitops-smart-fleet-platform.git
-cd transitops-smart-fleet-platform
-```
+#### Phase 6 – Anomaly Detection
+- [ ] Detect unusual fuel consumption
+- [ ] Detect abnormal maintenance costs
+- [ ] Identify suspicious fleet activity
+- [ ] Generate automated alerts
 
-### 2. Install Dependencies
-```bash
-npm install
-```
+#### Phase 7 – AI Assistant
+- [ ] Natural language fleet analytics
+- [ ] AI-powered operational assistant
+- [ ] Intelligent report generation
+- [ ] Fleet Q&A using enterprise data
 
-### 3. Environment Variables
-Create `.env` in `apps/api/`:
-```env
-PORT=3000
-DATABASE_URL="postgresql://user:password@localhost:5432/transitops"
-JWT_SECRET="super-secret-jwt-key"
-FRONTEND_URL="http://localhost:5173"
-NODE_ENV="development"
-```
-Create `.env` in `apps/web/`:
-```env
-VITE_API_URL="http://localhost:3000/api"
-```
+#### Phase 8 – MLOps
+- [ ] Automated model training pipeline
+- [ ] Model versioning
+- [ ] Performance monitoring
+- [ ] Continuous model improvement
 
-### 4. Database Setup
-```bash
-npm run db:generate
-npm run db:migrate
-npm run db:seed
-```
-*Note: The seed script provides demo credentials (`admin@transitops.com` / `Admin@123456`).*
+---
 
-### 5. Run Locally
-Start both backend and frontend concurrently:
-```bash
-npm run dev
-```
+## 🧠 AI Technology Stack (Planned)
 
-## 🌍 Deployment Guide
-The project is configured for cloud deployment:
-- **Frontend (Vercel)**: Connect the GitHub repository to Vercel. Ensure the Framework Preset is Vite. The included `vercel.json` handles React Router rewrites.
-- **Backend & Database (Railway)**: Connect the GitHub repository to Railway. The included `railway.json` utilizes Nixpacks to automatically build and run the Express API. Add a PostgreSQL plugin and link the `DATABASE_URL`.
+### AI Service
+- Python
+- FastAPI
 
-## 🔮 Future Roadmap
-- [ ] Automated weekly PDF report generation for dispatchers.
-- [ ] E2E Test suite using Cypress/Playwright.
-- [ ] Live WebSocket integration for real-time map GPS tracking.
+### Machine Learning
+- Scikit-learn
+- XGBoost
+- Pandas
+- NumPy
+- Joblib
 
-## 📄 License
-This project is licensed under the MIT License.
+### Explainable AI
+- SHAP
 
-## ✍️ Author
-Designed and engineered by **Astlejoe789**.
+### Future AI
+- TensorFlow
+- PyTorch
+- LangChain
+- Vector Database (RAG)
+
+---
+
+## 🎯 Vision
+
+The goal of TransitOps AI is to evolve beyond traditional fleet management by combining enterprise software engineering with Artificial Intelligence. The platform will provide predictive insights, intelligent recommendations, anomaly detection, and conversational analytics to support smarter fleet operations.
