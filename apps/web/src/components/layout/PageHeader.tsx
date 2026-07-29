@@ -27,7 +27,7 @@ export const PageHeader = forwardRef<HTMLDivElement, PageHeaderProps>(
           {backHref && (
             <Link
               to={backHref}
-              className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-surface-500 shadow-sm ring-1 ring-inset ring-surface-200 transition-colors hover:text-surface-900 dark:bg-surface-800 dark:ring-surface-700 dark:hover:text-white"
+              className="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface-800/50 text-surface-400 shadow-sm ring-1 ring-inset ring-surface-700/30 transition-colors hover:text-white hover:bg-surface-700/50"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>

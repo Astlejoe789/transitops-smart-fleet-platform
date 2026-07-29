@@ -4,7 +4,6 @@ import { useTheme } from 'next-themes';
 import { useAuth } from '@/hooks/useAuth';
 import {
   Menu,
-  Search,
   ChevronDown,
   User as UserIcon,
   Settings,
@@ -15,6 +14,7 @@ import {
   Moon
 } from 'lucide-react';
 import { NotificationBell } from '@/modules/notifications/components/NotificationBell';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface HeaderProps {
   onOpenMobileDrawer?: () => void;
@@ -45,58 +45,39 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
     : 'Dashboard';
 
   return (
-    <header className="sticky top-0 z-10 flex h-[72px] w-full items-center justify-between border-b border-surface-800 bg-[#09090B] px-8">
+    <header className="sticky top-0 z-10 flex h-[72px] w-full items-center justify-between border-b border-surface-800/50 bg-[#060e1f] px-8">
       {/* Left Section: Mobile Toggle & Breadcrumb */}
       <div className="flex items-center gap-3">
         {onOpenMobileDrawer && (
           <button
             onClick={onOpenMobileDrawer}
-            className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-surface-800 text-surface-400 lg:hidden hover:bg-surface-850 hover:text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] border border-surface-800 text-surface-400 lg:hidden hover:bg-surface-850 hover:text-white transition-colors"
           >
             <Menu className="h-5 w-5" />
           </button>
         )}
 
-        <div className="hidden sm:flex items-center text-[length:var(--text-body)] font-medium text-surface-400">
+        <div className="hidden sm:flex items-center text-[12px] font-semibold uppercase tracking-wider text-surface-400">
           <Link to="/dashboard" className="hover:text-white transition-colors">
             TransitOps
           </Link>
-          <ChevronRight className="h-4 w-4 mx-2 text-surface-500" />
-          <span className="font-semibold text-white">{formattedBreadcrumb}</span>
-        </div>
-      </div>
-
-      {/* Middle Section: Global Search Bar */}
-      <div className="hidden md:flex flex-1 max-w-md mx-6">
-        <div className="relative w-full">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className="h-5 w-5 text-surface-500" />
-          </div>
-          <input
-            type="text"
-            placeholder="Search... (Press ⌘K)"
-            className="w-full h-[44px] rounded-[10px] border border-surface-800 bg-surface-900 py-2 pl-10 pr-4 text-[length:var(--text-body)] text-white placeholder-surface-500 focus:border-primary-500 focus:outline-none transition-colors"
-          />
+          <ChevronRight className="h-3.5 w-3.5 mx-1.5 text-surface-600" />
+          <span className="text-white">{formattedBreadcrumb}</span>
         </div>
       </div>
 
       {/* Right Section: Actions, Profile Menu */}
       <div className="flex items-center gap-4">
-        {/* Quick Action Button */}
-        <button className="hidden sm:flex h-[44px] items-center justify-center rounded-[10px] bg-primary-500 px-4 text-[length:var(--text-body)] font-semibold text-white hover:bg-primary-600 transition-colors">
-          Create New
-        </button>
-
         {/* Theme Toggle Button */}
         <button
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="flex items-center justify-center h-[44px] w-[44px] rounded-[10px] border border-surface-800 hover:bg-surface-850 transition-colors text-surface-400 hover:text-white"
+          className="flex items-center justify-center h-[40px] w-[40px] rounded-[var(--radius-lg)] border border-surface-800 hover:bg-surface-850 transition-colors text-surface-400 hover:text-white"
         >
           {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
 
         {/* Notifications Dropdown */}
-        <div className="flex items-center justify-center h-[44px] w-[44px] rounded-[10px] border border-surface-800 hover:bg-surface-850 transition-colors">
+        <div className="flex items-center justify-center h-[40px] w-[40px] rounded-[var(--radius-lg)] border border-surface-800 hover:bg-surface-850 transition-colors">
           <NotificationBell />
         </div>
 
@@ -104,9 +85,9 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-2 rounded-[10px] border border-surface-800 h-[44px] px-2 hover:bg-surface-850 transition-colors"
+            className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-surface-800 h-[40px] px-2 hover:bg-surface-850 transition-colors"
           >
-            <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-surface-800 text-[length:var(--text-caption)] font-bold text-white uppercase border border-surface-700">
+            <div className="flex h-6 w-6 items-center justify-center rounded-[6px] bg-surface-800 text-[length:var(--text-caption)] font-bold text-white uppercase border border-surface-700">
               {user ? `${user.firstName[0]}${user.lastName[0]}` : 'U'}
             </div>
             <span className="hidden sm:inline-block text-[length:var(--text-body-sm)] font-medium text-white max-w-[100px] truncate">
@@ -115,50 +96,58 @@ export function Header({ onOpenMobileDrawer }: HeaderProps) {
             <ChevronDown className="h-4 w-4 text-surface-400" />
           </button>
 
-          {profileOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-[16px] border border-surface-800 bg-surface-900 p-2 shadow-xl z-30 space-y-1">
-              <div className="px-3 py-3 border-b border-surface-800">
-                <p className="text-[length:var(--text-body)] font-semibold text-white">
-                  {user ? `${user.firstName} ${user.lastName}` : 'User'}
-                </p>
-                <p className="text-[length:var(--text-caption)] text-surface-400 truncate mt-1">{user?.email}</p>
-              </div>
+          <AnimatePresence>
+            {profileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className="absolute right-0 mt-2 w-56 rounded-[var(--radius-xl)] border border-surface-800 bg-surface-900 p-2 shadow-xl z-30 space-y-1"
+              >
+                <div className="px-3 py-3 border-b border-surface-800 mb-1">
+                  <p className="text-[length:var(--text-body-sm)] font-semibold text-white">
+                    {user ? `${user.firstName} ${user.lastName}` : 'User'}
+                  </p>
+                  <p className="text-[length:var(--text-caption)] text-surface-400 truncate mt-0.5">{user?.email}</p>
+                </div>
 
-              <Link
-                to="/settings"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
-              >
-                <UserIcon className="h-4 w-4" /> Profile & Account
-              </Link>
-              <Link
-                to="/settings"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
-              >
-                <Settings className="h-4 w-4" /> System Settings
-              </Link>
-              <a
-                href="#help"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white"
-              >
-                <HelpCircle className="h-4 w-4" /> Documentation
-              </a>
-
-              <div className="border-t border-surface-800 pt-1 mt-1">
-                <button
-                  onClick={() => {
-                    setProfileOpen(false);
-                    logout();
-                  }}
-                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2 text-[length:var(--text-body-sm)] font-semibold text-danger-500 hover:bg-surface-850"
+                <Link
+                  to="/profile"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-3 rounded-[var(--radius-lg)] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white transition-colors"
                 >
-                  <LogOut className="h-4 w-4" /> Sign Out
-                </button>
-              </div>
-            </div>
-          )}
+                  <UserIcon className="h-4 w-4" /> Profile & Account
+                </Link>
+                <Link
+                  to="/settings"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-3 rounded-[var(--radius-lg)] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white transition-colors"
+                >
+                  <Settings className="h-4 w-4" /> System Settings
+                </Link>
+                <Link
+                  to="/documentation"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-3 rounded-[var(--radius-lg)] px-3 py-2 text-[length:var(--text-body-sm)] font-medium text-surface-400 hover:bg-surface-850 hover:text-white transition-colors"
+                >
+                  <HelpCircle className="h-4 w-4" /> Documentation
+                </Link>
+
+                <div className="border-t border-surface-800 pt-1 mt-1">
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false);
+                      logout();
+                    }}
+                    className="flex w-full items-center gap-3 rounded-[var(--radius-lg)] px-3 py-2 text-[length:var(--text-body-sm)] font-semibold text-danger hover:bg-surface-850 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4" /> Sign Out
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </header>

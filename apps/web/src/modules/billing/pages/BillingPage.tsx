@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, Filter, Download } from 'lucide-react';
+import { Plus, Search, Filter, Download, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { InvoicesDashboardCards } from '../components/InvoicesDashboardCards';
@@ -19,6 +19,7 @@ import { useRecordPayment } from '../hooks/usePayments';
 import type { Invoice} from '../types';
 import { InvoiceStatus } from '../types';
 import { PageContainer, PageHeader } from "@/components/layout";
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export function BillingPage() {
   const [activeTab, setActiveTab] = useState<'invoices' | 'revenue'>('invoices');
@@ -155,6 +156,13 @@ export function BillingPage() {
             <div className="h-64 flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
             </div>
+          ) : (!invoicesResp?.data || invoicesResp.data.length === 0) ? (
+            <EmptyState
+              icon={FileText}
+              title="No invoices found"
+              description="Create a new invoice to start billing customers."
+              action={{ label: 'New Invoice', onClick: () => setIsCreateOpen(true) }}
+            />
           ) : (
             <InvoicesTable
               data={invoicesResp?.data ?? []}

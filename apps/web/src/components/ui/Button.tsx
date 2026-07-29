@@ -6,13 +6,15 @@ import type { HTMLMotionProps } from 'framer-motion';
 import { motion } from 'framer-motion';
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-[10px] text-[length:var(--text-body)] font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius-lg)] text-[length:var(--text-button)] font-semibold ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-gradient-to-b from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 shadow-md shadow-primary-500/20 border border-primary-500/50',
+        default: 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm',
+        primary: 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm',
+        danger: 'bg-danger text-white hover:bg-red-600',
         destructive: 'bg-danger text-white hover:bg-red-600',
-        outline: 'border border-surface-800 bg-transparent hover:bg-surface-850 text-white',
+        outline: 'border border-surface-700 bg-transparent hover:bg-surface-850 text-white',
         secondary: 'bg-surface-800 text-white hover:bg-surface-850',
         ghost: 'hover:bg-surface-850 text-surface-400 hover:text-white',
         link: 'text-primary-500 underline-offset-4 hover:underline',

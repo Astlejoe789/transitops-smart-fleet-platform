@@ -5,9 +5,10 @@ import { ExpenseFormModal } from '../components/ExpenseFormModal';
 import { useExpenses, useCreateExpense, useUpdateExpense } from '../hooks/useExpenses';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Plus, Search, Filter } from 'lucide-react';
+import { Plus, Search, Filter, Receipt } from 'lucide-react';
 import type { Expense } from '../types';
 import { PageContainer, PageHeader } from "@/components/layout";
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,11 +73,20 @@ export function ExpensesPage() {
           </div>
         </div>
 
-        <ExpensesTable
-          data={expensesData?.data || []}
-          isLoading={isLoading}
-          onEdit={handleEdit}
-        />
+        {!isLoading && (!expensesData?.data || expensesData.data.length === 0) ? (
+          <EmptyState
+            icon={Receipt}
+            title="No expenses recorded"
+            description="Add an expense to keep track of your financials."
+            action={{ label: 'New Expense', onClick: () => setIsModalOpen(true) }}
+          />
+        ) : (
+          <ExpensesTable
+            data={expensesData?.data || []}
+            isLoading={isLoading}
+            onEdit={handleEdit}
+          />
+        )}
       </div>
 
       <ExpenseFormModal

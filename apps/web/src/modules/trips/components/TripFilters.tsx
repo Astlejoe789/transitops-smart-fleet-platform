@@ -24,7 +24,7 @@ export function TripFilters({
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="block w-full rounded-md border-0 py-2 pl-10 pr-3 text-surface-900 ring-1 ring-inset ring-surface-300 placeholder:text-surface-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 dark:bg-surface-800 dark:text-white dark:ring-surface-700"
+          className="block w-full rounded-[10px] border border-surface-700/50 bg-[#030712] py-2.5 pl-10 pr-3 text-white placeholder:text-surface-500 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-sm transition-colors"
           placeholder="Search trips by number, origin, or destination..."
         />
       </div>
@@ -33,7 +33,7 @@ export function TripFilters({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="block w-full appearance-none rounded-md border-0 py-2 pl-3 pr-10 text-surface-900 ring-1 ring-inset ring-surface-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 dark:bg-surface-800 dark:text-white dark:ring-surface-700"
+            className="block w-full appearance-none rounded-[10px] border border-surface-700/50 bg-[#030712] py-2.5 pl-3 pr-10 text-white focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 text-sm transition-colors"
           >
             <option value="">All Statuses</option>
             <option value="DRAFT">Draft</option>

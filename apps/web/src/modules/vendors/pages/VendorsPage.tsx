@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, Filter, Download } from 'lucide-react';
+import { Plus, Search, Filter, Download, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { VendorsTable } from '../components/VendorsTable';
@@ -7,6 +7,7 @@ import { VendorFormModal } from '../components/VendorFormModal';
 import { useVendors, useCreateVendor, useUpdateVendor, useDeleteVendor } from '../hooks/useVendors';
 import type { Vendor } from '../types';
 import { PageContainer, PageHeader } from "@/components/layout";
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export function VendorsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -90,6 +91,13 @@ export function VendorsPage() {
         <div className="h-64 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
         </div>
+      ) : (!vendorsResponse?.data || vendorsResponse.data.length === 0) ? (
+        <EmptyState
+          icon={Briefcase}
+          title="No vendors yet"
+          description="Add your first vendor to manage suppliers."
+          action={{ label: 'Add Vendor', onClick: () => { setSelectedVendor(null); setIsModalOpen(true); } }}
+        />
       ) : (
         <VendorsTable 
           data={vendorsResponse?.data || []} 

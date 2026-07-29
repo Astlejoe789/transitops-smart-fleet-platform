@@ -54,8 +54,8 @@ export function NotificationsPanel({ notifications = [], isLoading = false }: No
             <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-surface-100 dark:bg-surface-800">
               <CheckCircle2 className="h-6 w-6 text-emerald-500" />
             </div>
-            <p className="text-sm font-medium text-surface-900 dark:text-white">All caught up!</p>
-            <p className="text-xs text-surface-500 dark:text-surface-400">No new alerts to show.</p>
+            <p className="text-sm font-medium text-surface-900 dark:text-white">You're all caught up.</p>
+            <p className="text-xs text-surface-500 dark:text-surface-400">No alerts at the moment.</p>
           </div>
         ) : (
           notifications.map((notification) => {
