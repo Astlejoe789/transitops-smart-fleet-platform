@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Truck, Shield, Zap, Map, FileText, 
-  Users, Wrench, Github,
-  ArrowRight, Sparkles, CheckCircle2,
+  Users, Wrench,
+  ArrowRight, CheckCircle2,
   Clock, Linkedin, Twitter, Youtube, Globe, PlayCircle, Rocket,
-  MapPin, UserCheck, Banknote, BrainCircuit
+  Banknote
 } from 'lucide-react';
 
 const STATS = [

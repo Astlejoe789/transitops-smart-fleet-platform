@@ -5,13 +5,8 @@ import {
   Route,
   Wrench,
   Fuel,
-  Receipt,
   UserSquare2,
-  Building2,
-  FileText,
-  CreditCard,
   BarChart3,
-  TrendingUp,
   Sparkles,
   type LucideIcon,
 } from 'lucide-react';

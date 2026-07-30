@@ -3,7 +3,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { NAV_GROUPS } from './navigation';
 import {
   Truck,
-  Settings,
   ChevronLeft,
   ChevronRight,
   LogOut,

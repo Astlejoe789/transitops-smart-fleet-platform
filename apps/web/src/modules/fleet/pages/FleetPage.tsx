@@ -3,7 +3,7 @@ import { Plus, Truck, Download } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { EmptyState } from '@/components/ui/EmptyState';
+
 import { VehicleTable } from '../components/VehicleTable';
 import { VehicleFilters } from '../components/VehicleFilters';
 import { VehicleFormModal } from '../components/VehicleFormModal';

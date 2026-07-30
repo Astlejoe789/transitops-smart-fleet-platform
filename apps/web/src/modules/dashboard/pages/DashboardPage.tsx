@@ -6,8 +6,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { 
-  useDashboardSummary,
-  useRecentActivities
+  useDashboardSummary
 } from '../hooks/useDashboard';
 
 import { SummaryCard } from '../components/SummaryCard';
