@@ -1,20 +1,23 @@
-import { ModulePlaceholderPage } from '@/components/common/ModulePlaceholderPage';
 import { ShieldCheck } from 'lucide-react';
+import { PageContainer, PageHeader } from '@/components/layout';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export default function AdministrationPage() {
   return (
-    <ModulePlaceholderPage
-      moduleName="System Administration"
-      category="System"
-      description="Manage company branches, system roles, permissions, audit logs, and security."
-      icon={ShieldCheck}
-      plannedFeatures={[
-        'Company Branch Management',
-        'RBAC Role & Permission Editor',
-        'System User Provisioning',
-        'Audit Trail Log Viewer',
-        'Security Policy Settings'
-      ]}
-    />
+    <PageContainer>
+      <PageHeader
+        title="System Administration"
+        subtitle="Manage company branches, roles, permissions, and security."
+      />
+      
+      <div className="mt-8">
+        <EmptyState
+          icon={ShieldCheck}
+          title="Administration Settings Unavailable"
+          description="System administration and RBAC features will become available in the next major release."
+        />
+      </div>
+    </PageContainer>
   );
 }
+

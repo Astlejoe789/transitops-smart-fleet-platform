@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, Filter, Download } from 'lucide-react';
+import { Plus, Search, Filter, Download, Users } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { CustomersTable } from '../components/CustomersTable';
@@ -7,6 +7,7 @@ import { CustomerFormModal } from '../components/CustomerFormModal';
 import { useCustomers, useCreateCustomer, useUpdateCustomer, useDeleteCustomer } from '../hooks/useCustomers';
 import type { Customer } from '../types';
 import { PageContainer, PageHeader } from "@/components/layout";
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export function CustomersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -90,6 +91,13 @@ export function CustomersPage() {
         <div className="h-64 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
         </div>
+      ) : (!customersResponse?.data || customersResponse.data.length === 0) ? (
+        <EmptyState
+          icon={Users}
+          title="No customers yet"
+          description="Add your first customer to start managing accounts."
+          action={{ label: 'Add Customer', onClick: () => { setSelectedCustomer(null); setIsModalOpen(true); } }}
+        />
       ) : (
         <CustomersTable 
           data={customersResponse?.data || []} 

@@ -22,6 +22,7 @@ const FleetPage = lazyNamed(import('@/modules/fleet/pages/FleetPage'));
 const VehicleDetailsPage = lazyNamed(import('@/modules/fleet/pages/VehicleDetailsPage'));
 const DriversPage = lazyNamed(import('@/modules/drivers/pages/DriversPage'));
 const DriverDetailsPage = lazyNamed(import('@/modules/drivers/pages/DriverDetailsPage'));
+const DriverPortalPage = lazyNamed(import('@/modules/drivers/pages/DriverPortalPage'));
 const TripsPage = lazyNamed(import('@/modules/trips/pages/TripsPage'));
 const TripDetailsPage = lazyNamed(import('@/modules/trips/pages/TripDetailsPage'));
 const DispatchPage = lazyNamed(import('@/modules/trips/pages/DispatchPage'));
@@ -49,6 +50,8 @@ const RoleManagementPage = lazyNamed(import('@/modules/administration/pages/Role
 const SystemConfigPage = lazyNamed(import('@/modules/administration/pages/SystemConfigPage'));
 const AuditLogPage = lazyNamed(import('@/modules/administration/pages/AuditLogPage'));
 const SettingsPage = lazyNamed(import('@/modules/settings/pages/SettingsPage'));
+const ProfilePage = lazyNamed(import('@/modules/settings/pages/ProfilePage'));
+const DocumentationPage = lazyNamed(import('@/modules/settings/pages/DocumentationPage'));
 
 // Generic suspense loader
 const PageLoader = () => (
@@ -107,6 +110,7 @@ export const routes: RouteObject[] = [
       { path: 'fleet/:id', element: withSuspense(VehicleDetailsPage) },
       { path: 'drivers', element: withSuspense(DriversPage) },
       { path: 'drivers/:id', element: withSuspense(DriverDetailsPage) },
+      { path: 'driver-portal', element: withSuspense(DriverPortalPage) },
       { path: 'trips', element: withSuspense(TripsPage) },
       { path: 'trips/:id', element: withSuspense(TripDetailsPage) },
       { path: 'dispatch', element: withSuspense(DispatchPage) },
@@ -132,6 +136,11 @@ export const routes: RouteObject[] = [
       { path: 'admin/settings', element: withSuspense(SystemConfigPage) },
       { path: 'admin/audit', element: withSuspense(AuditLogPage) },
       { path: 'settings', element: withSuspense(SettingsPage) },
+      { path: 'profile', element: withSuspense(ProfilePage) },
+      { path: 'documentation', element: withSuspense(DocumentationPage) },
+      
+      // 404 Catch-All Page inside Dashboard
+      { path: '*', element: withSuspense(NotFoundPage) },
     ],
   },
 

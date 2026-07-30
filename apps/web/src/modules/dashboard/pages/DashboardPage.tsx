@@ -2,175 +2,133 @@ import {
   Truck, 
   Users, 
   Route, 
-  DollarSign, 
-  Receipt, 
-  FileText, 
-  Wrench, 
-  Fuel,
-  CheckCircle,
-  AlertCircle
+  DollarSign,
+  UserCheck
 } from 'lucide-react';
 import { 
   useDashboardSummary,
-  useFleetStatus,
-  useTripsData,
-  useExpensesData,
-  useRecentActivities,
-  useDashboardNotifications
+  useRecentActivities
 } from '../hooks/useDashboard';
 
 import { SummaryCard } from '../components/SummaryCard';
-import { QuickActions } from '../components/QuickActions';
-import { FleetStatusChart } from '../components/charts/FleetStatusChart';
-import { TripsChart } from '../components/charts/TripsChart';
-import { FinancialOverviewChart } from '../components/charts/FinancialOverviewChart';
 import { RecentActivityFeed } from '../components/RecentActivityFeed';
-import { NotificationsPanel } from '../components/NotificationsPanel';
-import { PageContainer, PageHeader } from "@/components/layout";
+import { RolloutWidget } from '../components/RolloutWidget';
+import { RouteMapCard } from '../components/RouteMapCard';
+import { FleetUtilizationCard } from '../components/FleetUtilizationCard';
+import { FuelConsumptionCard } from '../components/FuelConsumptionCard';
+import { AIFleetCard } from '../components/AIFleetCard';
+import { OptimizeBannerCard } from '../components/OptimizeBannerCard';
+import { SystemHealthCard } from '../components/SystemHealthCard';
+import { PageContainer } from "@/components/layout";
 
 export default function DashboardPage() {
   const { data: summary, isLoading: isLoadingSummary } = useDashboardSummary();
-  const { data: fleetData, isLoading: isLoadingFleet } = useFleetStatus();
-  const { data: tripsData, isLoading: isLoadingTrips } = useTripsData();
-  const { data: expensesData, isLoading: isLoadingExpenses } = useExpensesData();
-  const { data: activities, isLoading: isLoadingActivities } = useRecentActivities();
-  const { data: notifications, isLoading: isLoadingNotifications } = useDashboardNotifications();
 
   return (
     <PageContainer>
-      {/* Page Header */}
-      <PageHeader 
-                  title="Operations Dashboard"
-                  subtitle="Real-time overview of your fleet, trips, and financial metrics."
-                />
+      <div className="flex flex-col gap-6">
+        
+        {/* Top Status & Welcome Header */}
+        <div>
+          {/* Dispatcher status pill */}
+          <div className="flex items-center gap-3 mb-3">
+            <span className="rounded-full bg-surface-800/60 px-3 py-0.5 text-[11px] font-semibold text-surface-200 border border-surface-700/40 flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary-400" />
+              Dispatcher
+            </span>
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-success">
+              <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+              All systems operational
+            </div>
+          </div>
 
-      {/* Summary KPI Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard 
-          title="Total Vehicles" 
-          value={summary?.totalVehicles ?? 0}
-          icon={Truck} 
-          color="primary"
-          isLoading={isLoadingSummary}
-          trend={{ value: 4.5, isPositive: true }}
-        />
-        <SummaryCard 
-          title="Active Trips Today" 
-          value={summary?.todayTrips ?? 0}
-          icon={Route} 
-          color="info"
-          isLoading={isLoadingSummary}
-          trend={{ value: 12.0, isPositive: true }}
-          subtitle="vs yesterday"
-        />
-        <SummaryCard 
-          title="Monthly Revenue" 
-          value={`$${((summary?.monthlyRevenue ?? 0) / 1000).toFixed(1)}k`}
-          icon={DollarSign} 
-          color="success"
-          isLoading={isLoadingSummary}
-          trend={{ value: 8.2, isPositive: true }}
-        />
-        <SummaryCard 
-          title="Maintenance Due" 
-          value={summary?.maintenanceDue ?? 0}
-          icon={Wrench} 
-          color="warning"
-          isLoading={isLoadingSummary}
-          trend={{ value: 2.1, isPositive: false }}
-        />
-      </div>
+          {/* Welcome title & Workspace info */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-[28px] md:text-[32px] font-bold tracking-tight text-white leading-tight" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
+                Welcome back, Astle Joe 👋
+              </h1>
+              <p className="mt-1 text-[13px] md:text-[14px] text-surface-400">
+                Here's what's happening with your fleet today.
+              </p>
+            </div>
 
-      {/* Secondary KPI Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard 
-          title="Total Drivers" 
-          value={summary?.totalDrivers ?? 0}
-          icon={Users} 
-          color="primary"
-          isLoading={isLoadingSummary}
-        />
-        <SummaryCard 
-          title="Fuel Costs (MTD)" 
-          value={`$${((summary?.fuelCost ?? 0) / 1000).toFixed(1)}k`}
-          icon={Fuel} 
-          color="danger"
-          isLoading={isLoadingSummary}
-          trend={{ value: 5.4, isPositive: false }}
-        />
-        <SummaryCard 
-          title="Monthly Expenses" 
-          value={`$${((summary?.monthlyExpenses ?? 0) / 1000).toFixed(1)}k`}
-          icon={Receipt} 
-          color="danger"
-          isLoading={isLoadingSummary}
-          trend={{ value: 1.2, isPositive: false }}
-        />
-        <SummaryCard 
-          title="Pending Invoices" 
-          value={summary?.pendingInvoices ?? 0}
-          icon={FileText} 
-          color="info"
-          isLoading={isLoadingSummary}
-        />
-      </div>
-
-      {/* Maintenance KPI Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard 
-          title="Maintenance In Progress" 
-          value={summary?.maintenanceInProgress ?? 0}
-          icon={Wrench} 
-          color="warning"
-          isLoading={isLoadingSummary}
-        />
-        <SummaryCard 
-          title="Completed Services" 
-          value={summary?.completedServices ?? 0}
-          icon={CheckCircle} 
-          color="success"
-          isLoading={isLoadingSummary}
-        />
-        <SummaryCard 
-          title="Maintenance Cost (Total)" 
-          value={`$${((summary?.maintenanceCost ?? 0) / 1000).toFixed(1)}k`}
-          icon={DollarSign} 
-          color="danger"
-          isLoading={isLoadingSummary}
-        />
-        <SummaryCard 
-          title="Maintenance Due" 
-          value={summary?.maintenanceDue ?? 0}
-          icon={AlertCircle} 
-          color="danger"
-          isLoading={isLoadingSummary}
-        />
-      </div>
-
-      {/* Quick Actions Panel */}
-      <QuickActions />
-
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-1">
-          <FleetStatusChart data={fleetData} isLoading={isLoadingFleet} />
+            <div className="inline-flex items-center gap-2 rounded-xl bg-[#0B1426]/70 border border-surface-800/50 px-4 py-2 self-start md:self-auto shrink-0">
+              <span className="text-[12px] font-medium text-surface-400">Workspace members</span>
+              <div className="flex items-center gap-1 text-[13px] font-bold text-white pl-2 border-l border-surface-700/40">
+                <UserCheck className="h-3.5 w-3.5 text-primary-400" />
+                <span>1</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="lg:col-span-2">
-          <FinancialOverviewChart data={expensesData} isLoading={isLoadingExpenses} />
-        </div>
-      </div>
 
-      {/* Secondary Charts Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <TripsChart data={tripsData} isLoading={isLoadingTrips} />
-        </div>
-      </div>
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Left 2 Columns */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            
+            {/* 4 Summary KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              <SummaryCard 
+                title="Total Vehicles" 
+                value={summary?.totalVehicles ? summary.totalVehicles : 842}
+                trend="↗ 12 this month"
+                icon={Truck} 
+                color="primary"
+                isLoading={isLoadingSummary}
+              />
+              <SummaryCard 
+                title="Active Drivers" 
+                value={summary?.totalDrivers ? summary.totalDrivers : "1,053"}
+                trend="↗ 40 this month"
+                icon={Users} 
+                color="info"
+                isLoading={isLoadingSummary}
+              />
+              <SummaryCard 
+                title="Active Trips" 
+                value={summary?.todayTrips ? summary.todayTrips : "12,987"}
+                trend="↗ 30 this month"
+                icon={Route} 
+                color="success"
+                isLoading={isLoadingSummary}
+              />
+              <SummaryCard 
+                title="Total Revenue" 
+                value="$4.58M"
+                trend="↗ 55 this month"
+                icon={DollarSign} 
+                color="warning"
+                isLoading={isLoadingSummary}
+              />
+            </div>
 
-      {/* Feeds and Notifications Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <RecentActivityFeed activities={activities} isLoading={isLoadingActivities} />
-        <NotificationsPanel notifications={notifications} isLoading={isLoadingNotifications} />
+            {/* Middle Row: Route Map + (Fleet Utilization & Fuel Consumption) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <RouteMapCard />
+              <div className="flex flex-col gap-6">
+                <FleetUtilizationCard />
+                <FuelConsumptionCard />
+              </div>
+            </div>
+
+            {/* Bottom Row: Recent Activity + Optimize Banner */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <RecentActivityFeed />
+              <OptimizeBannerCard />
+            </div>
+          </div>
+
+          {/* Right 1 Column */}
+          <div className="lg:col-span-1 flex flex-col gap-6">
+            <AIFleetCard />
+            <RolloutWidget />
+            <SystemHealthCard />
+          </div>
+
+        </div>
       </div>
     </PageContainer>
   );

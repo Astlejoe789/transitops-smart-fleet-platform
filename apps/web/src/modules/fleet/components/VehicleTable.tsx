@@ -23,7 +23,7 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
         accessorKey: 'plateNumber',
         header: 'Plate Number',
         cell: ({ row }) => (
-          <div className="font-semibold text-surface-900 dark:text-white">
+          <div className="text-[length:var(--text-body-sm)] font-semibold text-white">
             {row.original.plateNumber}
           </div>
         ),
@@ -32,7 +32,7 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
         accessorKey: 'vin',
         header: 'VIN',
         cell: ({ row }) => (
-          <div className="text-surface-500 font-mono text-xs dark:text-surface-400">
+          <div className="text-[length:var(--text-caption)] font-mono text-surface-400">
             {row.original.vin}
           </div>
         ),
@@ -43,10 +43,10 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
         accessorFn: (row) => `${row.make} ${row.model}`,
         cell: ({ row }) => (
           <div>
-            <div className="font-medium text-surface-900 dark:text-surface-100">
+            <div className="text-[length:var(--text-body-sm)] font-medium text-white">
               {row.original.make} {row.original.model}
             </div>
-            <div className="text-xs text-surface-500 dark:text-surface-400">
+            <div className="text-[length:var(--text-caption)] text-surface-400">
               {row.original.year} • {row.original.color || 'N/A'}
             </div>
           </div>
@@ -75,7 +75,7 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
         accessorKey: 'currentOdometer',
         header: 'Odometer',
         cell: ({ row }) => (
-          <div className="text-surface-600 dark:text-surface-300">
+          <div className="text-[length:var(--text-body-sm)] text-surface-400">
             {row.original.currentOdometer.toLocaleString()} km
           </div>
         ),
@@ -83,14 +83,14 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
       {
         id: 'actions',
         cell: ({ row }) => (
-          <div className="flex items-center justify-end space-x-2">
+          <div className="flex items-center justify-end space-x-1">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => navigate(`/fleet/${row.original.id}`)}
               title="View Details"
             >
-              <Eye className="h-4 w-4 text-surface-500" />
+              <Eye className="h-4 w-4 text-surface-400" />
             </Button>
             <Button
               variant="ghost"
@@ -98,7 +98,7 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
               onClick={() => onEdit(row.original)}
               title="Edit Vehicle"
             >
-              <Edit className="h-4 w-4 text-blue-500" />
+              <Edit className="h-4 w-4 text-primary-500" />
             </Button>
             <Button
               variant="ghost"
@@ -106,7 +106,7 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
               onClick={() => onDelete(row.original)}
               title="Delete Vehicle"
             >
-              <Trash2 className="h-4 w-4 text-red-500" />
+              <Trash2 className="h-4 w-4 text-danger-500" />
             </Button>
           </div>
         ),
@@ -117,9 +117,9 @@ export function VehicleTable({ data, isLoading, onEdit, onDelete }: VehicleTable
 
   if (isLoading) {
     return (
-      <div className="rounded-md border border-surface-200 p-8 text-center dark:border-surface-800">
+      <div className="rounded-[var(--radius-xl)] border border-surface-800 p-8 text-center bg-surface-950">
         <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent"></div>
-        <p className="mt-4 text-sm text-surface-500">Loading vehicles...</p>
+        <p className="mt-4 text-[length:var(--text-body-sm)] text-surface-500">Loading vehicles...</p>
       </div>
     );
   }

@@ -6,6 +6,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { FormField } from '@/components/ui/FormField';
 import { useCreateVehicle, useUpdateVehicle, type Vehicle } from '../hooks/useFleet';
 
 const vehicleSchema = z.object({
@@ -110,49 +111,37 @@ export function VehicleFormModal({ isOpen, onClose, vehicle }: VehicleFormModalP
       <form id="vehicle-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Make</label>
+          <FormField label="Make" error={errors.make?.message} required>
             <Input {...register('make')} placeholder="e.g. Ford" error={!!errors.make} />
-            {errors.make && <p className="text-xs text-red-500">{errors.make.message}</p>}
-          </div>
+          </FormField>
           
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Model</label>
+          <FormField label="Model" error={errors.model?.message} required>
             <Input {...register('model')} placeholder="e.g. Transit" error={!!errors.model} />
-            {errors.model && <p className="text-xs text-red-500">{errors.model.message}</p>}
-          </div>
+          </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Year</label>
+          <FormField label="Year" error={errors.year?.message} required>
             <Input type="number" {...register('year')} error={!!errors.year} />
-            {errors.year && <p className="text-xs text-red-500">{errors.year.message}</p>}
-          </div>
+          </FormField>
           
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Color</label>
+          <FormField label="Color" error={errors.color?.message}>
             <Input {...register('color')} placeholder="e.g. White" error={!!errors.color} />
-          </div>
+          </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">VIN</label>
+          <FormField label="VIN" error={errors.vin?.message} required>
             <Input {...register('vin')} placeholder="17-character VIN" error={!!errors.vin} />
-            {errors.vin && <p className="text-xs text-red-500">{errors.vin.message}</p>}
-          </div>
+          </FormField>
           
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Plate Number</label>
+          <FormField label="Plate Number" error={errors.plateNumber?.message} required>
             <Input {...register('plateNumber')} placeholder="License Plate" error={!!errors.plateNumber} />
-            {errors.plateNumber && <p className="text-xs text-red-500">{errors.plateNumber.message}</p>}
-          </div>
+          </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Type</label>
+          <FormField label="Type" error={errors.type?.message}>
             <Select {...register('type')} error={!!errors.type}>
               <option value="TRUCK">Truck</option>
               <option value="VAN">Van</option>
@@ -161,34 +150,31 @@ export function VehicleFormModal({ isOpen, onClose, vehicle }: VehicleFormModalP
               <option value="MOTORCYCLE">Motorcycle</option>
               <option value="TRAILER">Trailer</option>
             </Select>
-          </div>
+          </FormField>
           
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Fuel Type</label>
+          <FormField label="Fuel Type" error={errors.fuelType?.message}>
             <Select {...register('fuelType')} error={!!errors.fuelType}>
               <option value="DIESEL">Diesel</option>
               <option value="GASOLINE">Gasoline</option>
               <option value="ELECTRIC">Electric</option>
               <option value="HYBRID">Hybrid</option>
             </Select>
-          </div>
+          </FormField>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Status</label>
+          <FormField label="Status" error={errors.status?.message}>
             <Select {...register('status')} error={!!errors.status}>
               <option value="AVAILABLE">Available</option>
               <option value="IN_TRANSIT">In Transit</option>
               <option value="MAINTENANCE">Maintenance</option>
               <option value="OUT_OF_SERVICE">Out of Service</option>
             </Select>
-          </div>
+          </FormField>
 
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-surface-700 dark:text-surface-300">Current Odometer (km)</label>
+          <FormField label="Current Odometer (km)" error={errors.currentOdometer?.message}>
             <Input type="number" {...register('currentOdometer')} error={!!errors.currentOdometer} />
-          </div>
+          </FormField>
         </div>
 
         <div className="mt-6 flex justify-end space-x-2 pt-4">

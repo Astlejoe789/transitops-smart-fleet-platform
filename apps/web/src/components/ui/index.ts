@@ -5,3 +5,4 @@
  * They will be placed here automatically based on components.json config.
  */
 export {};
+export * from './EmptyState';

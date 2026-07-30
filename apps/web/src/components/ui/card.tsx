@@ -1,18 +1,14 @@
 import * as React from "react"
-import type { HTMLMotionProps } from "framer-motion";
-import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
-export type CardProps = HTMLMotionProps<"div">;
+export type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, ...props }, ref) => (
-    <motion.div
+    <div
       ref={ref}
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.2 }}
       className={cn(
-        "rounded-2xl border border-white/5 bg-surface-900/60 backdrop-blur-2xl text-white shadow-card transition-all hover:shadow-2xl hover:border-white/10",
+        "rounded-[var(--radius-2xl)] border border-surface-800/40 bg-surface-900/80 backdrop-blur-sm text-white shadow-sm",
         className
       )}
       {...props}
@@ -54,7 +50,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-[length:var(--text-body)] text-surface-400", className)}
+    className={cn("text-[length:var(--text-body-sm)] text-surface-400", className)}
     {...props}
   />
 ))

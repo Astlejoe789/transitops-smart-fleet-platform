@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 export interface PageContainerProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
-  maxWidth?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
+  maxWidth?: 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'ultra' | 'full';
 }
 
 const maxWidthClasses = {
@@ -17,15 +17,16 @@ const maxWidthClasses = {
   '5xl': 'max-w-5xl',
   '6xl': 'max-w-6xl',
   '7xl': 'max-w-7xl',
+  'ultra': 'max-w-[1700px]',
   full: 'max-w-full',
 };
 
 export const PageContainer = forwardRef<HTMLDivElement, PageContainerProps>(
-  ({ children, className, maxWidth = '7xl', ...props }, ref) => {
+  ({ children, className, maxWidth = 'ultra', ...props }, ref) => {
     return (
       <div
         ref={ref}
-        className={cn('mx-auto w-full pb-8', maxWidthClasses[maxWidth], className)}
+        className={cn('mx-auto w-full pb-10 space-y-6', maxWidthClasses[maxWidth], className)}
         {...props}
       >
         {children}
@@ -34,3 +35,4 @@ export const PageContainer = forwardRef<HTMLDivElement, PageContainerProps>(
   },
 );
 PageContainer.displayName = 'PageContainer';
+

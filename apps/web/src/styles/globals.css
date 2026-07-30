@@ -1,2 +1,26 @@
 /* Additional global styles beyond Tailwind */
 /* Place custom animations, utility classes, or overrides here */
+
+/* ============================================
+   Global Dark Theme Fixes
+   Override light-mode defaults that appear
+   across many components
+   ============================================ */
+
+/* Ensure select dropdown options are readable in dark mode */
+select option {
+  background-color: var(--color-surface-900);
+  color: var(--color-foreground);
+}
+
+/* Fix scrollbar gutter in panels */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-surface-700);
+  border-radius: 9999px;
+}

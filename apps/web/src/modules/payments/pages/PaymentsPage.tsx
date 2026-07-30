@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Filter, Download, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Search, Filter, Download, ArrowUpRight, ArrowDownRight, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
@@ -8,6 +8,7 @@ import type { PaymentMethod, Payment } from '../../billing/types';
 import { PaymentStatus } from '../../billing/types';
 import { format } from 'date-fns';
 import { PageContainer, PageHeader } from "@/components/layout";
+import { EmptyState } from '@/components/ui/EmptyState';
 
 function formatCurrency(amount: number) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
@@ -143,6 +144,12 @@ export default function PaymentsPage() {
           <div className="h-64 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
           </div>
+        ) : (!paymentsResp?.data || paymentsResp.data.length === 0) ? (
+          <EmptyState
+            icon={CreditCard}
+            title="No payments found"
+            description="Payments will appear here once invoices are paid."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm whitespace-nowrap">
@@ -206,13 +213,6 @@ export default function PaymentsPage() {
                     </td>
                   </tr>
                 ))}
-                {(paymentsResp?.data?.length === 0) && (
-                  <tr>
-                    <td colSpan={9} className="px-6 py-12 text-center text-surface-500">
-                      No payments found.
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>

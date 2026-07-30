@@ -12,15 +12,20 @@ import {
   getSortedRowModel,
   getFilteredRowModel
 } from '@tanstack/react-table';
-import { ChevronDown, ChevronUp, ChevronsUpDown, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronsUpDown, Search, FileText } from 'lucide-react';
 import { Input } from './Input';
 import { Button } from './Button';
+import { EmptyState } from './EmptyState';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey?: string;
   searchPlaceholder?: string;
+  emptyStateIcon?: any;
+  emptyStateTitle?: string;
+  emptyStateDescription?: string;
+  emptyStateAction?: { label: string; onClick: () => void };
 }
 
 export function DataTable<TData, TValue>({
@@ -28,6 +33,10 @@ export function DataTable<TData, TValue>({
   data,
   searchKey,
   searchPlaceholder = 'Search...',
+  emptyStateIcon = FileText,
+  emptyStateTitle = 'No results found',
+  emptyStateDescription = 'There are no records matching your criteria.',
+  emptyStateAction
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -58,7 +67,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4">
         {searchKey && (
           <div className="relative max-w-sm">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-surface-500" />
+            <Search className="absolute left-2.5 top-3 h-4 w-4 text-surface-500" />
             <Input
               placeholder={searchPlaceholder}
               value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
@@ -69,21 +78,19 @@ export function DataTable<TData, TValue>({
             />
           </div>
         )}
-        
-        {/* We can add a Dropdown for Column Visibility here if needed */}
       </div>
-      <div className="rounded-md border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 overflow-hidden">
+      <div className="rounded-[var(--radius-xl)] border border-surface-800 bg-surface-900 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-surface-50 text-surface-500 dark:bg-surface-800/50 dark:text-surface-400 border-b border-surface-200 dark:border-surface-800">
+          <table className="w-full text-left text-[length:var(--text-table-cell)]">
+            <thead className="bg-surface-800/50 text-[length:var(--text-table-head)] uppercase tracking-wider text-surface-400 border-b border-surface-800">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <th key={header.id} className="h-10 px-4 align-middle font-medium whitespace-nowrap">
+                      <th key={header.id} className="h-12 px-4 align-middle font-semibold whitespace-nowrap">
                         {header.isPlaceholder ? null : (
                           <div 
-                            className={header.column.getCanSort() ? 'cursor-pointer select-none flex items-center gap-1 hover:text-surface-900 dark:hover:text-surface-100 transition-colors' : ''}
+                            className={header.column.getCanSort() ? 'cursor-pointer select-none flex items-center gap-1 hover:text-white transition-colors' : ''}
                             onClick={header.column.getToggleSortingHandler()}
                           >
                             {flexRender(
@@ -96,7 +103,7 @@ export function DataTable<TData, TValue>({
                                   asc: <ChevronUp className="h-4 w-4" />,
                                   desc: <ChevronDown className="h-4 w-4" />,
                                 }[header.column.getIsSorted() as string] ?? (
-                                  <ChevronsUpDown className="h-4 w-4 text-surface-300 dark:text-surface-600" />
+                                  <ChevronsUpDown className="h-4 w-4 text-surface-600" />
                                 )}
                               </span>
                             )}
@@ -113,10 +120,10 @@ export function DataTable<TData, TValue>({
                 table.getRowModel().rows.map((row) => (
                   <tr
                     key={row.id}
-                    className="border-b border-surface-200 transition-colors hover:bg-surface-50/50 data-[state=selected]:bg-surface-50 dark:border-surface-800 dark:hover:bg-surface-800/50 dark:data-[state=selected]:bg-surface-800"
+                    className="h-14 border-b border-surface-800 transition-colors hover:bg-surface-850 data-[state=selected]:bg-surface-850 last:border-0"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="p-4 align-middle">
+                      <td key={cell.id} className="p-4 align-middle text-surface-300">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
@@ -124,8 +131,14 @@ export function DataTable<TData, TValue>({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={columns.length} className="h-24 text-center">
-                    No results.
+                  <td colSpan={columns.length} className="p-8">
+                    <EmptyState
+                      icon={emptyStateIcon}
+                      title={emptyStateTitle}
+                      description={emptyStateDescription}
+                      action={emptyStateAction}
+                      compact
+                    />
                   </td>
                 </tr>
               )}
@@ -134,9 +147,8 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       <div className="flex items-center justify-between py-4">
-        <div className="text-sm text-surface-500">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+        <div className="text-[length:var(--text-body-sm)] text-surface-500">
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}
         </div>
         <div className="flex items-center space-x-2">
           <Button
