@@ -8,7 +8,7 @@ const files = project.getSourceFiles();
 
 for (const sourceFile of files) {
   let hasChanges = false;
-  let changedImports = false;
+  const changedImports = false;
 
   const returnStatements = sourceFile.getDescendantsOfKind(SyntaxKind.ReturnStatement);
   for (const returnStmt of returnStatements) {

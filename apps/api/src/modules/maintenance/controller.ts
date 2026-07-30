@@ -19,7 +19,7 @@ export class MaintenanceController {
       const result = await maintenanceService.getMaintenanceLogs(companyId, req.query);
       res.status(StatusCodes.OK).json({ status: 'success', ...result });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -29,7 +29,7 @@ export class MaintenanceController {
       const log = await maintenanceService.getMaintenanceLogById(companyId, req.params.id);
       res.status(StatusCodes.OK).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -40,7 +40,7 @@ export class MaintenanceController {
       const log = await maintenanceService.createMaintenanceLog(companyId, userId, validated.body);
       res.status(StatusCodes.CREATED).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -51,7 +51,7 @@ export class MaintenanceController {
       const log = await maintenanceService.updateMaintenanceLog(companyId, userId, req.params.id, validated.body);
       res.status(StatusCodes.OK).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -61,7 +61,7 @@ export class MaintenanceController {
       await maintenanceService.deleteMaintenanceLog(companyId, userId, req.params.id);
       res.status(StatusCodes.OK).json({ status: 'success', message: 'Maintenance log deleted successfully' });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -71,7 +71,7 @@ export class MaintenanceController {
       await maintenanceService.restoreMaintenanceLog(companyId, userId, req.params.id);
       res.status(StatusCodes.OK).json({ status: 'success', message: 'Maintenance log restored successfully' });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -82,7 +82,7 @@ export class MaintenanceController {
       const log = await maintenanceService.updateMaintenanceStatus(companyId, userId, req.params.id, validated.body.status, validated.body.notes);
       res.status(StatusCodes.OK).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -93,7 +93,7 @@ export class MaintenanceController {
       const log = await maintenanceService.assignTechnician(companyId, userId, req.params.id, validated.body.technicianId);
       res.status(StatusCodes.OK).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -104,7 +104,7 @@ export class MaintenanceController {
       const part = await maintenanceService.addPart(companyId, userId, req.params.id, validated.body);
       res.status(StatusCodes.CREATED).json({ status: 'success', data: part });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -114,7 +114,7 @@ export class MaintenanceController {
       await maintenanceService.deletePart(companyId, userId, req.params.id, req.params.partId);
       res.status(StatusCodes.OK).json({ status: 'success', message: 'Part deleted successfully' });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -125,7 +125,7 @@ export class MaintenanceController {
       const doc = await maintenanceService.addDocument(companyId, userId, req.params.id, validated.body);
       res.status(StatusCodes.CREATED).json({ status: 'success', data: doc });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -135,7 +135,7 @@ export class MaintenanceController {
       await maintenanceService.deleteDocument(companyId, userId, req.params.id, req.params.docId);
       res.status(StatusCodes.OK).json({ status: 'success', message: 'Document deleted successfully' });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 }

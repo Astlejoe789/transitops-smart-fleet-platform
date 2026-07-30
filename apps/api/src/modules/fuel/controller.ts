@@ -12,7 +12,7 @@ export class FuelController {
       const result = await fuelService.getFuelLogs(companyId, req.query);
       res.status(StatusCodes.OK).json({ status: 'success', ...result });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -22,7 +22,7 @@ export class FuelController {
       const log = await fuelService.getFuelLogById(companyId, req.params.id);
       res.status(StatusCodes.OK).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -33,7 +33,7 @@ export class FuelController {
       const log = await fuelService.createFuelLog(companyId, userId, validated.body);
       res.status(StatusCodes.CREATED).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -44,7 +44,7 @@ export class FuelController {
       const log = await fuelService.updateFuelLog(companyId, userId, req.params.id, validated.body);
       res.status(StatusCodes.OK).json({ status: 'success', data: log });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -54,7 +54,7 @@ export class FuelController {
       await fuelService.deleteFuelLog(companyId, userId, req.params.id);
       res.status(StatusCodes.OK).json({ status: 'success', message: 'Fuel log deleted successfully' });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -64,7 +64,7 @@ export class FuelController {
       await fuelService.restoreFuelLog(companyId, userId, req.params.id);
       res.status(StatusCodes.OK).json({ status: 'success', message: 'Fuel log restored successfully' });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 
@@ -75,7 +75,7 @@ export class FuelController {
       const data = await fuelService.getAnalytics(companyId, req.query);
       res.status(StatusCodes.OK).json({ status: 'success', data });
     } catch (error) {
-      next(error);
+      next(error as Error);
     }
   }
 

@@ -54,7 +54,7 @@ export default function NotFoundPage() {
         
         {/* Subtitle */}
         <p className="text-[15px] text-surface-400 leading-relaxed mb-10 max-w-md">
-          We're building something powerful to help you manage your fleet operations — all in one place. This page is currently not available.
+          We&apos;re building something powerful to help you manage your fleet operations — all in one place. This page is currently not available.
         </p>
 
         {/* Buttons */}

@@ -6,7 +6,7 @@ export class MaintenanceService {
   /**
    * Helper to log audit events
    */
-  private async logAudit(companyId: string, userId: string, action: AuditAction, entityId: string, oldValues?: any, newValues?: any) {
+  private async logAudit(companyId: string, userId: string, action: AuditAction, entityId: string, oldValues?: Record<string, unknown> | null, newValues?: Record<string, unknown> | null) {
     await prisma.auditLog.create({
       data: {
         companyId,
@@ -37,7 +37,7 @@ export class MaintenanceService {
   /**
    * Get all maintenance logs with pagination and filtering
    */
-  async getMaintenanceLogs(companyId: string, query: any = {}) {
+  async getMaintenanceLogs(companyId: string, query: Record<string, any> = {}) {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -109,7 +109,7 @@ export class MaintenanceService {
   /**
    * Create a new maintenance log
    */
-  async createMaintenanceLog(companyId: string, userId: string, data: any) {
+  async createMaintenanceLog(companyId: string, userId: string, data: Omit<Prisma.MaintenanceLogUncheckedCreateInput, 'companyId' | 'maintenanceId'> & { scheduledDate: string | Date }) {
     const vehicle = await prisma.vehicle.findFirst({
       where: { id: data.vehicleId, companyId, deletedAt: null },
     });
@@ -149,7 +149,7 @@ export class MaintenanceService {
   /**
    * Update maintenance log
    */
-  async updateMaintenanceLog(companyId: string, userId: string, id: string, data: any) {
+  async updateMaintenanceLog(companyId: string, userId: string, id: string, data: Omit<Prisma.MaintenanceLogUncheckedUpdateInput, 'companyId'> & { scheduledDate?: string | Date | null; startDate?: string | Date | null; completedDate?: string | Date | null }) {
     const log = await prisma.maintenanceLog.findFirst({
       where: { id, companyId, deletedAt: null },
     });
@@ -240,7 +240,7 @@ export class MaintenanceService {
       throw new HttpException(400, `Cannot transition from ${log.status} to ${status}`);
     }
 
-    const dataToUpdate: any = { status };
+    const dataToUpdate: Prisma.MaintenanceLogUncheckedUpdateInput = { status };
     if (notes) {
       dataToUpdate.notes = log.notes ? `${log.notes}\n${notes}` : notes;
     }
@@ -313,7 +313,7 @@ export class MaintenanceService {
   /**
    * Add a part
    */
-  async addPart(companyId: string, userId: string, logId: string, data: any) {
+  async addPart(companyId: string, userId: string, logId: string, data: Omit<Prisma.MaintenancePartUncheckedCreateInput, 'maintenanceLogId' | 'totalCost'> & { quantity: number; unitCost: number }) {
     const log = await prisma.maintenanceLog.findFirst({
       where: { id: logId, companyId, deletedAt: null },
     });

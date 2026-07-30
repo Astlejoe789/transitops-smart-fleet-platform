@@ -6,7 +6,7 @@ export class FuelService {
   /**
    * Helper to log audit events
    */
-  private async logAudit(companyId: string, userId: string, action: AuditAction, entityId: string, oldValues?: any, newValues?: any) {
+  private async logAudit(companyId: string, userId: string, action: AuditAction, entityId: string, oldValues?: Record<string, unknown> | null, newValues?: Record<string, unknown> | null) {
     await prisma.auditLog.create({
       data: {
         companyId,
@@ -37,7 +37,7 @@ export class FuelService {
   /**
    * Get all fuel logs with pagination and filtering
    */
-  async getFuelLogs(companyId: string, query: any = {}) {
+  async getFuelLogs(companyId: string, query: Record<string, any> = {}) {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 10;
     const skip = (page - 1) * limit;
@@ -114,7 +114,7 @@ export class FuelService {
   /**
    * Create fuel log
    */
-  async createFuelLog(companyId: string, userId: string, data: any) {
+  async createFuelLog(companyId: string, userId: string, data: Omit<Prisma.FuelLogUncheckedCreateInput, 'companyId' | 'fuelLogNumber' | 'totalCost' | 'efficiency' | 'createdById'> & { odometerReading: number; liters: number; costPerLiter: number; fuelDate: string | Date }) {
     // Validate vehicle and driver exist
     const vehicle = await prisma.vehicle.findFirst({
       where: { id: data.vehicleId, companyId, deletedAt: null },
@@ -173,7 +173,7 @@ export class FuelService {
   /**
    * Update fuel log
    */
-  async updateFuelLog(companyId: string, userId: string, id: string, data: any) {
+  async updateFuelLog(companyId: string, userId: string, id: string, data: Omit<Prisma.FuelLogUncheckedUpdateInput, 'companyId'> & { liters?: number; costPerLiter?: number; fuelDate?: string | Date }) {
     const log = await prisma.fuelLog.findFirst({
       where: { id, companyId, deletedAt: null },
     });
@@ -245,7 +245,7 @@ export class FuelService {
   /**
    * Get Fuel Analytics
    */
-  async getAnalytics(companyId: string, query: any) {
+  async getAnalytics(companyId: string, query: Record<string, any>) {
     const startDate = query.startDate ? new Date(query.startDate) : new Date(new Date().setMonth(new Date().getMonth() - 1));
     const endDate = query.endDate ? new Date(query.endDate) : new Date();
 
