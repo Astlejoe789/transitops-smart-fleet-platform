@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Fuel, BarChart3, Bell, Download, ArrowRight } from 'lucide-react';
 
 interface QuickActionProps {
-  icon: React.ElementType;
+  icon: any;
   title: string;
   description: string;
   linkLabel: string;

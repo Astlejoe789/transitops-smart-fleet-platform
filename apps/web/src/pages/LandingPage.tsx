@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Truck, Shield, Zap, Map, FileText, 
-  Users, Wrench,
+  Users, Wrench, Activity,
   ArrowRight, CheckCircle2,
-  Clock, Linkedin, Twitter, Youtube, Globe, PlayCircle, Rocket,
-  Banknote
+  Clock, Linkedin, Twitter, Youtube, Globe, PlayCircle, Rocket
 } from 'lucide-react';
+import HeroScene from '../components/landing/HeroScene';
 
 const STATS = [
   { value: "12k+", label: "Vehicles Managed", icon: Truck },
@@ -16,181 +16,130 @@ const STATS = [
 ];
 
 const FEATURES = [
-  { icon: Truck, title: "Fleet Management", desc: "Track every vehicle in real-time with GPS dashboards and health monitoring.", color: "text-emerald-400 border-emerald-500/30" },
-  { icon: Map, title: "Trip Planning", desc: "Optimize routes, automate dispatching, and manage multi-stop journeys.", color: "text-blue-400 border-blue-500/30" },
-  { icon: Users, title: "Driver Management", desc: "Monitor compliance, track certifications, and manage driver schedules.", color: "text-blue-400 border-blue-500/30" },
-  { icon: Wrench, title: "Maintenance", desc: "Automate preventive service schedules and catch issues before breakdowns.", color: "text-amber-400 border-amber-500/30" },
-  { icon: Zap, title: "Fuel Tracking", desc: "Monitor consumption, track costs, and identify efficiency gains.", color: "text-emerald-400 border-emerald-500/30" },
-  { icon: FileText, title: "Expense Management", desc: "Full CRUD for expenses, vendor billing, and operations budget tracking.", color: "text-blue-400 border-blue-500/30" },
-  { icon: Activity, title: "AI Insights", desc: "Predictive analytics and fleet copilot powered by intelligent rules engine.", color: "text-emerald-400 border-emerald-500/30" },
-  { icon: Shield, title: "Compliance", desc: "Stay compliant with automated checks and audit-ready logs.", color: "text-purple-400 border-purple-500/30" },
+  { icon: Truck, title: "Fleet Management", desc: "Track every vehicle in real-time with GPS dashboards and health monitoring.", color: "text-emerald-400 border-emerald-500/30", bg: "bg-emerald-500/10" },
+  { icon: Map, title: "Trip Planning", desc: "Optimize routes, automate dispatching, and manage multi-stop journeys.", color: "text-blue-400 border-blue-500/30", bg: "bg-blue-500/10" },
+  { icon: Users, title: "Driver Management", desc: "Monitor compliance, track certifications, and manage driver schedules.", color: "text-blue-400 border-blue-500/30", bg: "bg-blue-500/10" },
+  { icon: Wrench, title: "Maintenance", desc: "Automate preventive service schedules and catch issues before breakdowns.", color: "text-amber-400 border-amber-500/30", bg: "bg-amber-500/10" },
+  { icon: Zap, title: "Fuel Tracking", desc: "Monitor consumption, track costs, and identify efficiency gains.", color: "text-emerald-400 border-emerald-500/30", bg: "bg-emerald-500/10" },
+  { icon: FileText, title: "Expense Management", desc: "Full CRUD for expenses, vendor billing, and operations budget tracking.", color: "text-blue-400 border-blue-500/30", bg: "bg-blue-500/10" },
+  { icon: Activity, title: "AI Insights", desc: "Predictive analytics and fleet copilot powered by intelligent rules engine.", color: "text-emerald-400 border-emerald-500/30", bg: "bg-emerald-500/10" },
+  { icon: Shield, title: "Compliance", desc: "Stay compliant with automated checks and audit-ready logs.", color: "text-purple-400 border-purple-500/30", bg: "bg-purple-500/10" },
 ];
 
-function Activity(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-    </svg>
-  )
-}
-
 const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.08 } }),
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.1 } }),
 };
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#030712] text-white selection:bg-primary-500/30 font-sans relative overflow-x-hidden">
       
-      {/* ── Background Effects ── */}
-      <div 
-        className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `linear-gradient(to right, #94a3b8 1px, transparent 1px), linear-gradient(to bottom, #94a3b8 1px, transparent 1px)`,
-          backgroundSize: '48px 48px'
-        }}
-      />
-      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary-500/5 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-blue-500/5 blur-[150px] rounded-full pointer-events-none" />
+      {/* ── Background Effects & 3D Scene ── */}
+      <div className="absolute top-0 left-0 right-0 h-[110vh] z-0 overflow-hidden">
+        <HeroScene />
+        {/* Gradient fade into the rest of the page */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#030712]/50 to-[#030712] pointer-events-none" />
+      </div>
+      
+      <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-primary-600/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none" />
 
       {/* ── 1. Navigation ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-surface-800/40 bg-[#030712]/80 backdrop-blur-xl">
+      <motion.nav 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#030712]/40 backdrop-blur-2xl"
+      >
         <div className="max-w-[1700px] mx-auto flex items-center justify-between px-8 lg:px-16 h-[72px]">
           <div className="flex items-center gap-10">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-gradient-to-br from-primary-500 to-primary-400 text-white shadow-lg shadow-primary-500/20">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-gradient-to-br from-primary-500 to-primary-400 text-white shadow-[0_0_15px_rgba(14,165,233,0.3)] transition-transform group-hover:scale-105">
                 <Truck className="h-4 w-4" />
               </div>
               <span className="text-[17px] font-bold tracking-tight text-white" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>TransitOps</span>
             </Link>
-            <div className="hidden lg:flex items-center gap-6 text-[13px] font-medium text-surface-300">
-              <span className="hover:text-white cursor-pointer transition-colors flex items-center gap-1">Features <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></span>
-              <span className="hover:text-white cursor-pointer transition-colors flex items-center gap-1">Solutions <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></span>
-              <span className="hover:text-white cursor-pointer transition-colors inline-flex items-center gap-1.5">
+            <div className="hidden lg:flex items-center gap-8 text-[13px] font-medium text-surface-300">
+              <span className="hover:text-white cursor-pointer transition-colors flex items-center gap-1.5">Features <svg className="w-3 h-3 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></span>
+              <span className="hover:text-white cursor-pointer transition-colors flex items-center gap-1.5">Solutions <svg className="w-3 h-3 text-surface-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></span>
+              <span className="hover:text-white cursor-pointer transition-colors inline-flex items-center gap-2">
                 Pricing 
-                <span className="text-[9px] bg-primary-900/50 text-primary-300 px-1.5 py-0.5 rounded-md border border-primary-700/30 font-bold tracking-wider">SOON</span>
+                <span className="text-[9px] bg-primary-500/10 text-primary-300 px-1.5 py-0.5 rounded border border-primary-500/20 font-bold tracking-wider">SOON</span>
               </span>
               <span className="hover:text-white cursor-pointer transition-colors">Enterprise</span>
-              <span className="hover:text-white cursor-pointer transition-colors">Docs</span>
             </div>
           </div>
           <div className="flex items-center gap-6">
             <Link to="/login" className="text-[13px] font-semibold text-surface-300 hover:text-white transition-colors">
               Sign In
             </Link>
-            <Link to="/dashboard" className="hidden sm:flex h-[36px] items-center justify-center rounded-[8px] bg-primary-500 px-5 text-[13px] font-semibold text-white hover:bg-primary-400 transition-all shadow-lg shadow-primary-500/20">
+            <Link to="/dashboard" className="hidden sm:flex h-[38px] items-center justify-center rounded-[8px] bg-white px-5 text-[13px] font-bold text-[#030712] hover:bg-surface-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)]">
               Get Started
             </Link>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* ── 2. Hero Section ── */}
-      <section className="relative z-10 pt-32 lg:pt-40 pb-20 px-8 lg:px-16 max-w-[1700px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <section className="relative z-10 pt-40 lg:pt-52 pb-32 px-8 lg:px-16 max-w-[1700px] mx-auto min-h-[90vh] flex flex-col justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* Hero Text */}
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }}>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary-700/30 bg-primary-950/30 px-3 py-1 mb-6">
-              <span className="text-[11px] font-bold text-primary-400 tracking-wide uppercase">AI-Powered Fleet Intelligence</span>
-            </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-6 2xl:col-span-5"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="inline-flex items-center gap-2.5 rounded-full border border-primary-500/30 bg-primary-500/10 backdrop-blur-md px-3.5 py-1.5 mb-8 shadow-[0_0_15px_rgba(14,165,233,0.15)]"
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
+              <span className="text-[11px] font-bold text-primary-300 tracking-widest uppercase">AI-Powered Fleet Intelligence</span>
+            </motion.div>
 
-            <h1 className="text-[44px] md:text-[56px] lg:text-[64px] font-extrabold tracking-tight text-white leading-[1.05] mb-6" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
-              The intelligent operating system for{' '}
-              <span className="text-primary-400">modern fleet</span>{' '}
+            <h1 className="text-[48px] md:text-[64px] lg:text-[72px] font-extrabold tracking-tight text-white leading-[1.05] mb-6" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
+              The intelligent OS for{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-cyan-300">modern fleet</span>{' '}
               management.
             </h1>
             
-            <p className="text-[16px] md:text-[18px] text-surface-400 mb-10 leading-relaxed max-w-lg">
+            <p className="text-[17px] md:text-[19px] text-surface-300 mb-10 leading-relaxed max-w-lg font-medium">
               Run trips, dispatch, maintenance, fuel, and compliance from one place — with a rules engine that explains every decision and a tamper-evident audit log.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-10">
-              <Link to="/dashboard">
-                <button className="group h-[48px] px-8 rounded-lg bg-primary-500 hover:bg-primary-400 text-[14px] font-bold text-white transition-all flex items-center gap-2">
+              <Link to="/dashboard" className="w-full sm:w-auto">
+                <button className="w-full group h-[52px] px-8 rounded-xl bg-gradient-to-b from-primary-400 to-primary-600 hover:from-primary-300 hover:to-primary-500 text-[14px] font-bold text-white transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(14,165,233,0.3)] shadow-primary-500/30 border border-primary-400/20 hover:scale-[1.02]">
                   Launch Dashboard
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </button>
               </Link>
-              <Link to="/dashboard">
-                <button className="group h-[48px] px-8 rounded-lg border border-surface-700 bg-surface-900/50 hover:bg-surface-800 text-[14px] font-bold text-white transition-all flex items-center gap-2">
+              <Link to="/dashboard" className="w-full sm:w-auto">
+                <button className="w-full group h-[52px] px-8 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 backdrop-blur-md text-[14px] font-bold text-white transition-all flex items-center justify-center gap-2 hover:scale-[1.02]">
                   View Demo
                   <PlayCircle className="h-4 w-4 text-surface-400 group-hover:text-white transition-colors" />
                 </button>
               </Link>
             </div>
-
-            {/* Hero Section Floating Bars */}
-            <div className="relative h-24 mt-4 hidden md:block">
-              <motion.div 
-                animate={{ y: [0, -6, 0] }} 
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} 
-                className="absolute left-0 top-0 px-4 py-3 rounded-[12px] bg-primary-950/40 border border-primary-700/30 backdrop-blur-md flex items-center gap-3 w-52"
-              >
-                <div className="h-8 w-8 rounded-full bg-primary-500/20 text-primary-400 flex items-center justify-center shrink-0">
-                  <Activity className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-surface-400 font-medium uppercase tracking-wider mb-0.5">System Status</div>
-                  <div className="text-[14px] font-bold text-white leading-none">All Systems Go</div>
-                </div>
-              </motion.div>
-              
-              <motion.div 
-                animate={{ y: [0, 6, 0] }} 
-                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }} 
-                className="absolute left-[240px] top-8 px-4 py-3 rounded-[12px] bg-surface-900/50 border border-surface-700/50 backdrop-blur-md flex items-center gap-3 w-52"
-              >
-                <div className="h-8 w-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-surface-400 font-medium uppercase tracking-wider mb-0.5">Data Sync</div>
-                  <div className="text-[14px] font-bold text-white leading-none">Real-time Active</div>
-                </div>
-              </motion.div>
-            </div>
           </motion.div>
 
-          {/* Hero Image */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="rounded-[16px] border border-surface-700/50 bg-[#0B1426] p-2 shadow-2xl overflow-hidden relative">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent pointer-events-none" />
-              <img 
-                src="/images/dashboard-preview.png" 
-                alt="TransitOps Dashboard" 
-                className="w-full h-auto rounded-[12px] border border-surface-800"
-                onError={(e) => {
-                  // Fallback if image doesn't exist yet
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.parentElement!.innerHTML += '<div class="w-full aspect-[4/3] bg-surface-900 rounded-[12px] flex items-center justify-center text-surface-500 text-sm">Dashboard Preview Image</div>';
-                }}
-              />
-            </div>
-          </motion.div>
+          {/* Hero Image Space (Now occupied by 3D Scene) */}
+          <div className="hidden lg:block lg:col-span-6 2xl:col-span-7 h-full relative pointer-events-none">
+            {/* The 3D scene renders behind this, providing a cinematic right-side composition */}
+          </div>
 
         </div>
       </section>
 
       {/* ── 3. Trust Bar / Stats ── */}
-      <section className="relative z-10 py-16 border-y border-surface-800/40 bg-surface-950/30">
+      <section className="relative z-10 py-20 border-y border-white/5 bg-[#030712]/60 backdrop-blur-xl">
         <div className="max-w-[1700px] mx-auto px-8 lg:px-16 text-center">
-          <p className="text-[11px] font-bold text-surface-500 uppercase tracking-widest mb-10">Trusted by fleets across the globe</p>
+          <p className="text-[11px] font-bold text-surface-500 uppercase tracking-widest mb-12">Trusted by enterprises across the globe</p>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {STATS.map((stat, i) => (
@@ -199,16 +148,16 @@ export default function LandingPage() {
                 custom={i}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 variants={fadeUp}
-                className="flex items-center justify-center gap-4 py-6 px-4 rounded-2xl bg-[#0B1426]/60 border border-surface-800/50 hover:bg-[#0B1426] transition-colors"
+                className="flex items-center justify-center gap-5 py-6 px-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
               >
-                <div className="h-12 w-12 rounded-xl bg-surface-900/80 border border-surface-700/50 flex items-center justify-center text-primary-400">
-                  <stat.icon className="h-5 w-5" />
+                <div className="h-14 w-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-primary-400 shadow-inner">
+                  <stat.icon className="h-6 w-6" />
                 </div>
                 <div className="text-left">
-                  <div className="text-[24px] font-bold text-white leading-none mb-1" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>{stat.value}</div>
-                  <div className="text-[12px] text-surface-400">{stat.label}</div>
+                  <div className="text-[28px] font-extrabold text-white leading-none mb-1.5" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>{stat.value}</div>
+                  <div className="text-[13px] font-medium text-surface-400">{stat.label}</div>
                 </div>
               </motion.div>
             ))}
@@ -217,204 +166,177 @@ export default function LandingPage() {
       </section>
 
       {/* ── 4. Features Grid ── */}
-      <section id="features" className="relative z-10 py-24">
-        <div className="max-w-[1700px] mx-auto px-8 lg:px-16">
-          <div className="text-center mb-16">
-            <p className="text-[11px] font-bold text-primary-400 uppercase tracking-widest mb-3">Powerful Features</p>
-            <h2 className="text-[32px] md:text-[40px] font-bold text-white" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
+      <section id="features" className="relative z-10 py-32 bg-[#030712]">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary-500/5 blur-[150px] pointer-events-none" />
+        <div className="max-w-[1700px] mx-auto px-8 lg:px-16 relative">
+          <div className="text-center mb-20">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 mb-6"
+            >
+              <span className="text-[11px] font-bold text-surface-300 tracking-widest uppercase">Powerful Features</span>
+            </motion.div>
+            <h2 className="text-[36px] md:text-[48px] font-extrabold text-white tracking-tight" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
               Everything you need to run your fleet.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {FEATURES.map((feature, i) => (
               <motion.div 
                 key={feature.title}
                 custom={i}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 variants={fadeUp}
-                className="flex flex-col p-6 rounded-[20px] border border-surface-800/60 bg-[#0B1426]/40 hover:bg-[#0B1426]/80 hover:border-surface-700 transition-all group"
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                className="flex flex-col p-8 rounded-[24px] border border-white/5 bg-white/[0.02] backdrop-blur-sm hover:bg-white/[0.04] hover:border-white/10 transition-all group shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_32px_-8px_rgba(14,165,233,0.15)] relative overflow-hidden"
               >
-                <div className={`h-12 w-12 rounded-[12px] border flex items-center justify-center mb-5 bg-surface-900/50 ${feature.color}`}>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-white/[0.03] to-transparent rounded-bl-full pointer-events-none transition-opacity opacity-0 group-hover:opacity-100" />
+                
+                <div className={`h-12 w-12 rounded-[14px] border flex items-center justify-center mb-6 backdrop-blur-md ${feature.bg} ${feature.color}`}>
                   <feature.icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-[16px] font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-[13px] text-surface-400 leading-relaxed">{feature.desc}</p>
+                <h3 className="text-[18px] font-bold text-white mb-3 tracking-tight">{feature.title}</h3>
+                <p className="text-[14px] text-surface-400 leading-relaxed font-medium">{feature.desc}</p>
               </motion.div>
             ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <button className="text-[14px] font-semibold text-primary-400 hover:text-primary-300 transition-colors inline-flex items-center gap-1.5 group">
-              Explore all features
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </button>
           </div>
         </div>
       </section>
 
       {/* ── 5. Built For Today (Split Section) ── */}
-      <section className="relative z-10 py-24 bg-surface-950/20">
+      <section className="relative z-10 py-32 bg-surface-950/20 border-t border-white/5">
         <div className="max-w-[1700px] mx-auto px-8 lg:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             
-            <div className="order-2 lg:order-1 relative">
-              <p className="text-[14px] font-bold text-primary-400 uppercase tracking-widest mb-5">Why fleets love TransitOps</p>
-              <h2 className="text-[44px] md:text-[56px] lg:text-[64px] font-extrabold text-white leading-[1.05] mb-10" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
-                Built for today.<br/>Ready for tomorrow.
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
+              className="order-2 lg:order-1 relative"
+            >
+              <p className="text-[12px] font-bold text-primary-400 uppercase tracking-widest mb-4">Why fleets love TransitOps</p>
+              <h2 className="text-[44px] md:text-[56px] lg:text-[64px] font-extrabold text-white leading-[1.05] mb-10 tracking-tight" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
+                Built for today.<br/>
+                <span className="text-surface-500">Ready for tomorrow.</span>
               </h2>
               
-              <ul className="space-y-6 mb-16">
+              <ul className="space-y-6 mb-12">
                 {[
                   "Real-time visibility across your entire fleet",
-                  "Reduce costs with data-driven decisions",
+                  "Reduce costs with AI data-driven decisions",
                   "Improve safety, compliance, and uptime",
-                  "Scale effortlessly as your fleet grows"
+                  "Scale effortlessly as your logistics grow"
                 ].map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-4 text-[17px] md:text-[18px] text-surface-300 font-medium">
+                  <motion.li 
+                    key={idx} 
+                    initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + idx * 0.1 }} viewport={{ once: true }}
+                    className="flex items-center gap-4 text-[16px] md:text-[18px] text-surface-300 font-medium"
+                  >
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-500/20 text-primary-400">
                       <CheckCircle2 className="h-4 w-4" />
                     </div>
                     {item}
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
+            </motion.div>
 
-              {/* Floating Bars to fill empty gaps */}
-              <div className="relative h-56 hidden md:block">
-                <motion.div 
-                  animate={{ y: [0, -8, 0] }} 
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} 
-                  className="absolute left-0 top-0 px-5 py-4 rounded-[16px] bg-surface-900/90 border border-surface-700/50 shadow-2xl backdrop-blur-md flex items-center gap-4 w-64"
-                >
-                  <div className="h-10 w-10 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
-                    <Zap className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] text-surface-400 font-medium mb-0.5">Efficiency Gained</div>
-                    <div className="text-[18px] font-bold text-white leading-none">32% Increase</div>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  animate={{ y: [0, 8, 0] }} 
-                  transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }} 
-                  className="absolute left-[240px] top-12 px-5 py-4 rounded-[16px] bg-primary-950/80 border border-primary-700/30 shadow-2xl backdrop-blur-md flex items-center gap-4 w-60"
-                >
-                  <div className="h-10 w-10 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
-                    <Banknote className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] text-surface-400 font-medium mb-0.5">Operating Costs</div>
-                    <div className="text-[18px] font-bold text-white leading-none">15% Reduced</div>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  animate={{ y: [0, -6, 0] }} 
-                  transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 2 }} 
-                  className="absolute left-[90px] top-[110px] px-5 py-4 rounded-[16px] bg-surface-900/90 border border-surface-700/50 shadow-2xl backdrop-blur-md flex items-center gap-4 w-60"
-                >
-                  <div className="h-10 w-10 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
-                    <Shield className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] text-surface-400 font-medium mb-0.5">Audit Compliance</div>
-                    <div className="text-[18px] font-bold text-white leading-none">100% Secure</div>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-
-            <div className="order-1 lg:order-2">
-              <div className="relative rounded-[24px] overflow-hidden border border-surface-800/50 bg-[#0B1426]/50">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
+              className="order-1 lg:order-2"
+            >
+              <div className="relative rounded-[32px] overflow-hidden border border-white/10 bg-white/[0.02] shadow-[0_0_40px_rgba(0,0,0,0.5)] p-2 backdrop-blur-xl">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary-500/10 via-transparent to-purple-500/10 pointer-events-none" />
                 <img 
                   src="/trucks-illustration.png" 
                   alt="Modern Fleet Trucks" 
-                  className="w-full h-auto object-cover opacity-90"
+                  className="w-full h-auto rounded-[24px] object-cover opacity-90 border border-white/5"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement!.innerHTML += '<div class="w-full aspect-video bg-surface-900 rounded-[24px] flex items-center justify-center text-surface-500">Data Visualization Layer</div>';
+                  }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent opacity-60" />
               </div>
-            </div>
+            </motion.div>
 
           </div>
         </div>
       </section>
 
       {/* ── 6. CTA Banner ── */}
-      <section className="relative z-10 py-24 px-8 lg:px-16">
+      <section className="relative z-10 py-32 px-8 lg:px-16 bg-[#030712]">
         <div className="max-w-[1700px] mx-auto">
-          <div className="relative rounded-[24px] border border-primary-900/30 bg-gradient-to-br from-[#0B1426] to-[#030712] p-10 md:p-14 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
-            
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
+            className="relative rounded-[32px] border border-primary-500/20 bg-gradient-to-br from-primary-950/40 to-surface-950/50 p-12 md:p-20 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12 backdrop-blur-2xl shadow-[0_0_50px_rgba(14,165,233,0.1)]"
+          >
             {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[300px] h-[300px] bg-primary-500/10 blur-[80px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[400px] h-[400px] bg-primary-500/15 blur-[100px] rounded-full pointer-events-none" />
             
-            <div className="relative flex items-center gap-6 text-left">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-500/10 border border-primary-500/20 shrink-0">
-                <Rocket className="h-8 w-8 text-primary-400" />
+            <div className="relative flex items-center gap-8 text-left z-10">
+              <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary-500/10 border border-primary-500/30 shrink-0 shadow-[0_0_20px_rgba(14,165,233,0.2)]">
+                <Rocket className="h-10 w-10 text-primary-400" />
               </div>
               <div>
-                <h2 className="text-[28px] font-bold text-white mb-2" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
+                <h2 className="text-[32px] md:text-[40px] font-extrabold text-white mb-3 tracking-tight" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
                   Ready to modernize your fleet?
                 </h2>
-                <p className="text-[15px] text-surface-400">
+                <p className="text-[17px] text-surface-300 font-medium">
                   Get started in minutes with our comprehensive platform.
                 </p>
               </div>
             </div>
 
-            <div className="relative flex flex-col items-center gap-4 shrink-0 w-full md:w-auto">
+            <div className="relative flex flex-col items-center gap-5 shrink-0 w-full md:w-auto z-10">
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
                 <Link to="/dashboard" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto h-[48px] px-8 rounded-lg bg-primary-500 hover:bg-primary-400 text-[14px] font-bold text-white transition-all flex items-center justify-center gap-2">
+                  <button className="w-full sm:w-auto h-[52px] px-8 rounded-xl bg-white text-[14px] font-bold text-[#030712] hover:bg-surface-200 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:scale-[1.02]">
                     Get Started Free
                     <ArrowRight className="h-4 w-4" />
                   </button>
                 </Link>
-                <button className="w-full sm:w-auto h-[48px] px-8 rounded-lg border border-surface-700 bg-surface-900/50 hover:bg-surface-800 text-[14px] font-bold text-white transition-all">
+                <button className="w-full sm:w-auto h-[52px] px-8 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 backdrop-blur-md text-[14px] font-bold text-white transition-all hover:scale-[1.02]">
                   Talk to Sales
                 </button>
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-4 text-[12px] text-surface-400 font-medium">
-                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-primary-500" /> Free 14-day trial</span>
-                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-primary-500" /> No credit card</span>
-                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-primary-500" /> Cancel anytime</span>
+              <div className="flex flex-wrap items-center justify-center gap-5 text-[13px] text-surface-400 font-medium">
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> Free 14-day trial</span>
+                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> No credit card</span>
               </div>
             </div>
 
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ── 7. Footer ── */}
-      <footer className="relative z-10 border-t border-surface-800/40 bg-[#030712] py-12">
-        <div className="max-w-[1700px] mx-auto px-8 lg:px-16 flex flex-col md:flex-row justify-between items-center gap-6">
+      <footer className="relative z-10 border-t border-white/5 bg-[#030712] py-16">
+        <div className="max-w-[1700px] mx-auto px-8 lg:px-16 flex flex-col md:flex-row justify-between items-center gap-8">
           
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-[6px] bg-primary-500">
-              <Truck className="h-3.5 w-3.5 text-white" />
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-primary-500">
+              <Truck className="h-4 w-4 text-white" />
             </div>
-            <span className="text-[15px] font-bold text-white" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>TransitOps</span>
+            <span className="text-[17px] font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>TransitOps</span>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-8 text-[13px] text-surface-400 font-medium">
+          <div className="flex flex-wrap justify-center gap-10 text-[14px] text-surface-400 font-medium">
             <span className="hover:text-white cursor-pointer transition-colors">Documentation</span>
             <span className="hover:text-white cursor-pointer transition-colors">Privacy</span>
             <span className="hover:text-white cursor-pointer transition-colors">Terms</span>
             <span className="hover:text-white cursor-pointer transition-colors">Contact</span>
           </div>
 
-          <div className="flex items-center gap-4 text-surface-500">
-            <a href="#" className="hover:text-white transition-colors"><Linkedin className="h-4 w-4" /></a>
-            <a href="#" className="hover:text-white transition-colors"><Twitter className="h-4 w-4" /></a>
-            <a href="#" className="hover:text-white transition-colors"><Youtube className="h-4 w-4" /></a>
-            <a href="#" className="hover:text-white transition-colors"><Globe className="h-4 w-4" /></a>
+          <div className="flex items-center gap-5 text-surface-500">
+            <a href="#" className="hover:text-white transition-colors hover:scale-110 transform"><Linkedin className="h-5 w-5" /></a>
+            <a href="#" className="hover:text-white transition-colors hover:scale-110 transform"><Twitter className="h-5 w-5" /></a>
+            <a href="#" className="hover:text-white transition-colors hover:scale-110 transform"><Youtube className="h-5 w-5" /></a>
+            <a href="#" className="hover:text-white transition-colors hover:scale-110 transform"><Globe className="h-5 w-5" /></a>
           </div>
 
         </div>
-        <div className="max-w-[1700px] mx-auto px-8 lg:px-16 mt-8 text-center md:text-left text-[12px] text-surface-600">
+        <div className="max-w-[1700px] mx-auto px-8 lg:px-16 mt-12 text-center md:text-left text-[13px] text-surface-600 font-medium">
           © 2026 TransitOps. All rights reserved.
         </div>
       </footer>
