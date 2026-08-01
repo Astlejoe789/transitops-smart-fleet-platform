@@ -8,3 +8,4 @@ app.listen(env.PORT, () => {
   console.log(`📋 Health check: http://localhost:${env.PORT}/health`);
   console.log(`🌍 Environment: ${env.NODE_ENV}`);
 });
+

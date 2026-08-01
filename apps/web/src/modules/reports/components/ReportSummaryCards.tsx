@@ -9,7 +9,7 @@ interface ReportSummaryCardsProps {
 }
 
 interface StatCardProps {
-  icon: React.ElementType;
+  icon: any;
   label: string;
   value: string | number;
   subtitle: string;

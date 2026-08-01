@@ -13,7 +13,7 @@ interface FuelSummaryCardsProps {
 }
 
 interface StatCardProps {
-  icon: React.ElementType;
+  icon: any;
   label: string;
   value: string | number;
   trend: string;

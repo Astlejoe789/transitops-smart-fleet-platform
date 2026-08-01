@@ -7,7 +7,7 @@ interface DriverSummaryCardsProps {
 }
 
 interface StatCardProps {
-  icon: React.ElementType;
+  icon: any;
   label: string;
   value: number;
   subtitle: string;

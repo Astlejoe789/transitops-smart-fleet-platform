@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Download, Settings, BarChart2, ArrowRight } from 'lucide-react';
 
 interface QuickActionProps {
-  icon: React.ElementType;
+  icon: any;
   title: string;
   description: string;
   linkLabel: string;
