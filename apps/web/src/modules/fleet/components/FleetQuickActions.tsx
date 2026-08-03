@@ -19,7 +19,7 @@ function QuickAction({ icon: Icon, title, description, linkLabel, linkTo, onClic
   );
 
   return (
-    <div className="flex flex-col gap-3 rounded-[16px] bg-[#0B1426]/70 border border-surface-800/40 p-5 transition-all hover:border-surface-700/60 hover:bg-[#0B1426]/90">
+    <div className="flex flex-col items-center text-center gap-3 rounded-[16px] bg-[#0B1426]/70 border border-surface-800/40 p-5 transition-all hover:border-surface-700/60 hover:bg-[#0B1426]/90">
       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-950/60 border border-primary-800/30 text-primary-400">
         <Icon className="h-5 w-5" />
       </div>

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -25,18 +25,16 @@ export function KPICard({ title, value, icon: Icon, trend, onClick, className }:
       )}
       onClick={onClick}
     >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        <div className="p-2 bg-primary/10 rounded-full">
-          <Icon className="h-4 w-4 text-primary" />
+      <CardContent className="flex flex-col items-center justify-center text-center p-6">
+        <div className="p-2.5 bg-primary/10 rounded-full mb-3">
+          <Icon className="h-5 w-5 text-primary" />
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-[12px] font-medium text-muted-foreground tracking-wide uppercase mb-1">
+          {title}
+        </p>
+        <div className="text-[26px] font-bold leading-tight">{value}</div>
         {trend && (
-          <p className="text-xs mt-1">
+          <p className="text-xs mt-2">
             <span className={cn(
               "font-medium",
               trend.isPositive ? "text-emerald-500" : "text-rose-500"

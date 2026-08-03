@@ -54,19 +54,15 @@ export function FuelDashboard() {
       {kpis.map((kpi) => {
         const Icon = kpi.icon;
         return (
-          <div key={kpi.title} className="p-6 transition-all bg-white shadow-sm border border-surface-200 dark:border-surface-800 dark:bg-surface-900 rounded-xl hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-surface-500">{kpi.title}</p>
-                <h3 className="mt-2 text-2xl font-bold text-surface-900 dark:text-white">
-                  {kpi.value}
-                </h3>
-              </div>
-              <div className={`p-3 rounded-xl ${kpi.bg}`}>
-                <Icon className={`w-6 h-6 ${kpi.color}`} />
-              </div>
+          <div key={kpi.title} className="flex flex-col items-center justify-center text-center p-6 transition-all bg-white shadow-sm border border-surface-200 dark:border-surface-800 dark:bg-surface-900 rounded-xl hover:shadow-md">
+            <div className={`p-3 rounded-full ${kpi.bg} mb-3`}>
+              <Icon className={`w-6 h-6 ${kpi.color}`} />
             </div>
-            <div className="flex items-center mt-4 text-sm">
+            <p className="text-[12px] font-medium text-surface-500 tracking-wide uppercase mb-1">{kpi.title}</p>
+            <h3 className="text-2xl font-bold text-surface-900 dark:text-white">
+              {kpi.value}
+            </h3>
+            <div className="flex items-center mt-2 text-sm">
               <span className={`font-medium ${kpi.trendUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                 {kpi.trend}
               </span>
