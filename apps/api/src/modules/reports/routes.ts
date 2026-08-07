@@ -12,6 +12,15 @@ const controller = new ReportsController();
 
 router.use(authMiddleware);
 
+// Summary & list (used by the Reports page header/grid)
+router.get('/summary', requirePermission('reports', 'read'), controller.getSummary);
+router.get('/list', requirePermission('reports', 'read'), controller.getReportsList);
+
+// Export endpoints
+router.get('/export-all', requirePermission('reports', 'read'), controller.exportAll);
+router.get('/:reportId/export', requirePermission('reports', 'read'), controller.exportOne);
+
+// Detailed data reports
 router.get('/fleet', requirePermission('reports', 'read'), controller.getFleetReport);
 router.get('/drivers', requirePermission('reports', 'read'), controller.getDriversReport);
 router.get('/trips', requirePermission('reports', 'read'), controller.getTripsReport);
@@ -23,4 +32,3 @@ router.get('/vendors', requirePermission('reports', 'read'), controller.getVendo
 router.get('/billing', requirePermission('reports', 'read'), controller.getBillingReport);
 
 export const reportsRoutes = router;
-

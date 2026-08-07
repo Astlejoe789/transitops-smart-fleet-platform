@@ -1,4 +1,0 @@
-/**
- * Maintenance module — schemas
- */
-export {};

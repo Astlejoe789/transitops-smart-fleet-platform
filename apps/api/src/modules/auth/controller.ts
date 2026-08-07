@@ -55,4 +55,9 @@ export class AuthController {
       'Password reset processed',
     );
   };
+  updateProfile = async (req: Request, res: Response): Promise<void> => {
+    const authReq = req as AuthenticatedRequest;
+    const user = await this.service.updateProfile(authReq.user.userId, req.body);
+    ApiResponse.success(res, user, 'Profile updated successfully');
+  };
 }

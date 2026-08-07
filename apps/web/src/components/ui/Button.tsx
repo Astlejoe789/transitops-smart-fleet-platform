@@ -10,14 +10,14 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm',
-        primary: 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm',
-        danger: 'bg-danger text-white hover:bg-red-600',
-        destructive: 'bg-danger text-white hover:bg-red-600',
-        outline: 'border border-surface-700 bg-transparent hover:bg-surface-850 text-white',
-        secondary: 'bg-surface-800 text-white hover:bg-surface-850',
-        ghost: 'hover:bg-surface-850 text-surface-400 hover:text-white',
-        link: 'text-primary-500 underline-offset-4 hover:underline',
+        default: 'bg-[#0066B3] text-white hover:bg-[#004f8c] shadow-sm',
+        primary: 'bg-[#0066B3] text-white hover:bg-[#004f8c] shadow-sm',
+        danger: 'bg-red-600 text-white hover:bg-red-700 shadow-sm',
+        destructive: 'bg-red-600 text-white hover:bg-red-700 shadow-sm',
+        outline: 'border-[1.5px] border-slate-200 dark:border-slate-700 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-900 dark:text-white',
+        secondary: 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-slate-700',
+        ghost: 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white',
+        link: 'text-[#0066B3] underline-offset-4 hover:underline',
       },
       size: {
         default: 'h-11 px-4 py-2',

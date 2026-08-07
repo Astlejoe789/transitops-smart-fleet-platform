@@ -104,6 +104,13 @@ export class AuthRepository {
     });
   }
 
+  async updateUserProfile(userId: string, data: { firstName?: string; lastName?: string; phone?: string }): Promise<User> {
+    return prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+  }
+
   async updateLastLogin(userId: string): Promise<void> {
     await prisma.user.update({
       where: { id: userId },

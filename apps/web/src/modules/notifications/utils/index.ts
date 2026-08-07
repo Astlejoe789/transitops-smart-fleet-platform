@@ -1,4 +1,0 @@
-/**
- * Notifications module — utils
- */
-export {};

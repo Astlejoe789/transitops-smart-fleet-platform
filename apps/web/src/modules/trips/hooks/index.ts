@@ -1,4 +1,0 @@
-/**
- * Trips module — hooks
- */
-export {};

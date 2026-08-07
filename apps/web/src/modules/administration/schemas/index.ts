@@ -1,4 +1,0 @@
-/**
- * Administration module — schemas
- */
-export {};

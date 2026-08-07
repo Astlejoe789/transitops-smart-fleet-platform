@@ -1,166 +1,138 @@
-import { useState } from 'react';
-import { Plus, Download } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
+import React, { useState } from 'react';
+import { Fuel, Plus, Search, TrendingDown, TrendingUp, MoreHorizontal, Download } from 'lucide-react';
 
-import { FuelFilters } from '../components/FuelFilters';
-import { FuelTable } from '../components/FuelTable';
-import { FuelFormModal } from '../components/FuelFormModal';
-import { FuelSummaryCards } from '../components/FuelSummaryCards';
-import { FuelQuickActions } from '../components/FuelQuickActions';
-import { useFuelLogs, useCreateFuelLog, useUpdateFuelLog } from '../hooks/useFuel';
-import type { FuelLog } from '../types';
+import { getFuelLogs, addFuelLog, type FuelLog } from '@/api/fuel.api';
+import { AddFuelLogModal } from '../components/AddFuelLogModal';
 
-// ─── Fuel Empty State Illustration ────────────────────────────────────────────
-function FuelEmptyIllustration() {
-  return (
-    <div className="relative flex items-center justify-center h-24 w-36 mx-auto mb-2">
-      {/* Fuel pump icon */}
-      <div className="absolute left-1 top-2">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-900/30 border border-primary-800/30">
-          <svg className="h-6 w-6 text-primary-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 22v-8p2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v8" />
-            <path d="M7 22V11a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v11" />
-            <path d="M13 5h3a2 2 0 0 1 2 2v2" />
-            <path d="M18 10a2 2 0 0 0-2-2h-3" />
-            <circle cx="7" cy="6" r="2" />
-          </svg>
-        </div>
-      </div>
-      {/* Clipboard / document center */}
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="flex h-16 w-14 items-center justify-center rounded-xl bg-primary-800/20 border-2 border-primary-700/30">
-          <svg className="h-8 w-8 text-primary-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10 9 9 9 8 9" />
-          </svg>
-        </div>
-      </div>
-      {/* Small leaf icon */}
-      <div className="absolute right-2 bottom-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-900/20 border border-emerald-800/20">
-          <svg className="h-4 w-4 text-emerald-500/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-export function FuelPage() {
-  const [filters, setFilters] = useState({ page: 1, limit: 10, search: '', status: '', type: '' });
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingLog, setEditingLog] = useState<FuelLog | null>(null);
+export default function FuelPage() {
+  const [search, setSearch] = useState('');
+  const [logs, setLogs] = useState<FuelLog[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const { data: logsData, isLoading } = useFuelLogs(filters);
-  const { mutate: createLog } = useCreateFuelLog();
-  const { mutate: updateLog } = useUpdateFuelLog();
+  React.useEffect(() => {
+    fetchLogs();
+  }, []);
 
-  const isEmpty = !isLoading && (!logsData?.data || logsData.data.length === 0);
-
-  // We enforce 'empty details' as requested: 0 for all metrics.
-  const stats = {
-    totalRefuels: 0,
-    monthlyCost: 0,
-    avgEfficiency: 'N/A',
-    highestCostVehicle: 'N/A',
+  const fetchLogs = async () => {
+    const data = await getFuelLogs();
+    setLogs(data);
   };
 
-  const handleEdit = (log: FuelLog) => {
-    setEditingLog(log);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setEditingLog(null);
-    setIsModalOpen(false);
-  };
-
-  const handleSubmit = (data: Partial<FuelLog>) => {
-    if (editingLog) {
-      updateLog({ id: editingLog.id, data }, { onSuccess: handleCloseModal });
-    } else {
-      createLog(data, { onSuccess: handleCloseModal });
+  const handleAddLog = async (logData: Partial<FuelLog>) => {
+    const newLog = await addFuelLog(logData);
+    if (newLog) {
+      setLogs(prev => [...prev, newLog]);
     }
   };
 
-  const handleCreate = () => {
-    setEditingLog(null);
-    setIsModalOpen(true);
-  };
+  const filtered = logs.filter(f =>
+    f.id.toLowerCase().includes(search.toLowerCase()) ||
+    f.vehicleId.toLowerCase().includes(search.toLowerCase()) ||
+    f.driverId.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalLiters = logs.reduce((a, f) => a + (f.gallons || 0), 0);
+  const totalCost = logs.reduce((a, f) => a + f.cost, 0);
+  const avgEfficiency = logs.length ? 7.2 : 0; // mocked efficiency for now
 
   return (
-    <PageContainer>
-      {/* Page Header */}
-      <PageHeader
-        title="Fuel Management"
-        subtitle="Monitor fuel consumption and costs."
-        actions={
-          <Button onClick={handleCreate}>
-            <Plus className="w-4 h-4 mr-2" />
-            Log Fuel Entry
-          </Button>
-        }
-      />
+    <div className="space-y-5 pb-8">
+      {/* Header */}
+      <section className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
+        <div>
+          <p className="mb-1 text-sm text-muted-foreground">Finance</p>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">Fuel Logs</h1>
+        </div>
+        <button onClick={() => setIsAddModalOpen(true)} className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm">
+          <Plus className="h-4 w-4" /> Add Fuel Entry
+        </button>
+      </section>
 
-      {/* Summary Stat Cards */}
-      <FuelSummaryCards
-        todayRefuels={stats.totalRefuels}
-        monthlyCost={stats.monthlyCost}
-        avgEfficiency={stats.avgEfficiency}
-        highestCostVehicle={stats.highestCostVehicle}
-        isLoading={isLoading}
-      />
+      {/* KPIs */}
+      <section className="grid gap-3 sm:grid-cols-3" aria-label="Fuel metrics">
+        {[
+          { label: 'Total Fuel (MTD)', value: `${totalLiters.toFixed(0)}L`, icon: Fuel, iconClass: 'bg-primary/10 text-primary', sub: `Across ${logs.length} fill-ups` },
+          { label: 'Total Fuel Cost (MTD)', value: `₹${(totalCost/1000).toFixed(1)}K`, icon: TrendingUp, iconClass: 'bg-destructive/10 text-destructive', sub: 'vs ₹38K last month' },
+          { label: 'Avg. Efficiency', value: `${avgEfficiency.toFixed(1)} km/L`, icon: TrendingDown, iconClass: 'bg-success/10 text-success', sub: '+0.3 km/L vs last month' },
+        ].map(k => {
+          const Icon = k.icon;
+          return (
+            <article key={k.label} className="rounded-lg border bg-card p-5 shadow-sm">
+              <div className="mb-5 flex items-start justify-between">
+                <span className={`grid size-10 place-items-center rounded-md ${k.iconClass}`}>
+                  <Icon width={20} height={20} aria-hidden="true" />
+                </span>
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">{k.label}</p>
+              <div className="mt-1 flex items-end justify-between gap-2">
+                <p className="font-display text-2xl font-bold">{k.value}</p>
+                <p className="text-right text-xs text-muted-foreground">{k.sub}</p>
+              </div>
+            </article>
+          );
+        })}
+      </section>
 
-      {/* Filters + Table Section */}
-      <div className="rounded-[18px] border border-surface-800/40 bg-[#0B1426]/50 p-6 shadow-sm">
-        <FuelFilters onFiltersChange={(newFilters) => setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }))} />
-
-        {isEmpty ? (
-          <div className="flex flex-col items-center justify-center rounded-[18px] border border-dashed border-surface-700/50 bg-surface-900/30 text-center p-16 min-h-[340px]">
-            <FuelEmptyIllustration />
-            <h3 className="mt-4 text-[length:var(--text-h3)] leading-[var(--leading-h3)] font-semibold text-white">
-              No fuel logs
-            </h3>
-            <p className="mt-2 max-w-sm text-[length:var(--text-body-sm)] text-surface-400">
-              Log your first fuel entry to start tracking fuel consumption and costs.
-            </p>
-            <Button onClick={handleCreate} className="mt-8">
-              <Plus className="mr-2 h-4 w-4" />
-              Log Fuel Entry
-            </Button>
-            <button
-              onClick={handleCreate}
-              className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-surface-400 hover:text-primary-400 transition-colors"
-            >
-              <Download className="h-4 w-4" />
-              Import fuel logs
-            </button>
-          </div>
-        ) : (
-          <FuelTable
-            data={logsData?.data || []}
-            isLoading={isLoading}
-            onEdit={handleEdit}
-          />
-        )}
+      {/* Controls */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search by ID, vehicle, or driver..."
+            className="w-full h-8 pl-8 pr-3 text-sm bg-muted/50 border border-border rounded-lg outline-none focus:ring-2 focus:ring-ring/30 text-foreground placeholder:text-muted-foreground" />
+        </div>
+        <div className="flex-1" />
+        <button className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-input bg-card text-xs font-medium text-muted-foreground hover:bg-accent transition-colors shadow-sm">
+          <Download className="h-3.5 w-3.5" /> Export
+        </button>
       </div>
 
-      {/* Quick Actions / Getting Started */}
-      <FuelQuickActions onLogFuel={handleCreate} />
-
-      <FuelFormModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleSubmit}
-        initialData={editingLog}
-      />
-    </PageContainer>
+      {/* Table */}
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] text-left text-sm">
+            <thead className="bg-muted/60 text-[11px] uppercase text-muted-foreground">
+              <tr>
+                {['Log ID', 'Vehicle', 'Driver', 'Trip', 'Date', 'Liters', 'Total', 'Efficiency', 'Station', ''].map(h => (
+                  <th key={h} className="px-5 py-3 font-semibold">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(f => (
+                <tr key={f.id} className="border-t border-border hover:bg-muted/30 transition-colors group">
+                  <td className="px-5 py-3.5 font-bold font-mono text-primary text-xs">{f.id.slice(0,8)}</td>
+                  <td className="px-5 py-3.5 font-mono text-xs font-semibold">{f.vehicleId}</td>
+                  <td className="px-5 py-3.5 text-xs text-muted-foreground">{f.driverId}</td>
+                  <td className="px-5 py-3.5 font-mono text-xs">{(f as any).trip ? <span className="text-primary">{(f as any).trip}</span> : <span className="text-muted-foreground">—</span>}</td>
+                  <td className="px-5 py-3.5 text-xs text-muted-foreground">{f.date}</td>
+                  <td className="px-5 py-3.5 text-xs font-bold">{f.gallons}L</td>
+                  <td className="px-5 py-3.5 text-xs font-bold">₹{f.cost.toLocaleString()}</td>
+                  <td className="px-5 py-3.5">
+                    <span className={`text-xs font-bold ${(f as any).efficiency >= 7.5 ? 'text-success' : (f as any).efficiency >= 6.5 ? 'text-warning' : 'text-muted-foreground'}`}>
+                      {(f as any).efficiency || '-'} km/L
+                    </span>
+                  </td>
+                  <td className="px-5 py-3.5 text-xs text-muted-foreground max-w-[150px] truncate">{f.location || (f as any).station}</td>
+                  <td className="px-5 py-3.5">
+                    <button className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {filtered.length === 0 && (
+          <div className="py-16 text-center">
+            <Fuel className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+            <p className="text-muted-foreground text-sm">No fuel logs found.</p>
+          </div>
+        )}
+      </div>
+      <AddFuelLogModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSave={handleAddLog} />
+    </div>
   );
 }

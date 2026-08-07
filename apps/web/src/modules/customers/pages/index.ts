@@ -1,4 +1,0 @@
-/**
- * Customers module — pages
- */
-export {};

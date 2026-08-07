@@ -1,4 +1,0 @@
-/**
- * Analytics module — hooks
- */
-export {};

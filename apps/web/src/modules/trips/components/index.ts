@@ -1,4 +1,0 @@
-/**
- * Trips module — components
- */
-export {};

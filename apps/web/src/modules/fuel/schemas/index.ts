@@ -1,4 +1,0 @@
-/**
- * Fuel module — schemas
- */
-export {};

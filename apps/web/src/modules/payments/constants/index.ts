@@ -1,4 +1,0 @@
-/**
- * Payments module — constants
- */
-export {};

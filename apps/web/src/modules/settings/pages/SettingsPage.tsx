@@ -1,527 +1,258 @@
-import { useState } from 'react';
-import { 
-  Settings, Shield, Building2, Users, Plug, Sparkles, 
-  CheckCircle2, Activity, HardDrive, ArrowRight, ChevronRight, Check
-} from 'lucide-react';
-import { PageContainer } from "@/components/layout";
+import React, { useState } from 'react';
+import { User, Bell, Shield, Database, Globe, Moon, Sun, Check, ChevronRight, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from 'next-themes';
+import { useForm } from 'react-hook-form';
+import { usersApi } from '@/api/users.api';
+import { useToast } from '@/components/ui/Toast';
+
+const TABS = [
+  { id: 'profile', label: 'Profile', icon: User },
+  { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'security', label: 'Security & RBAC', icon: Shield },
+  { id: 'system', label: 'System', icon: Database },
+];
+
+const DEFAULT_NOTIFICATIONS = [
+  { label: 'License Expiry Alerts', desc: 'Get notified when driver licenses are about to expire', enabled: true },
+  { label: 'Vehicle In-Shop Alerts', desc: 'Notify when a vehicle enters or exits maintenance', enabled: true },
+  { label: 'Trip Completion Updates', desc: 'Receive updates when trips are completed or cancelled', enabled: false },
+  { label: 'Expense Approval Requests', desc: 'Get alerts when new expenses are submitted for review', enabled: true },
+  { label: 'Fleet Utilization Reports', desc: 'Weekly summary of fleet performance metrics', enabled: false },
+];
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('General');
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-  
-  // General Form State
-  const [formData, setFormData] = useState({
-    organizationName: 'TransitOps Logistics',
-    currency: 'USD - US Dollar ($)',
-    timezone: '(UTC+05:30) Asia/Kolkata',
-    distanceUnit: 'km',
-    language: 'English (United States)',
-    numberFormat: '1,234.56',
-    dateFormat: 'DD MMM YYYY (29 Jul 2026)',
-    weekStartsOn: 'Monday'
+  const [activeTab, setActiveTab] = useState('profile');
+  const { user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
+  const { success, error: toastError } = useToast();
+
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [notifications, setNotifications] = useState(DEFAULT_NOTIFICATIONS);
+  const { register: registerProfile, handleSubmit: handleProfileSubmit } = useForm({
+    defaultValues: {
+      firstName: user?.firstName || 'Alex',
+      lastName: user?.lastName || 'Morgan',
+      email: user?.email || 'alex@transitops.com',
+      phone: '+91 98765 43210'
+    }
   });
 
-  // Security Toggles State
-  const [securityData, setSecurityData] = useState({
-    twoFactor: true,
-    autoLogout: true
-  });
-
-  const handleSave = () => {
-    setIsSaving(true);
-    // Simulate API request
-    setTimeout(() => {
-      setIsSaving(false);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    }, 600);
-  };
-
-  const handleReset = () => {
-    if (activeTab === 'General') {
-      setFormData({
-        organizationName: 'TransitOps Logistics',
-        currency: 'USD - US Dollar ($)',
-        timezone: '(UTC+05:30) Asia/Kolkata',
-        distanceUnit: 'km',
-        language: 'English (United States)',
-        numberFormat: '1,234.56',
-        dateFormat: 'DD MMM YYYY (29 Jul 2026)',
-        weekStartsOn: 'Monday'
-      });
-    } else if (activeTab === 'Security') {
-      setSecurityData({
-        twoFactor: true,
-        autoLogout: true
-      });
+  const onProfileSubmit = async (data: any) => {
+    setIsSavingProfile(true);
+    try {
+      await usersApi.updateProfile(data);
+      success('Profile updated', 'Your changes have been saved successfully.');
+    } catch {
+      toastError('Update failed', 'Could not save your profile. Please try again.');
+    } finally {
+      setIsSavingProfile(false);
     }
   };
 
+  const toggleNotification = (index: number) => {
+    setNotifications((prev) =>
+      prev.map((n, i) => (i === index ? { ...n, enabled: !n.enabled } : n))
+    );
+  };
+
   return (
-    <PageContainer maxWidth="ultra" className="space-y-8">
+    <div className="space-y-5 pb-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <section className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Application Settings</h1>
-          <p className="text-[13px] text-surface-400">
-            Manage your organization, workspace, security, integrations and system preferences.
-          </p>
+          <p className="mb-1 text-sm text-muted-foreground">Configuration</p>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">Settings</h1>
         </div>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={handleReset}
-            className="px-5 py-2 rounded-lg border border-surface-700 bg-surface-900/50 hover:bg-surface-800 text-white text-[13px] font-semibold transition-all"
-          >
-            Reset
-          </button>
-          <button 
-            onClick={handleSave}
-            disabled={isSaving}
-            className={`px-5 py-2 rounded-lg text-white text-[13px] font-bold transition-all shadow-lg flex items-center gap-2 ${
-              saveSuccess ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20' : 'bg-primary-600 hover:bg-primary-500 shadow-primary-600/20'
-            }`}
-          >
-            {isSaving ? (
-              <div className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
-            ) : saveSuccess ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Check className="h-4 w-4" />
-            )}
-            {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
-          </button>
-        </div>
-      </div>
+      </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        {/* LEFT SIDEBAR (3 cols) */}
-        <div className="lg:col-span-3 space-y-6">
-          <div className="p-3 rounded-[16px] bg-surface-900/40 border border-surface-700/50">
-            <div className="space-y-1">
-              {[
-                { name: 'General', icon: Settings },
-                { name: 'Security', icon: Shield },
-              ].map((item, idx) => {
-                const isActive = activeTab === item.name;
-                return (
-                  <button 
-                    key={idx} 
-                    onClick={() => setActiveTab(item.name)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-[13px] transition-all ${
-                      isActive 
-                        ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold' 
-                        : 'text-surface-400 hover:text-white hover:bg-surface-800/50 border border-transparent'
-                    }`}
-                  >
-                    <item.icon className="h-[18px] w-[18px]" /> {item.name}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="p-5 rounded-[16px] bg-gradient-to-br from-primary-950/40 to-[#030712] border border-primary-800/30">
-            <div className="flex items-center gap-2 text-primary-400 font-bold mb-3 text-[13px]">
-              <Sparkles className="h-4 w-4" /> AI Fleet Copilot
-            </div>
-            <p className="text-[11px] text-surface-400 mb-5 leading-relaxed">
-              Smart insights and recommendations to optimize your fleet operations.
-            </p>
-            <button className="w-full py-2.5 rounded-lg bg-primary-500/10 border border-primary-500/20 text-primary-400 font-bold text-[12px] hover:bg-primary-500/20 transition-colors flex justify-center items-center gap-1.5">
-              Try Copilot <ArrowRight className="h-3 w-3" />
+      <div className="flex flex-col lg:flex-row gap-5">
+        {/* Sidebar Tabs */}
+        <nav className="lg:w-64 shrink-0 rounded-lg border border-border bg-card p-2 h-fit shadow-sm">
+          {TABS.map(tab => {
+            const Icon = tab.icon;
+            const active = activeTab === tab.id;
+            return (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-semibold transition-colors ${
+                  active 
+                    ? 'bg-secondary text-foreground' 
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                }`}>
+                <Icon className="h-4 w-4 shrink-0" />
+                {tab.label}
+              </button>
+            );
+          })}
+          <div className="mt-2 pt-2 border-t border-border">
+            <button onClick={logout}
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-md text-sm font-semibold text-destructive hover:bg-destructive/10 transition-colors">
+              <LogOut className="h-4 w-4 shrink-0" />
+              Sign Out
             </button>
           </div>
-        </div>
+        </nav>
 
-        {/* RIGHT CONTENT (9 cols) */}
-        <div className="lg:col-span-9 space-y-6">
-          
-          {/* Top Metric Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
-            
-            {/* Card 1: Workspace */}
-            <div className="p-4 rounded-[16px] bg-surface-900/40 border border-surface-700/50 flex items-center gap-4">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <Building2 className="h-5 w-5" />
-              </div>
-              <div className="overflow-hidden">
-                <div className="text-[11px] text-surface-400 font-semibold mb-0.5">Workspace</div>
-                <div className="text-[13px] text-white font-medium truncate">Current Organization</div>
-                <div className="text-[11px] text-surface-500 mt-1 truncate">{formData.organizationName || 'TransitOps Logistics'}</div>
-              </div>
-            </div>
-
-            {/* Card 2: Members */}
-            <div className="p-4 rounded-[16px] bg-surface-900/40 border border-surface-700/50 flex items-center gap-4">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center text-primary-400">
-                <Users className="h-5 w-5" />
-              </div>
-              <div className="overflow-hidden w-full">
-                <div className="text-[11px] text-surface-400 font-semibold mb-0.5">Members</div>
-                <div className="text-[18px] text-white font-bold leading-none">1</div>
-                <div className="flex items-center justify-between mt-1.5">
-                  <span className="text-[10px] text-surface-500">Active Member</span>
-                  <span className="text-[10px] font-bold text-emerald-400">↑ 0%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Roles */}
-            <div className="p-4 rounded-[16px] bg-surface-900/40 border border-surface-700/50 flex items-center gap-4">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="overflow-hidden">
-                <div className="text-[11px] text-surface-400 font-semibold mb-0.5">Roles</div>
-                <div className="text-[18px] text-white font-bold leading-none">6</div>
-                <div className="text-[10px] text-surface-500 mt-1.5">Permission Roles</div>
-              </div>
-            </div>
-
-            {/* Card 4: Integrations */}
-            <div className="p-4 rounded-[16px] bg-surface-900/40 border border-surface-700/50 flex items-center gap-4">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-                <Plug className="h-5 w-5" />
-              </div>
-              <div className="overflow-hidden">
-                <div className="text-[11px] text-surface-400 font-semibold mb-0.5">Integrations</div>
-                <div className="text-[18px] text-white font-bold leading-none">0</div>
-                <div className="text-[10px] text-surface-500 mt-1.5">Connected</div>
-              </div>
-            </div>
-
-            {/* Card 5: Security */}
-            <div className="p-4 rounded-[16px] bg-surface-900/40 border border-surface-700/50 flex items-center gap-4">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <div className="overflow-hidden">
-                <div className="text-[11px] text-surface-400 font-semibold mb-0.5">Security</div>
-                <div className="text-[18px] text-emerald-400 font-bold leading-none">Healthy</div>
-                <div className="text-[10px] text-surface-500 mt-1.5">All systems secure</div>
-              </div>
-            </div>
-
-            {/* Card 6: Storage */}
-            <div className="p-4 rounded-[16px] bg-surface-900/40 border border-surface-700/50 flex flex-col justify-center">
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center gap-2">
-                   <div className="h-7 w-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-                     <HardDrive className="h-3.5 w-3.5" />
-                   </div>
-                   <div>
-                     <div className="text-[11px] text-surface-400 font-semibold">Storage</div>
-                   </div>
-                </div>
-              </div>
-              <div>
-                <div className="text-[16px] text-white font-bold leading-none mb-1">2.4 GB</div>
-                <div className="flex justify-between text-[10px] text-surface-500 mb-2">
-                  <span>of 50 GB used</span>
-                  <span>5%</span>
-                </div>
-                <div className="w-full bg-surface-800 rounded-full h-1">
-                  <div className="bg-emerald-500 h-1 rounded-full" style={{ width: '5%' }}></div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-            
-            {/* Center Forms (8 cols) */}
-            <div className="xl:col-span-8 space-y-6">
-              
-              {activeTab === 'General' && (
-                <div className="p-6 rounded-[16px] bg-surface-900/40 border border-surface-700/50 transition-opacity animate-in fade-in">
-                  <div className="mb-6">
-                    <h2 className="text-[18px] font-bold text-white mb-1">General Settings</h2>
-                    <p className="text-[13px] text-surface-400">Configure the basic settings for your organization.</p>
+        {/* Content Panel */}
+        <div className="flex-1 space-y-5">
+          {activeTab === 'profile' && (
+            <>
+              {/* Profile Card */}
+              <form onSubmit={handleProfileSubmit(onProfileSubmit)} className="rounded-lg border border-border bg-card p-6 shadow-sm">
+                <h2 className="text-base font-bold mb-6">Profile Information</h2>
+                <div className="flex items-center gap-5 mb-6 pb-6 border-b border-border">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-primary text-primary-foreground text-xl font-bold shadow-sm">
+                    {user ? `${user.firstName[0]}${user.lastName[0]}` : 'AM'}
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Organization Name</label>
-                      <input 
-                        type="text" 
-                        value={formData.organizationName}
-                        onChange={(e) => setFormData({...formData, organizationName: e.target.value})}
-                        className="w-full bg-[#030712] border border-surface-700 rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-emerald-500 transition-colors" 
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Currency</label>
-                      <select 
-                        value={formData.currency}
-                        onChange={(e) => setFormData({...formData, currency: e.target.value})}
-                        className="w-full bg-[#030712] border border-surface-700 rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none"
-                      >
-                        <option>USD - US Dollar ($)</option>
-                        <option>EUR - Euro (€)</option>
-                        <option>GBP - British Pound (£)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Timezone</label>
-                      <select 
-                        value={formData.timezone}
-                        onChange={(e) => setFormData({...formData, timezone: e.target.value})}
-                        className="w-full bg-[#030712] border border-surface-700 rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none"
-                      >
-                        <option>(UTC+05:30) Asia/Kolkata</option>
-                        <option>(UTC-05:00) Eastern Time</option>
-                        <option>(UTC+00:00) GMT</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Distance Unit</label>
-                      <div className="flex bg-[#030712] border border-surface-700 rounded-xl overflow-hidden p-1">
-                        <button 
-                          onClick={() => setFormData({...formData, distanceUnit: 'km'})}
-                          className={`flex-1 py-1.5 rounded-lg text-[13px] font-bold transition-colors ${
-                            formData.distanceUnit === 'km' ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400' : 'text-surface-400 hover:text-white font-medium border border-transparent'
-                          }`}
-                        >
-                          km
-                        </button>
-                        <button 
-                          onClick={() => setFormData({...formData, distanceUnit: 'miles'})}
-                          className={`flex-1 py-1.5 rounded-lg text-[13px] font-bold transition-colors ${
-                            formData.distanceUnit === 'miles' ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400' : 'text-surface-400 hover:text-white font-medium border border-transparent'
-                          }`}
-                        >
-                          miles
-                        </button>
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Language</label>
-                      <select 
-                        value={formData.language}
-                        onChange={(e) => setFormData({...formData, language: e.target.value})}
-                        className="w-full bg-[#030712] border border-surface-700 rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none"
-                      >
-                        <option>English (United States)</option>
-                        <option>Spanish</option>
-                        <option>French</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Number Format</label>
-                      <select 
-                        value={formData.numberFormat}
-                        onChange={(e) => setFormData({...formData, numberFormat: e.target.value})}
-                        className="w-full bg-[#030712] border border-surface-700 rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none"
-                      >
-                        <option>1,234.56</option>
-                        <option>1.234,56</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Date Format</label>
-                      <select 
-                        value={formData.dateFormat}
-                        onChange={(e) => setFormData({...formData, dateFormat: e.target.value})}
-                        className="w-full bg-[#030712] border border-surface-700 rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none"
-                      >
-                        <option>DD MMM YYYY (29 Jul 2026)</option>
-                        <option>MM/DD/YYYY (07/29/2026)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[12px] font-semibold text-surface-300">Week Starts On</label>
-                      <select 
-                        value={formData.weekStartsOn}
-                        onChange={(e) => setFormData({...formData, weekStartsOn: e.target.value})}
-                        className="w-full bg-[#030712] border border-surface-700 rounded-xl px-4 py-2.5 text-[13px] text-white focus:outline-none focus:border-emerald-500 transition-colors appearance-none"
-                      >
-                        <option>Monday</option>
-                        <option>Sunday</option>
-                      </select>
-                    </div>
+                  <div>
+                    <div className="font-bold text-lg">{user ? `${user.firstName} ${user.lastName}` : 'Alex Morgan'}</div>
+                    <div className="text-sm text-muted-foreground">{user?.email || 'alex@transitops.com'}</div>
+                    <span className="inline-block mt-1.5 text-xs font-bold px-2 py-0.5 rounded bg-secondary text-secondary-foreground">Fleet Manager</span>
                   </div>
+                  <button type="button" className="ml-auto h-9 px-4 text-sm font-semibold rounded-md border border-input bg-background hover:bg-accent transition-colors shadow-sm">
+                    Change Photo
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground mb-1.5">First Name</label>
+                      <input {...registerProfile('firstName')} type="text"
+                        className="w-full h-9 px-3 bg-muted/50 border border-border rounded-md text-sm text-foreground focus:ring-2 focus:ring-ring/30 outline-none transition-shadow" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground mb-1.5">Last Name</label>
+                      <input {...registerProfile('lastName')} type="text"
+                        className="w-full h-9 px-3 bg-muted/50 border border-border rounded-md text-sm text-foreground focus:ring-2 focus:ring-ring/30 outline-none transition-shadow" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground mb-1.5">Email Address</label>
+                      <input {...registerProfile('email')} type="email"
+                        className="w-full h-9 px-3 bg-muted/50 border border-border rounded-md text-sm text-foreground focus:ring-2 focus:ring-ring/30 outline-none transition-shadow" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground mb-1.5">Phone Number</label>
+                      <input {...registerProfile('phone')} type="tel"
+                        className="w-full h-9 px-3 bg-muted/50 border border-border rounded-md text-sm text-foreground focus:ring-2 focus:ring-ring/30 outline-none transition-shadow" />
+                    </div>
+                </div>
+                <div className="flex justify-end mt-6 pt-6 border-t border-border">
+                  <button type="submit" disabled={isSavingProfile} className="h-9 px-6 bg-primary hover:opacity-90 text-primary-foreground text-sm font-semibold rounded-md shadow-sm transition-opacity disabled:opacity-50">
+                    {isSavingProfile ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
 
-                  <div className="mt-8 flex justify-end">
-                    <button 
-                      onClick={handleSave}
-                      disabled={isSaving}
-                      className={`px-6 py-2 rounded-lg text-[13px] font-bold transition-all shadow-lg flex items-center gap-2 ${
-                        saveSuccess ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-primary-600 hover:bg-primary-500 text-white shadow-primary-600/20'
-                      }`}
+              {/* Theme Card */}
+              <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+                <h2 className="text-base font-bold mb-4">Appearance</h2>
+                <div className="flex gap-3">
+                  {[
+                    { value: 'light', label: 'Light Mode', icon: Sun },
+                    { value: 'dark', label: 'Dark Mode', icon: Moon },
+                    { value: 'system', label: 'System Default', icon: Globe },
+                  ].map(opt => {
+                    const Icon = opt.icon;
+                    const active = theme === opt.value;
+                    return (
+                      <button key={opt.value} onClick={() => setTheme(opt.value)}
+                        className={`flex-1 flex flex-col items-center gap-2 py-4 rounded-lg border-2 transition-colors text-sm font-semibold ${
+                          active 
+                            ? 'border-primary bg-secondary text-primary' 
+                            : 'border-transparent bg-muted/50 text-muted-foreground hover:bg-muted'
+                        }`}>
+                        <Icon className="h-5 w-5" />
+                        {opt.label}
+                        {active && <Check className="h-4 w-4" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'notifications' && (
+            <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <h2 className="text-base font-bold mb-6">Notification Preferences</h2>
+              <div className="space-y-1">
+                {notifications.map((n, i) => (
+                  <div key={n.label} className={`flex items-center justify-between py-4 ${i !== 0 ? 'border-t border-border' : ''}`}>
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">{n.label}</div>
+                      <div className="text-xs text-muted-foreground mt-1">{n.desc}</div>
+                    </div>
+                    <button
+                      onClick={() => toggleNotification(i)}
+                      aria-checked={n.enabled}
+                      role="switch"
+                      aria-label={`Toggle ${n.label}`}
+                      className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${n.enabled ? 'bg-primary' : 'bg-muted'}`}
                     >
-                      {isSaving ? (
-                        <div className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
-                      ) : saveSuccess ? (
-                        <Check className="h-4 w-4" />
-                      ) : (
-                        <Check className="h-4 w-4" />
-                      )}
-                      {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
+                      <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-primary-foreground shadow transition-transform ${n.enabled ? 'translate-x-5' : 'translate-x-0.5'}`} />
                     </button>
                   </div>
-                </div>
-              )}
-
-              {activeTab === 'Security' && (
-                <div className="p-6 rounded-[16px] bg-surface-900/40 border border-surface-700/50 transition-opacity animate-in fade-in">
-                  <div className="flex items-start gap-3 mb-6">
-                    <div className="h-10 w-10 shrink-0 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                      <Shield className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h2 className="text-[16px] font-bold text-white mb-0.5">Security Settings</h2>
-                      <p className="text-[12px] text-surface-400">Manage security preferences and authentication settings.</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1 divide-y divide-surface-800 md:divide-y-0">
-                    
-                    {/* Item */}
-                    <div className="flex items-center justify-between py-4 md:border-b border-surface-800">
-                      <div>
-                        <div className="text-[13px] font-semibold text-white mb-0.5">Two-Factor Authentication</div>
-                        <div className="text-[11px] text-surface-400">Add an extra layer of security</div>
-                      </div>
-                      {/* Toggle Switch */}
-                      <div 
-                        onClick={() => setSecurityData({...securityData, twoFactor: !securityData.twoFactor})}
-                        className={`w-10 h-5 rounded-full flex items-center px-1 cursor-pointer transition-colors ${
-                          securityData.twoFactor ? 'bg-emerald-500 justify-end' : 'bg-surface-700 justify-start'
-                        }`}
-                      >
-                        <div className="w-3.5 h-3.5 bg-white rounded-full shadow-sm"></div>
-                      </div>
-                    </div>
-
-                    {/* Item */}
-                    <div className="flex items-center justify-between py-4 md:border-b border-surface-800 cursor-pointer group">
-                      <div>
-                        <div className="text-[13px] font-semibold text-white mb-0.5">Password Policy</div>
-                        <div className="text-[11px] text-surface-400">Strong password is required</div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-surface-600 group-hover:text-surface-300 transition-colors" />
-                    </div>
-
-                    {/* Item */}
-                    <div className="flex items-center justify-between py-4 md:border-b border-surface-800 cursor-pointer group">
-                      <div>
-                        <div className="text-[13px] font-semibold text-white mb-0.5">Session Timeout</div>
-                        <div className="text-[11px] text-surface-400">30 minutes</div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-surface-600 group-hover:text-surface-300 transition-colors" />
-                    </div>
-
-                    {/* Item */}
-                    <div className="flex items-center justify-between py-4 md:border-b border-surface-800">
-                      <div>
-                        <div className="text-[13px] font-semibold text-white mb-0.5">Auto Logout</div>
-                        <div className="text-[11px] text-surface-400">Logout inactive sessions automatically</div>
-                      </div>
-                      {/* Toggle Switch */}
-                      <div 
-                        onClick={() => setSecurityData({...securityData, autoLogout: !securityData.autoLogout})}
-                        className={`w-10 h-5 rounded-full flex items-center px-1 cursor-pointer transition-colors ${
-                          securityData.autoLogout ? 'bg-emerald-500 justify-end' : 'bg-surface-700 justify-start'
-                        }`}
-                      >
-                        <div className="w-3.5 h-3.5 bg-white rounded-full shadow-sm"></div>
-                      </div>
-                    </div>
-
-                    {/* Item */}
-                    <div className="flex items-center justify-between py-4 cursor-pointer group">
-                      <div>
-                        <div className="text-[13px] font-semibold text-white mb-0.5">Device Management</div>
-                        <div className="text-[11px] text-surface-400">3 devices active</div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-surface-600 group-hover:text-surface-300 transition-colors" />
-                    </div>
-
-                    {/* Item */}
-                    <div className="flex items-center justify-between py-4 cursor-pointer group">
-                      <div>
-                        <div className="text-[13px] font-semibold text-white mb-0.5">Login History</div>
-                        <div className="text-[11px] text-surface-400">View login activity</div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-surface-600 group-hover:text-surface-300 transition-colors" />
-                    </div>
-                    
-                  </div>
-                </div>
-              )}
-
+                ))}
+              </div>
             </div>
+          )}
 
-            {/* Right Side Widget (4 cols) */}
-            <div className="xl:col-span-4 space-y-6">
-              
-              <div className="p-6 rounded-[16px] bg-surface-900/40 border border-surface-700/50">
-                <div className="flex items-start gap-3 mb-8">
-                  <Activity className="h-5 w-5 text-emerald-400 mt-0.5" />
-                  <div>
-                    <h2 className="text-[16px] font-bold text-white mb-0.5">System Status</h2>
-                    <p className="text-[12px] text-surface-400">All systems operational</p>
-                  </div>
-                </div>
 
-                <div className="space-y-6">
-                  
-                  <div className="flex items-start gap-4">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-[13px] font-semibold text-white leading-none mb-1">System Health</div>
-                      <div className="text-[11px] text-surface-400">Operational</div>
+          {activeTab === 'security' && (
+            <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <h2 className="text-base font-bold mb-6">Roles & Permissions (RBAC)</h2>
+              <div className="space-y-3">
+                {[
+                  { role: 'Fleet Manager', users: 3, colorClass: 'text-primary', bgClass: 'bg-primary/10', perms: ['All Vehicles', 'All Drivers', 'Maintenance', 'Fleet Reports'] },
+                  { role: 'Dispatcher', users: 5, colorClass: 'text-success', bgClass: 'bg-success/10', perms: ['Create Trips', 'Assign Drivers', 'View Vehicles', 'Monitor Trips'] },
+                  { role: 'Driver', users: 42, colorClass: 'text-warning', bgClass: 'bg-warning/10', perms: ['View Own Trips', 'Fuel Entry', 'Expense Entry', 'Odometer Update'] },
+                  { role: 'Safety Officer', users: 2, colorClass: 'text-destructive', bgClass: 'bg-destructive/10', perms: ['License Verification', 'Suspend Drivers', 'Safety Reports'] },
+                  { role: 'Financial Analyst', users: 2, colorClass: 'text-[#8B5CF6]', bgClass: 'bg-[#8B5CF6]/10', perms: ['Fuel Reports', 'Expense Reports', 'ROI Analysis'] },
+                ].map(r => (
+                  <div key={r.role} className="flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors group cursor-pointer">
+                    <div className="flex items-center gap-4">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold ${r.bgClass} ${r.colorClass}`}>
+                        {r.role[0]}
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold">{r.role}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{r.users} users · {r.perms.slice(0, 2).join(', ')}{r.perms.length > 2 ? ` +${r.perms.length - 2} more` : ''}</div>
+                      </div>
                     </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-                  <div className="flex items-start gap-4">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-[13px] font-semibold text-white leading-none mb-1">API Status</div>
-                      <div className="text-[11px] text-surface-400">All APIs responding</div>
-                    </div>
+          {activeTab === 'system' && (
+            <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+              <h2 className="text-base font-bold mb-6">System Configuration</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {[
+                  { label: 'Company Name', value: 'TransitOps Ltd.' },
+                  { label: 'Default Currency', value: 'INR (₹)' },
+                  { label: 'Timezone', value: 'Asia/Kolkata (IST)' },
+                  { label: 'Date Format', value: 'DD-MM-YYYY' },
+                  { label: 'Distance Unit', value: 'Kilometers (km)' },
+                  { label: 'Fuel Unit', value: 'Liters (L)' },
+                ].map(field => (
+                  <div key={field.label}>
+                    <label className="block text-xs font-bold text-muted-foreground mb-1.5">{field.label}</label>
+                    <input defaultValue={field.value}
+                      className="w-full h-9 px-3 bg-muted/50 border border-border rounded-md text-sm text-foreground focus:ring-2 focus:ring-ring/30 outline-none transition-shadow" />
                   </div>
-
-                  <div className="flex items-start gap-4">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-[13px] font-semibold text-white leading-none mb-1">Database</div>
-                      <div className="text-[11px] text-surface-400">Healthy</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-[13px] font-semibold text-white leading-none mb-1">Storage</div>
-                      <div className="text-[11px] text-surface-400">2.4 GB / 50 GB (5%)</div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <div>
-                      <div className="text-[13px] font-semibold text-white leading-none mb-1">Background Jobs</div>
-                      <div className="text-[11px] text-surface-400">Running smoothly</div>
-                    </div>
-                  </div>
-
-                </div>
-
-                <button className="w-full mt-8 py-2.5 rounded-xl border border-surface-700 bg-surface-900/50 hover:bg-surface-800 text-[12px] font-bold text-white transition-all flex justify-center items-center gap-2">
-                  View System Logs <ArrowRight className="h-3.5 w-3.5 text-surface-400" />
+                ))}
+              </div>
+              <div className="flex justify-end mt-6 pt-6 border-t border-border">
+                <button className="h-9 px-6 bg-primary hover:opacity-90 text-primary-foreground text-sm font-semibold rounded-md shadow-sm transition-opacity">
+                  Save System Settings
                 </button>
               </div>
-
             </div>
-
-          </div>
-
-        </div>
+          )}
+        </div >
       </div>
-    </PageContainer>
+    </div>
   );
 }

@@ -1,14 +1,28 @@
 import type { Request, Response } from 'express';
 import { dashboardService } from './service.js';
 
+const ok = (res: Response, data: unknown) => res.json({ success: true, data });
+const err = (res: Response, msg: string, error: unknown) =>
+  res.status(500).json({ success: false, message: msg, error });
+
 export class DashboardController {
   async getSummary(req: Request, res: Response) {
     try {
       const companyId = (req as any).user?.companyId as string;
       const data = await dashboardService.getSummary(companyId);
-      res.json(data);
+      ok(res, data);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch dashboard summary', error });
+      err(res, 'Failed to fetch dashboard summary', error);
+    }
+  }
+
+  async getFleetDashboard(req: Request, res: Response) {
+    try {
+      const companyId = (req as any).user?.companyId as string;
+      const data = await dashboardService.getFleetDashboard(companyId);
+      ok(res, data);
+    } catch (error) {
+      err(res, 'Failed to fetch fleet dashboard data', error);
     }
   }
 
@@ -16,9 +30,9 @@ export class DashboardController {
     try {
       const companyId = (req as any).user?.companyId as string;
       const data = await dashboardService.getFleetStatus(companyId);
-      res.json(data);
+      ok(res, data);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch fleet status', error });
+      err(res, 'Failed to fetch fleet status', error);
     }
   }
 
@@ -26,9 +40,9 @@ export class DashboardController {
     try {
       const companyId = (req as any).user?.companyId as string;
       const data = await dashboardService.getTripsData(companyId);
-      res.json(data);
+      ok(res, data);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch trips data', error });
+      err(res, 'Failed to fetch trips data', error);
     }
   }
 
@@ -36,9 +50,9 @@ export class DashboardController {
     try {
       const companyId = (req as any).user?.companyId as string;
       const data = await dashboardService.getExpensesData(companyId);
-      res.json(data);
+      ok(res, data);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch expenses data', error });
+      err(res, 'Failed to fetch expenses data', error);
     }
   }
 
@@ -46,9 +60,9 @@ export class DashboardController {
     try {
       const companyId = (req as any).user?.companyId as string;
       const data = await dashboardService.getMaintenanceData(companyId);
-      res.json(data);
+      ok(res, data);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch maintenance data', error });
+      err(res, 'Failed to fetch maintenance data', error);
     }
   }
 
@@ -56,9 +70,9 @@ export class DashboardController {
     try {
       const companyId = (req as any).user?.companyId as string;
       const data = await dashboardService.getRecentActivities(companyId);
-      res.json(data);
+      ok(res, data);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch recent activities', error });
+      err(res, 'Failed to fetch recent activities', error);
     }
   }
 
@@ -66,9 +80,9 @@ export class DashboardController {
     try {
       const companyId = (req as any).user?.companyId as string;
       const data = await dashboardService.getNotifications(companyId);
-      res.json(data);
+      ok(res, data);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch notifications', error });
+      err(res, 'Failed to fetch notifications', error);
     }
   }
 }

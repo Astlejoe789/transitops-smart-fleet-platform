@@ -1,4 +1,0 @@
-/**
- * Trips module — services
- */
-export {};

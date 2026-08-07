@@ -218,4 +218,19 @@ export class AuthService {
     const newHash = await hashPassword(dto.newPassword);
     await this.repo.updateUserPassword(userId, newHash);
   }
+
+  /**
+   * Update profile fields for logged-in user
+   */
+  async updateProfile(userId: string, dto: { firstName?: string; lastName?: string; phone?: string }) {
+    const user = await this.repo.findUserById(userId);
+    if (!user) {
+      throw new HttpException(StatusCodes.NOT_FOUND, 'User not found');
+    }
+    return this.repo.updateUserProfile(userId, {
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      phone: dto.phone,
+    });
+  }
 }
