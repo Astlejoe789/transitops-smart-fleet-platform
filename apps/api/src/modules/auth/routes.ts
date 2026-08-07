@@ -38,6 +38,7 @@ router.post(
 router.use(authMiddleware);
 
 router.get('/me', asyncHandler(controller.me));
+router.put('/me', asyncHandler(controller.updateProfile));
 router.post('/logout', asyncHandler(controller.logout));
 router.post('/change-password', validate(changePasswordSchema), asyncHandler(controller.changePassword));
 

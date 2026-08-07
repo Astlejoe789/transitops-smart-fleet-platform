@@ -1,153 +1,153 @@
-import { useState, useMemo } from 'react';
-import { Plus, Wrench, ClipboardList } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
+import React, { useState } from 'react';
+import { Wrench, Plus, Search, Eye, Edit3, AlertTriangle, Download, MoreHorizontal } from 'lucide-react';
 
-import { MaintenanceFilters } from '../components/MaintenanceFilters';
-import { MaintenanceTable } from '../components/MaintenanceTable';
-import { MaintenanceFormModal } from '../components/MaintenanceFormModal';
-import { MaintenanceSummaryCards } from '../components/MaintenanceSummaryCards';
-import { MaintenanceQuickActions } from '../components/MaintenanceQuickActions';
-import { useMaintenance } from '../hooks/useMaintenance';
-import type { MaintenanceLog } from '../types';
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  SCHEDULED:   { label: 'Scheduled',   color: '#1a8fff', bg: 'hsl(211 50% 12%)' },
+  IN_PROGRESS: { label: 'In Progress', color: '#F59E0B', bg: 'hsl(38 50% 10%)' },
+  COMPLETED:   { label: 'Completed',   color: '#10B981', bg: 'hsl(160 40% 10%)' },
+  CANCELLED:   { label: 'Cancelled',   color: '#64748b', bg: 'hsl(222 47% 12%)' },
+};
 
-// ─── Maintenance Empty State Illustration ─────────────────────────────────────
-function MaintenanceEmptyIllustration() {
-  return (
-    <div className="relative flex items-center justify-center h-24 w-36 mx-auto mb-2">
-      {/* Wrench icon */}
-      <div className="absolute left-3 top-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-800/30 border border-primary-700/20">
-          <Wrench className="h-5 w-5 text-primary-400" />
-        </div>
-      </div>
-      {/* Vehicle / clipboard center */}
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary-600/15 border-2 border-primary-500/30">
-          <svg className="h-8 w-8 text-primary-400/80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <path d="M9 7h6M9 11h6M9 15h4" />
-          </svg>
-        </div>
-      </div>
-      {/* Gear / settings icon */}
-      <div className="absolute right-3 top-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-800/30 border border-primary-700/20">
-          <svg className="h-5 w-5 text-primary-500/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
+const TYPE_CONFIG: Record<string, { label: string; color: string }> = {
+  PREVENTIVE: { label: 'Preventive', color: '#10B981' },
+  CORRECTIVE: { label: 'Corrective', color: '#ef4444' },
+  INSPECTION: { label: 'Inspection', color: '#1a8fff' },
+  EMERGENCY:  { label: 'Emergency',  color: '#a78bfa' },
+};
+
+import { getMaintenanceLogs, addMaintenanceLog, type MaintenanceLog } from '@/api/maintenance.api';
+import { AddMaintenanceModal } from '../components/AddMaintenanceModal';
+
 
 export default function MaintenancePage() {
-  const [filters, setFilters] = useState({
-    page: 1,
-    limit: 10,
-    status: '',
-    type: '',
-    search: '',
-  });
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [logs, setLogs] = useState<MaintenanceLog[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editData, setEditData] = useState<MaintenanceLog | null>(null);
+  React.useEffect(() => {
+    fetchLogs();
+  }, []);
 
-  const { data, isLoading } = useMaintenance(filters);
-
-  const isEmpty = !isLoading && (!data?.data || data.data.length === 0);
-
-  // Derive summary stats from data
-  const stats = useMemo(() => {
-    const records: MaintenanceLog[] = data?.data || [];
-    return {
-      total: data?.meta?.total ?? records.length,
-      upcoming: records.filter((r) => r.status === 'SCHEDULED' || r.status === 'TECHNICIAN_ASSIGNED').length,
-      overdue: 0, // Would need backend support for overdue detection
-      completed: records.filter((r) => r.status === 'COMPLETED' || r.status === 'VERIFIED' || r.status === 'CLOSED').length,
-      openIssues: records.filter((r) => r.status === 'IN_PROGRESS' || r.status === 'WAITING_FOR_PARTS').length,
-    };
-  }, [data]);
-
-  const handleEdit = (log: MaintenanceLog) => {
-    setEditData(log);
-    setIsFormOpen(true);
+  const fetchLogs = async () => {
+    const data = await getMaintenanceLogs();
+    setLogs(data);
   };
 
-  const handleCreate = () => {
-    setEditData(null);
-    setIsFormOpen(true);
+  const handleAddLog = async (logData: Partial<MaintenanceLog>) => {
+    const newLog = await addMaintenanceLog(logData);
+    if (newLog) {
+      setLogs(prev => [...prev, newLog]);
+    }
   };
+
+  const filtered = logs.filter(m =>
+    (m.id.toLowerCase().includes(search.toLowerCase()) ||
+     m.vehicleId.toLowerCase().includes(search.toLowerCase()) ||
+     m.description.toLowerCase().includes(search.toLowerCase())) &&
+    (statusFilter === 'ALL' || (m as any).status === statusFilter)
+  );
 
   return (
-    <PageContainer>
-      {/* Page Header */}
-      <PageHeader
-        title="Maintenance"
-        subtitle="Manage vehicle service and repair logs."
-        actions={
-          <Button onClick={handleCreate}>
-            <Plus className="w-4 h-4 mr-2" />
-            Schedule Service
-          </Button>
-        }
-      />
+    <div className="space-y-5 pb-8">
+      <section className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
+        <div>
+          <p className="mb-1 text-sm text-muted-foreground">Fleet Management</p>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">Maintenance</h1>
+        </div>
+        <button onClick={() => setIsAddModalOpen(true)} className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm">
+          <Plus className="h-4 w-4" /> Create Record
+        </button>
+      </section>
 
-      {/* Summary Stat Cards */}
-      <MaintenanceSummaryCards
-        totalServices={stats.total}
-        upcoming={stats.upcoming}
-        overdue={stats.overdue}
-        completed={stats.completed}
-        openIssues={stats.openIssues}
-        isLoading={isLoading}
-      />
-
-      {/* Filters + Table Section */}
-      <div className="rounded-[18px] border border-surface-800/40 bg-[#0B1426]/50 p-6 shadow-sm">
-        <MaintenanceFilters filters={filters} onChange={setFilters} />
-
-        {isEmpty ? (
-          <div className="flex flex-col items-center justify-center rounded-[18px] border border-dashed border-surface-700/50 bg-surface-900/30 text-center p-16 min-h-[340px]">
-            <MaintenanceEmptyIllustration />
-            <h3 className="mt-4 text-[length:var(--text-h3)] leading-[var(--leading-h3)] font-semibold text-white">
-              No maintenance records
-            </h3>
-            <p className="mt-2 max-w-sm text-[length:var(--text-body-sm)] text-surface-400">
-              Schedule a service or add a repair log to keep your fleet running smoothly.
-            </p>
-            <Button onClick={handleCreate} className="mt-8">
-              <Plus className="mr-2 h-4 w-4" />
-              Schedule Service
-            </Button>
-            <button
-              onClick={handleCreate}
-              className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-surface-400 hover:text-primary-400 transition-colors"
-            >
-              <ClipboardList className="h-4 w-4" />
-              Add Repair Log
-            </button>
-          </div>
-        ) : (
-          <MaintenanceTable
-            data={data?.data || []}
-            isLoading={isLoading}
-            onEdit={handleEdit}
-          />
-        )}
+      {/* Alert */}
+      <div className="flex items-start gap-3 rounded-lg border border-warning/20 bg-warning-soft p-4">
+        <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+        <p className="text-sm text-warning">
+          <strong>2 vehicles currently In Shop</strong> — they cannot be dispatched until maintenance is marked complete.
+        </p>
       </div>
 
-      {/* Quick Actions / Getting Started */}
-      <MaintenanceQuickActions onScheduleService={handleCreate} />
+      <div className="flex flex-wrap items-center gap-3">
+        {[
+          { label: 'All', filter: 'ALL' },
+          { label: 'Scheduled', filter: 'SCHEDULED' },
+          { label: 'In Progress', filter: 'IN_PROGRESS' },
+          { label: 'Completed', filter: 'COMPLETED' },
+        ].map(c => (
+          <button key={c.filter} onClick={() => setStatusFilter(c.filter)}
+            className={`h-8 px-3.5 rounded-lg border text-xs font-semibold transition-colors ${
+              statusFilter === c.filter
+                ? 'border-primary bg-secondary text-primary'
+                : 'border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground'
+            }`}>
+            {c.label}
+          </button>
+        ))}
+        <div className="flex-1" />
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search records..."
+            className="h-8 w-[220px] pl-8 pr-3 text-sm bg-muted/50 border border-border rounded-lg outline-none focus:ring-2 focus:ring-ring/30 text-foreground placeholder:text-muted-foreground" />
+        </div>
+        <button className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-input bg-card text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors shadow-sm">
+          <Download className="h-3.5 w-3.5" /> Export
+        </button>
+      </div>
 
-      <MaintenanceFormModal
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        editData={editData}
-      />
-    </PageContainer>
+      <div className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] text-left text-sm">
+            <thead className="bg-muted/60 text-[11px] uppercase text-muted-foreground">
+              <tr>
+                {['Record ID', 'Vehicle', 'Type', 'Description', 'Scheduled Date', 'Est. Cost', 'Status', ''].map(h => (
+                  <th key={h} className="px-5 py-3 font-semibold">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(m => {
+                const s = STATUS_CONFIG[(m as any).status] || STATUS_CONFIG.SCHEDULED;
+                const t = TYPE_CONFIG[(m as any).type] || TYPE_CONFIG.PREVENTIVE;
+                return (
+                  <tr key={m.id} className="border-t border-border hover:bg-muted/30 transition-colors group">
+                    <td className="px-5 py-3.5 font-bold font-mono text-primary text-xs">{m.id.slice(0,8)}</td>
+                    <td className="px-5 py-3.5 font-mono text-xs font-semibold">{m.vehicleId}</td>
+                    <td className="px-5 py-3.5">
+                      <span className="text-xs font-bold" style={{ color: t.color }}>{t.label}</span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <p className="text-xs text-muted-foreground max-w-[250px] truncate">{m.description}</p>
+                    </td>
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground">{m.date}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold">₹{m.cost.toLocaleString()}</td>
+                    <td className="px-5 py-3.5">
+                      <span className="inline-flex items-center gap-1.5 rounded px-2 py-1 text-xs font-semibold"
+                        style={{ color: s.color, background: s.bg }}>
+                        <span className="size-1.5 rounded-full" style={{ background: s.color }} />
+                        {s.label}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <button className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {filtered.length === 0 && (
+          <div className="py-16 text-center">
+            <Wrench className="h-12 w-12 mx-auto text-muted-foreground/30 mb-4" />
+            <p className="text-muted-foreground text-sm">No maintenance records found.</p>
+          </div>
+        )}
+      </div>
+      <AddMaintenanceModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onSave={handleAddLog} />
+    </div>
   );
 }

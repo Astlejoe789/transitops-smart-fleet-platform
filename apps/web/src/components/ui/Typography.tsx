@@ -13,7 +13,8 @@ export const PageTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadi
     <h1
       ref={ref}
       className={cn(
-        'text-[length:var(--text-h1)] leading-[var(--leading-h1)] font-bold tracking-tight text-white',
+        'text-3xl md:text-4xl leading-tight font-extrabold tracking-tight text-slate-900 dark:text-white',
+        "font-['Outfit','Inter',sans-serif]",
         className,
       )}
       {...props}
@@ -28,7 +29,7 @@ export const PageSubtitle = forwardRef<HTMLParagraphElement, HTMLAttributes<HTML
     <p
       ref={ref}
       className={cn(
-        'mt-1 text-[length:var(--text-body-sm)] leading-[var(--leading-body-sm)] text-surface-500 dark:text-surface-400',
+        'mt-2 text-sm md:text-base leading-relaxed text-slate-500 dark:text-slate-400',
         className,
       )}
       {...props}
@@ -43,7 +44,8 @@ export const SectionTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHe
     <h2
       ref={ref}
       className={cn(
-        'text-[length:var(--text-h2)] leading-[var(--leading-h2)] font-semibold tracking-tight text-surface-900 dark:text-white',
+        'text-2xl font-bold tracking-tight text-slate-900 dark:text-white',
+        "font-['Outfit','Inter',sans-serif]",
         className,
       )}
       {...props}
@@ -58,7 +60,8 @@ export const CardSectionTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HT
     <h3
       ref={ref}
       className={cn(
-        'text-[length:var(--text-h3)] leading-[var(--leading-h3)] font-semibold tracking-tight text-surface-900 dark:text-white',
+        'text-xl font-bold tracking-tight text-slate-900 dark:text-white',
+        "font-['Outfit','Inter',sans-serif]",
         className,
       )}
       {...props}
@@ -73,7 +76,7 @@ export const BodyText = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLPara
     <p
       ref={ref}
       className={cn(
-        'text-[length:var(--text-body)] leading-[var(--leading-body)] text-surface-700 dark:text-surface-300',
+        'text-sm leading-relaxed text-slate-700 dark:text-slate-300',
         className,
       )}
       {...props}

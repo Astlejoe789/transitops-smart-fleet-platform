@@ -1,4 +1,0 @@
-/**
- * Vendors module — utils
- */
-export {};

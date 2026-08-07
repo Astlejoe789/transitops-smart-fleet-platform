@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { AuthProvider } from './AuthProvider';
 import { ThemeProvider } from './ThemeProvider';
+import { ToastProvider } from '@/components/ui/Toast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,9 +20,11 @@ interface AppProvidersProps {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

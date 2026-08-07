@@ -1,4 +1,0 @@
-/**
- * Reports module — schemas
- */
-export {};

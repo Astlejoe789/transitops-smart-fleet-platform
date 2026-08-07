@@ -64,6 +64,37 @@ export class ReportsController {
     const data = await reportsService.getBillingReport(authReq.user!.companyId, authReq.query);
     res.json({ success: true, data });
   }
+
+  async getSummary(req: Request, res: Response) {
+    const authReq = req as AuthenticatedRequest;
+    const data = await reportsService.getSummary(authReq.user!.companyId);
+    res.json({ success: true, data });
+  }
+
+  async getReportsList(req: Request, res: Response) {
+    const authReq = req as AuthenticatedRequest;
+    const data = await reportsService.getReportsList(authReq.user!.companyId);
+    res.json({ success: true, data });
+  }
+
+  async exportAll(req: Request, res: Response) {
+    const authReq = req as AuthenticatedRequest;
+    const format = (authReq.query.format as string) || 'csv';
+    const result = await reportsService.exportAll(authReq.user!.companyId, format);
+    res.setHeader('Content-Type', result.mime);
+    res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    res.send(result.content);
+  }
+
+  async exportOne(req: Request, res: Response) {
+    const authReq = req as AuthenticatedRequest;
+    const { reportId } = authReq.params;
+    const format = (authReq.query.format as string) || 'csv';
+    const result = await reportsService.exportOne(authReq.user!.companyId, reportId, format);
+    res.setHeader('Content-Type', result.mime);
+    res.setHeader('Content-Disposition', `attachment; filename="${result.filename}"`);
+    res.send(result.content);
+  }
 }
 
 

@@ -1,4 +1,0 @@
-/**
- * Vendors module — services
- */
-export {};

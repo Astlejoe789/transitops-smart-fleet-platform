@@ -31,11 +31,14 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    // Handle 401 Unauthorized — token refresh or redirect to login
+    // Handle 401 Unauthorized — clear token and redirect to login
     if (error.response?.status === 401) {
-      // TODO: Implement token refresh logic
-      // localStorage.removeItem('accessToken');
-      // window.location.href = '/login';
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // Only redirect if not already on an auth page
+      if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/forgot')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   },

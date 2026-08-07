@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/hooks/useAuth';
-import { AlertCircle, Truck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AlertCircle, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from 'next-themes';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -15,27 +16,67 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+/* ── tiny design tokens ──────────────────────────────── */
+const blue    = '#0066B3';
+const blueDark= '#004d87';
+const error   = '#dc2626';
+
+const inputStyle = (hasError: boolean, focused: boolean, dark: boolean): React.CSSProperties => {
+  const borderCol = dark ? '#1e293b' : '#e2e8f0';
+  const textCol = dark ? '#f1f5f9' : '#0a0a0a';
+  const bgCol = dark ? '#131e30' : '#f9fafc';
+  return {
+    width: '100%',
+    height: '46px',
+    padding: '0 14px',
+    fontSize: '15px',
+    color: textCol,
+    background: bgCol,
+    border: `1.5px solid ${hasError ? error : focused ? blue : borderCol}`,
+    borderRadius: '10px',
+    outline: 'none',
+    transition: 'border-color 0.2s, box-shadow 0.2s, background 0.3s',
+    boxShadow: focused ? `0 0 0 3px ${hasError ? 'rgba(220,38,38,0.1)' : 'rgba(0,102,179,0.1)'}` : 'none',
+    fontFamily: 'Inter, Outfit, sans-serif',
+    boxSizing: 'border-box' as const,
+  };
+};
+
+/* ── Demo credentials ─────────────────────────────────── */
+const DEMOS = [
+  { role: 'Fleet Mgr', email: 'fleet@transitops.com',      pass: 'Fleet@123456',    color: '#0066B3' },
+  { role: 'Dispatch',  email: 'dispatcher@transitops.com', pass: 'Dispatch@123456', color: '#10B981' },
+  { role: 'Driver',    email: 'driver@transitops.com',     pass: 'Driver@123456',   color: '#F59E0B' },
+  { role: 'Safety',    email: 'safety@transitops.com',     pass: 'Safety@123456',   color: '#EF4444' },
+  { role: 'Finance',   email: 'finance@transitops.com',    pass: 'Finance@123456',  color: '#8B5CF6' },
+];
+
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage]     = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting]     = useState(false);
+  const [showPassword, setShowPassword]     = useState(false);
+  const [emailFocused, setEmailFocused]     = useState(false);
+  const [passFocused, setPassFocused]       = useState(false);
+
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const dark = mounted ? (theme === 'dark' || resolvedTheme === 'dark') : false;
+
+  const textPrimary = dark ? '#f1f5f9' : '#0a0a0a';
+  const textMuted = dark ? '#94a3b8' : '#64748b';
+  const borderCol = dark ? '#1e293b' : '#e2e8f0';
+  const ssoBg = dark ? '#1e293b' : '#fff';
+  const demoBg = dark ? '#131e30' : '#f9fafc';
 
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      rememberMe: false,
-    },
+    defaultValues: { email: '', password: '', rememberMe: false },
   });
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -45,184 +86,222 @@ export default function LoginPage() {
       await login({ email: data.email, password: data.password });
       navigate(from, { replace: true });
     } catch (err: any) {
-      const msg = err?.response?.data?.message || 'Login failed. Please check your credentials.';
-      setErrorMessage(msg);
+      setErrorMessage(err?.response?.data?.message || 'Invalid email or password. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDemoFill = (email: string, pass: string) => {
+  const fillDemo = (email: string, pass: string) => {
     setValue('email', email, { shouldValidate: true });
     setValue('password', pass, { shouldValidate: true });
     setErrorMessage(null);
+    handleSubmit(onSubmit)();
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-      className="w-full flex flex-col items-center"
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Glass Card */}
-      <div className="w-full rounded-[24px] border border-surface-700/40 bg-surface-900/30 backdrop-blur-xl p-8 shadow-2xl relative overflow-hidden">
-        
-        {/* Subtle Top Inner Glow */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-surface-600/50 to-transparent" />
-
-        <div className="flex justify-center mb-6 lg:hidden">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-gradient-to-br from-primary-500 to-accent-500 text-white shadow-lg shadow-primary-600/20">
-            <Truck className="h-6 w-6" />
-          </div>
+      {/* ── Header ───────────────────────────────────────── */}
+      <div style={{ marginBottom: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+          <div style={{ width: '4px', height: '22px', background: blue, borderRadius: '2px' }} />
+          <span style={{ fontSize: '12px', fontWeight: 700, color: blue, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Fleet Operations Platform</span>
         </div>
+        <h1 style={{ fontSize: '28px', fontWeight: 800, color: textPrimary, letterSpacing: '-0.03em', fontFamily: 'Outfit, Inter, sans-serif', marginBottom: '8px', lineHeight: 1.15 }}>
+          Sign in to your account
+        </h1>
+        <p style={{ fontSize: '14px', color: textMuted, lineHeight: 1.6 }}>
+          Access your fleet dashboard, trips, and operations console.
+        </p>
+      </div>
 
-        {/* Header Text */}
-        <div className="space-y-1 mb-8 text-center lg:text-left">
-          <h2 className="text-[24px] font-bold tracking-tight text-white">Sign in</h2>
-          <p className="text-[14px] text-surface-400">Access your fleet operations dashboard.</p>
-        </div>
-
-        {/* Error Alert */}
+      {/* ── Error banner ─────────────────────────────────── */}
+      <AnimatePresence>
         {errorMessage && (
-          <div className="mb-6 flex items-center gap-3 rounded-[10px] border border-danger/30 bg-danger/5 p-3 text-[14px] text-red-300">
-            <AlertCircle className="h-5 w-5 shrink-0 text-danger" />
-            <p>{errorMessage}</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -8, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -8, height: 0 }}
+            style={{ marginBottom: '20px', display: 'flex', alignItems: 'flex-start', gap: '10px', padding: '12px 14px', background: 'rgba(220,38,38,0.05)', border: '1.5px solid rgba(220,38,38,0.2)', borderRadius: '10px' }}
+          >
+            <AlertCircle size={16} color={error} style={{ marginTop: '1px', flexShrink: 0 }} />
+            <p style={{ fontSize: '14px', color: error, lineHeight: 1.5 }}>{errorMessage}</p>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email Input */}
-          <div className="space-y-1.5">
-            <label className="block text-[14px] font-medium text-white">Email</label>
-            <input
-              type="email"
-              placeholder="you@fleet.co"
-              {...register('email')}
-              className={`w-full h-[44px] rounded-[10px] border bg-[#030712] px-3 text-[16px] text-white placeholder-surface-500 transition-colors focus:outline-none focus:ring-1 focus:ring-primary-500 ${
-                errors.email
-                  ? 'border-danger focus:border-danger focus:ring-danger'
-                  : 'border-surface-700/50 focus:border-primary-500'
-              }`}
-            />
-            {errors.email && (
-              <p className="text-[13px] text-danger">{errors.email.message}</p>
-            )}
+      {/* ── Login form ───────────────────────────────────── */}
+      <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+
+        {/* Email */}
+        <div>
+          <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: textPrimary, marginBottom: '7px' }}>
+            Email address
+          </label>
+          <input
+            type="email"
+            placeholder="you@company.com"
+            {...register('email')}
+            onFocus={() => setEmailFocused(true)}
+            onBlur={() => setEmailFocused(false)}
+            style={inputStyle(!!errors.email, emailFocused, dark)}
+          />
+          {errors.email && (
+            <p style={{ fontSize: '12px', color: error, marginTop: '5px' }}>{errors.email.message}</p>
+          )}
+        </div>
+
+        {/* Password */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '7px' }}>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: textPrimary }}>Password</label>
+            <Link to="/forgot-password" style={{ fontSize: '12px', color: blue, textDecoration: 'none', fontWeight: 500 }}
+              onMouseEnter={e => (e.currentTarget.style.color = blueDark)}
+              onMouseLeave={e => (e.currentTarget.style.color = blue)}
+            >
+              Forgot password?
+            </Link>
           </div>
-
-          {/* Password Input */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label className="block text-[14px] font-medium text-white">Password</label>
-              <Link to="/forgot-password" className="text-[13px] font-medium text-surface-400 hover:text-primary-400 transition-colors">
-                Forgot password?
-              </Link>
-            </div>
+          <div style={{ position: 'relative' }}>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               {...register('password')}
-              className={`w-full h-[44px] rounded-[10px] border bg-[#030712] px-3 text-[16px] text-white placeholder-surface-500 transition-colors focus:outline-none focus:ring-1 focus:ring-primary-500 ${
-                errors.password
-                  ? 'border-danger focus:border-danger focus:ring-danger'
-                  : 'border-surface-700/50 focus:border-primary-500'
-              }`}
+              onFocus={() => setPassFocused(true)}
+              onBlur={() => setPassFocused(false)}
+              style={{ ...inputStyle(!!errors.password, passFocused, dark), paddingRight: '44px' }}
             />
-            {errors.password && (
-              <p className="text-[13px] text-danger">{errors.password.message}</p>
-            )}
+            <button
+              type="button"
+              onClick={() => setShowPassword(v => !v)}
+              style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: textMuted, display: 'flex', alignItems: 'center' }}
+            >
+              {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+            </button>
           </div>
-
-          {/* Remember Me */}
-          <div className="flex items-center pt-1 pb-2">
-            <input
-              id="remember-me"
-              type="checkbox"
-              {...register('rememberMe')}
-              className="h-4 w-4 rounded-[4px] border-surface-700 bg-[#030712] text-primary-500 focus:ring-primary-500"
-            />
-            <label htmlFor="remember-me" className="ml-2.5 text-[14px] font-medium text-surface-400">
-              Remember me
-            </label>
-          </div>
-
-          {/* Submit Button */}
-          <motion.button
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full h-[44px] rounded-[10px] bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-[15px] font-semibold text-white transition-all disabled:opacity-50 flex justify-center items-center shadow-lg shadow-primary-600/20"
-          >
-            {isSubmitting ? (
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-            ) : (
-              'Sign in'
-            )}
-          </motion.button>
-        </form>
-
-        {/* Divider */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-surface-700/50"></div>
-          </div>
-          <div className="relative flex justify-center text-[12px] uppercase">
-            <span className="bg-surface-900 px-3 text-surface-500 font-medium">or continue with</span>
-          </div>
+          {errors.password && (
+            <p style={{ fontSize: '12px', color: error, marginTop: '5px' }}>{errors.password.message}</p>
+          )}
         </div>
 
-        {/* OAuth Buttons */}
-        <div className="space-y-3">
-          <button
-            type="button"
-            className="flex w-full h-[44px] items-center justify-center gap-3 rounded-[10px] border border-surface-700/50 bg-[#030712] text-[15px] font-medium text-white hover:bg-surface-850 transition-colors"
-          >
-            <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-            </svg>
-            Google
-          </button>
-          
-          <button
-            type="button"
-            className="flex w-full h-[44px] items-center justify-center gap-3 rounded-[10px] border border-surface-700/50 bg-[#030712] text-[15px] font-medium text-white hover:bg-surface-850 transition-colors"
-          >
-            <svg viewBox="0 0 23 23" className="h-5 w-5" aria-hidden="true">
-              <path fill="#f35325" d="M1 1h10v10H1z"/>
-              <path fill="#81bc06" d="M12 1h10v10H12z"/>
-              <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-              <path fill="#ffba08" d="M12 12h10v10H12z"/>
-            </svg>
-            Microsoft
-          </button>
+        {/* Remember me */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <input
+            id="remember-me"
+            type="checkbox"
+            {...register('rememberMe')}
+            style={{ width: '16px', height: '16px', accentColor: blue, cursor: 'pointer' }}
+          />
+          <label htmlFor="remember-me" style={{ fontSize: '13px', color: textMuted, cursor: 'pointer', userSelect: 'none' }}>
+            Keep me signed in for 30 days
+          </label>
         </div>
 
+        {/* Submit */}
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          type="submit"
+          disabled={isSubmitting}
+          style={{
+            width: '100%', height: '48px',
+            background: isSubmitting ? '#4d99d4' : blue,
+            color: '#fff', fontSize: '15px', fontWeight: 700,
+            border: 'none', borderRadius: '10px', cursor: isSubmitting ? 'not-allowed' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            transition: 'background 0.2s, box-shadow 0.2s',
+            boxShadow: isSubmitting ? 'none' : '0 4px 14px rgba(0,102,179,0.35)',
+            fontFamily: 'Outfit, Inter, sans-serif',
+            letterSpacing: '-0.01em',
+          }}
+          onMouseEnter={e => { if (!isSubmitting) (e.currentTarget as HTMLElement).style.background = blueDark; }}
+          onMouseLeave={e => { if (!isSubmitting) (e.currentTarget as HTMLElement).style.background = blue; }}
+        >
+          {isSubmitting ? (
+            <div style={{ width: '20px', height: '20px', border: '2.5px solid rgba(255,255,255,0.35)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
+          ) : (
+            <>Sign in <ArrowRight size={16} /></>
+          )}
+        </motion.button>
+      </form>
+
+      {/* ── Divider ──────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '24px 0' }}>
+        <div style={{ flex: 1, height: '1px', background: borderCol }} />
+        <span style={{ fontSize: '11px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', whiteSpace: 'nowrap' }}>or continue with</span>
+        <div style={{ flex: 1, height: '1px', background: borderCol }} />
       </div>
 
-      {/* Demo Accounts Wrapper */}
-      <div className="w-full mt-8">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="h-px bg-surface-700/40 flex-1"></div>
-          <span className="text-[12px] font-semibold text-surface-500 uppercase tracking-wider">Demo Credentials</span>
-          <div className="h-px bg-surface-700/40 flex-1"></div>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          <button onClick={() => handleDemoFill('admin@transitops.com', 'Admin@123456')} className="flex flex-col items-center justify-center py-2.5 px-1 rounded-[10px] border border-surface-700/40 bg-surface-900/30 hover:bg-surface-800/50 hover:border-primary-700/30 transition-all">
-            <span className="text-[12px] font-semibold text-white">Admin</span>
-          </button>
-          <button onClick={() => handleDemoFill('fleet@transitops.com', 'Fleet@123456')} className="flex flex-col items-center justify-center py-2.5 px-1 rounded-[10px] border border-surface-700/40 bg-surface-900/30 hover:bg-surface-800/50 hover:border-primary-700/30 transition-all">
-            <span className="text-[12px] font-semibold text-white">Fleet</span>
-          </button>
-          <button onClick={() => handleDemoFill('dispatcher@transitops.com', 'Dispatch@123456')} className="flex flex-col items-center justify-center py-2.5 px-1 rounded-[10px] border border-surface-700/40 bg-surface-900/30 hover:bg-surface-800/50 hover:border-primary-700/30 transition-all">
-            <span className="text-[12px] font-semibold text-white">Dispatch</span>
-          </button>
+      {/* ── SSO Buttons ──────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '28px' }}>
+        {/* Google */}
+        <button type="button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '44px', border: `1.5px solid ${borderCol}`, background: ssoBg, borderRadius: '10px', cursor: 'pointer', fontSize: '14px', fontWeight: 600, color: textPrimary, transition: 'border-color 0.2s, box-shadow 0.2s, background 0.3s' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#93c5fd'; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 10px rgba(0,0,0,0.08)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = borderCol; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+          </svg>
+          Google
+        </button>
+        {/* Microsoft */}
+        <button type="button" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '44px', border: `1.5px solid ${borderCol}`, background: ssoBg, borderRadius: '10px', cursor: 'pointer', fontSize: '14px', fontWeight: 600, color: textPrimary, transition: 'border-color 0.2s, box-shadow 0.2s, background 0.3s' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#93c5fd'; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 10px rgba(0,0,0,0.08)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = borderCol; (e.currentTarget as HTMLElement).style.boxShadow = 'none'; }}
+        >
+          <svg viewBox="0 0 23 23" width="18" height="18">
+            <path fill="#f35325" d="M1 1h10v10H1z"/>
+            <path fill="#81bc06" d="M12 1h10v10H12z"/>
+            <path fill="#05a6f0" d="M1 12h10v10H1z"/>
+            <path fill="#ffba08" d="M12 12h10v10H12z"/>
+          </svg>
+          Microsoft
+        </button>
+      </div>
+
+      {/* ── Demo credential cards ────────────────────────── */}
+      <div style={{ borderTop: `1px solid ${borderCol}`, paddingTop: '24px' }}>
+        <p style={{ fontSize: '11px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px', textAlign: 'center' }}>
+          Quick demo access
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: '8px' }}>
+          {DEMOS.map(demo => (
+            <motion.button
+              key={demo.role}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              type="button"
+              onClick={() => fillDemo(demo.email, demo.pass)}
+              style={{
+                padding: '10px 8px',
+                border: `1.5px solid ${borderCol}`,
+                borderRadius: '10px',
+                background: demoBg,
+                cursor: 'pointer',
+                transition: 'border-color 0.2s, background 0.2s',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = demo.color; (e.currentTarget as HTMLElement).style.background = `${demo.color}15`; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = borderCol; (e.currentTarget as HTMLElement).style.background = demoBg; }}
+            >
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: demo.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>{demo.role[0]}</span>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: textPrimary }}>{demo.role}</span>
+            </motion.button>
+          ))}
         </div>
       </div>
 
+      {/* ── Spinner keyframe ─────────────────────────────── */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </motion.div>
   );
 }
+

@@ -1,4 +1,0 @@
-/**
- * Maintenance module — constants
- */
-export {};

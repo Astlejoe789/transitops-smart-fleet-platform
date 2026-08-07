@@ -1,4 +1,0 @@
-/**
- * Settings module — services
- */
-export {};

@@ -8,6 +8,7 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/summary', dashboardController.getSummary);
+router.get('/fleet-dashboard', dashboardController.getFleetDashboard);
 router.get('/fleet', dashboardController.getFleetStatus);
 router.get('/trips', dashboardController.getTripsData);
 router.get('/expenses', dashboardController.getExpensesData);

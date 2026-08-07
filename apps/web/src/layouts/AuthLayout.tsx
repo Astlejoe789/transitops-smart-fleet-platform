@@ -1,135 +1,211 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Float, Grid } from '@react-three/drei';
+import { Suspense, useEffect, useState } from 'react';
+import * as THREE from 'three';
+import { useTheme } from 'next-themes';
+import { useGLTF } from '@react-three/drei';
 
-export function AuthLayout() {
+/* ─────────────────────────────────────────────────────────
+   3-D Brand Truck loaded from GLB
+───────────────────────────────────────────────────────── */
+function TruckModel({ dark }: { dark: boolean }) {
+  const { scene } = useGLTF('/truck.glb');
+  const brandColor = dark ? '#004a85' : '#0066B3';
+
+  // Apply brand color to the truck body meshes
+  useEffect(() => {
+    scene.traverse((node) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const mesh = node as THREE.Mesh;
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        const name = mesh.name.toLowerCase();
+        
+        // Avoid coloring wheels and glass so they retain their original look
+        if (!name.includes('wheel') && !name.includes('tire') && !name.includes('glass')) {
+          if (mat && mat.color) {
+            mat.color = new THREE.Color(brandColor);
+          }
+        }
+      }
+    });
+  }, [scene, brandColor]);
+
   return (
-    <div className="flex min-h-screen font-sans bg-[#030712]">
-      {/* Left Column (Promotional 60%) - Hidden on small screens */}
-      <div className="hidden lg:flex w-[60%] flex-col justify-between relative overflow-hidden">
-        
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('/images/auth-bg.png')` }}
-        />
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#030712]/90 via-[#0B1426]/70 to-[#030712]/80" />
-        
-        {/* Grid Pattern */}
-        <div 
-          className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(to right, #94a3b82a 1px, transparent 1px), linear-gradient(to bottom, #94a3b82a 1px, transparent 1px)`,
-            backgroundSize: '40px 40px'
-          }}
-        />
-        <div className="absolute top-0 left-0 w-full h-[500px] bg-primary-500/8 blur-[120px] rounded-full pointer-events-none -translate-y-1/2" />
-        
-        {/* Top Header */}
-        <div className="relative z-10 flex items-center gap-3.5 px-14 pt-10">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-gradient-to-br from-primary-500 to-accent-500 text-white shadow-lg shadow-primary-600/20">
-            <Truck className="h-6 w-6" />
-          </div>
-          <span className="text-[20px] font-bold tracking-tight text-white" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>
-            TransitOps
-          </span>
+    <group position={[0, -0.6, 0]} rotation={[0, -0.5, 0]}>
+      <primitive object={scene} scale={1.8} />
+    </group>
+  );
+}
+
+useGLTF.preload('/truck.glb');
+
+/* ─────────────────────────────────────────────────────────
+   Full 3D Scene
+───────────────────────────────────────────────────────── */
+function Scene({ dark }: { dark: boolean }) {
+  return (
+    <>
+      <ambientLight intensity={dark ? 0.65 : 1.5} color="#d0e8ff" />
+      <directionalLight position={[8, 12, 6]} intensity={dark ? 2.0 : 3.5} color="#ffffff" castShadow shadow-mapSize={[2048, 2048]} />
+      <directionalLight position={[-6, 4, -4]} intensity={dark ? 0.55 : 1.2} color="#aaccff" />
+      <pointLight position={[0, 6, 0]} intensity={0.5} color="#4488ff" />
+      <pointLight position={[0, -0.3, 0]} intensity={1.0} color="#0066B3" distance={9} />
+
+      <Grid
+        position={[0, -0.53, 0]}
+        args={[30, 30]}
+        cellSize={0.8}
+        cellThickness={0.4}
+        cellColor={dark ? "#1a3a6a" : "#cce0f5"}
+        sectionSize={4}
+        sectionThickness={0.8}
+        sectionColor={dark ? "#0066B3" : "#88b3d9"}
+        fadeDistance={18}
+        fadeStrength={2.5}
+        infiniteGrid
+      />
+
+      <Float speed={0.8} rotationIntensity={0.06} floatIntensity={0.3}>
+        <TruckModel dark={dark} />
+      </Float>
+
+      <OrbitControls
+        enableZoom
+        enablePan={false}
+        minDistance={5}
+        maxDistance={18}
+        minPolarAngle={Math.PI * 0.12}
+        maxPolarAngle={Math.PI * 0.52}
+        autoRotate
+        autoRotateSpeed={0.5}
+      />
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   AuthLayout — main export
+───────────────────────────────────────────────────────── */
+export function AuthLayout() {
+  const { theme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const dark = mounted ? (theme === 'dark' || resolvedTheme === 'dark') : false;
+
+  const leftBg = dark 
+    ? 'linear-gradient(135deg, #060e1a 0%, #0a1628 50%, #060e1a 100%)'
+    : 'linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%)';
+  const rightBg = dark ? '#0b1120' : '#ffffff';
+  const rightBorder = dark ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,102,179,0.08)';
+  const brandText = dark ? '#ffffff' : '#003d80';
+  const taglineText = dark ? '#ffffff' : '#003d80';
+  const taglineSub = dark ? 'rgba(255,255,255,0.6)' : 'rgba(0,50,120,0.6)';
+  const linkColor = dark ? 'rgba(255,255,255,0.3)' : 'rgba(0,50,120,0.5)';
+  const linkHover = dark ? 'rgba(255,255,255,0.65)' : 'rgba(0,50,120,0.9)';
+
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', 'Outfit', ui-sans-serif, system-ui, sans-serif" }}>
+
+      {/* ══ LEFT PANEL — 3D Truck Viewer ═══════════════════ */}
+      <div
+        style={{
+          width: '60%',
+          position: 'relative',
+          overflow: 'hidden',
+          background: leftBg,
+          flexShrink: 0,
+        }}
+        className="auth-left-panel"
+      >
+        {/* 3D Canvas fills the entire left panel */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
+          <Canvas
+            camera={{ position: [8, 3.5, 6], fov: 42 }}
+            shadows
+            gl={{
+              antialias: true,
+              alpha: true,
+              toneMapping: THREE.ACESFilmicToneMapping,
+            }}
+          >
+            <Suspense fallback={null}>
+              <Scene dark={dark} />
+            </Suspense>
+          </Canvas>
         </div>
 
-        {/* Hero Content — centered text */}
-        <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-12">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-[34px] font-bold tracking-tight text-white leading-[1.15] mb-3 max-w-lg text-center"
-            style={{ fontFamily: 'Outfit, Inter, sans-serif' }}
-          >
-            The operations console for modern fleets.
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-[15px] text-surface-300 leading-relaxed max-w-md text-center"
-          >
-            Dispatch with confidence, track every asset, and keep an auditable trail across trips, maintenance, fuel, and compliance.
-          </motion.p>
+        {/* Centre radial glow */}
+        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 55%, rgba(0,102,179,0.14) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 2 }} />
+
+        {/* Branding Overlay */}
+        <div style={{ position: 'absolute', top: 40, left: 48, zIndex: 3 }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
+            <div style={{
+              width: 44, height: 44,
+              borderRadius: 12,
+              background: 'linear-gradient(135deg, #0066B3 0%, #003d80 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 8px 16px rgba(0,102,179,0.25)'
+            }}>
+              <Truck size={24} color="#ffffff" strokeWidth={2.5} />
+            </div>
+            <span style={{ fontSize: '1.5rem', fontWeight: 800, color: brandText, letterSpacing: '-0.03em' }}>
+              TransitOps
+            </span>
+          </Link>
         </div>
 
-        {/* Floating Cards — scattered across the whole left panel */}
-        {/* Top-left area */}
-        <motion.div 
-          animate={{ y: [0, -12, 0] }} 
-          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-          className="absolute z-10 left-[8%] top-[18%] rounded-[16px] border border-surface-700/40 bg-surface-900/70 backdrop-blur-md px-5 py-4 shadow-xl w-[160px]"
-        >
-          <div className="text-[11px] text-surface-400 mb-1 font-medium">Active Trips</div>
-          <div className="text-[20px] font-bold text-white" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>1,204</div>
-        </motion.div>
-
-        {/* Top-right area */}
-        <motion.div 
-          animate={{ y: [0, 10, 0] }} 
-          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.8 }}
-          className="absolute z-10 right-[10%] top-[14%] rounded-[16px] border border-surface-700/40 bg-surface-900/70 backdrop-blur-md px-5 py-4 shadow-xl w-[160px]"
-        >
-          <div className="text-[11px] text-surface-400 mb-1 font-medium">On-time Rate</div>
-          <div className="text-[20px] font-bold text-accent-400" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>98.2%</div>
-        </motion.div>
-
-        {/* Middle-left area */}
-        <motion.div 
-          animate={{ x: [0, 8, 0] }} 
-          transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", delay: 1.5 }}
-          className="absolute z-10 left-[5%] top-[52%] rounded-[16px] border border-primary-700/30 bg-primary-950/50 backdrop-blur-md px-5 py-4 shadow-xl w-[160px]"
-        >
-          <div className="text-[11px] text-surface-400 mb-1 font-medium">Fleet Revenue</div>
-          <div className="text-[20px] font-bold text-success" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>$45.2k</div>
-        </motion.div>
-
-        {/* Middle-right area */}
-        <motion.div 
-          animate={{ y: [0, -10, 0], x: [0, -5, 0] }} 
-          transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut", delay: 0.3 }}
-          className="absolute z-10 right-[6%] top-[48%] rounded-[16px] border border-surface-700/40 bg-surface-900/70 backdrop-blur-md px-5 py-4 shadow-xl w-[160px]"
-        >
-          <div className="text-[11px] text-surface-400 mb-1 font-medium">Active Vehicles</div>
-          <div className="text-[20px] font-bold text-primary-400" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>89 / 94</div>
-        </motion.div>
-
-        {/* Bottom-left area */}
-        <motion.div 
-          animate={{ y: [0, 8, 0] }} 
-          transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut", delay: 2 }}
-          className="absolute z-10 left-[15%] bottom-[18%] rounded-[16px] border border-surface-700/40 bg-surface-900/70 backdrop-blur-md px-5 py-4 shadow-xl w-[160px]"
-        >
-          <div className="text-[11px] text-surface-400 mb-1 font-medium">Fuel Saved</div>
-          <div className="text-[20px] font-bold text-warning" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>12.4%</div>
-        </motion.div>
-
-        {/* Bottom-right area */}
-        <motion.div 
-          animate={{ y: [0, -9, 0], x: [0, 6, 0] }} 
-          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1.2 }}
-          className="absolute z-10 right-[12%] bottom-[14%] rounded-[16px] border border-accent-500/20 bg-surface-900/70 backdrop-blur-md px-5 py-4 shadow-xl w-[160px]"
-        >
-          <div className="text-[11px] text-surface-400 mb-1 font-medium">Maintenance Score</div>
-          <div className="text-[20px] font-bold text-accent-400" style={{ fontFamily: 'Outfit, Inter, sans-serif' }}>A+</div>
-        </motion.div>
-
-        {/* Footer */}
-        <div className="relative z-10 flex gap-6 text-[13px] text-surface-500 p-12">
-          <span className="hover:text-surface-300 transition-colors cursor-pointer">Privacy</span>
-          <span className="hover:text-surface-300 transition-colors cursor-pointer">Terms</span>
-          <span className="hover:text-surface-300 transition-colors cursor-pointer">Support</span>
+        <div style={{ position: 'absolute', bottom: 48, left: 48, zIndex: 3, maxWidth: 500 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: taglineText, lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-0.02em' }}>
+              Command Your Fleet <br/>With Precision
+            </h2>
+            <p style={{ fontSize: '1.1rem', color: taglineSub, lineHeight: 1.6, fontWeight: 400 }}>
+              The enterprise-grade platform for real-time monitoring, intelligent maintenance, and global logistics orchestration.
+            </p>
+          </motion.div>
         </div>
       </div>
 
-      {/* Right Column (Form Container 40%) */}
-      <div className="w-full lg:w-[40%] flex flex-col justify-center items-center p-6 lg:p-12 relative bg-[#030712] border-l border-surface-800/30">
-        <div className="w-full max-w-sm">
-          <Outlet />
+      {/* ══ RIGHT PANEL — Auth Forms ═══════════════════════ */}
+      <div style={{
+        width: '40%',
+        background: rightBg,
+        borderLeft: rightBorder,
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative'
+      }}>
+        {/* Main Content Area */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 10%' }}>
+          <div style={{ maxWidth: 440, width: '100%', margin: '0 auto' }}>
+            <Outlet />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          padding: '24px 40px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '0.85rem'
+        }}>
+          <div style={{ color: linkColor, fontWeight: 500 }}>
+            © 2026 TransitOps Enterprise
+          </div>
+          <div style={{ display: 'flex', gap: '24px' }}>
+            <a href="#" style={{ color: linkColor, textDecoration: 'none', fontWeight: 500, transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = linkHover} onMouseOut={e => e.currentTarget.style.color = linkColor}>Support</a>
+            <a href="#" style={{ color: linkColor, textDecoration: 'none', fontWeight: 500, transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = linkHover} onMouseOut={e => e.currentTarget.style.color = linkColor}>Privacy</a>
+            <a href="#" style={{ color: linkColor, textDecoration: 'none', fontWeight: 500, transition: 'color 0.2s' }} onMouseOver={e => e.currentTarget.style.color = linkHover} onMouseOut={e => e.currentTarget.style.color = linkColor}>Terms</a>
+          </div>
         </div>
       </div>
     </div>

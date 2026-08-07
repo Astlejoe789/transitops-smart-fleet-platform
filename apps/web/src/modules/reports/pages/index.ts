@@ -1,4 +1,0 @@
-/**
- * Reports module — pages
- */
-export {};

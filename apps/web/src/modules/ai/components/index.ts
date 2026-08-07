@@ -1,4 +1,0 @@
-/**
- * Ai module — components
- */
-export {};

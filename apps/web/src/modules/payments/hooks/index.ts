@@ -1,4 +1,0 @@
-/**
- * Payments module — hooks
- */
-export {};

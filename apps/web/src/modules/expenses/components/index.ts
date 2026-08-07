@@ -1,4 +1,0 @@
-/**
- * Expenses module — components
- */
-export {};
