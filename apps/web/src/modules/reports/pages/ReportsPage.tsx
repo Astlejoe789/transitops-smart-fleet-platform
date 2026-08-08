@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Download, FileText, Fuel, Wrench, Receipt, Users, Truck, Loader2 } from 'lucide-react';
 import { reportsApi, type ReportsSummary, type ReportItem } from '@/api/reports.api';
 import { useToast } from '@/components/ui/Toast';
@@ -69,7 +69,7 @@ const REPORTS = [
 export default function ReportsPage() {
   const [summary, setSummary] = useState<ReportsSummary | null>(null);
   const [reportsData, setReportsData] = useState<ReportItem[] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState<string | null>(null);
   const { success, error: toastError } = useToast();
 

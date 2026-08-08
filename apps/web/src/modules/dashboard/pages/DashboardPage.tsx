@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Truck, Activity, Wrench, Fuel,
   Ellipsis, Map, CalendarDays, ChevronDown,
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                     fontSize: '12px',
                     color: 'var(--recharts-tooltip-color, #f8fafc)',
                   }}
-                  formatter={(v: number) => [`${v}%`, 'Utilization']}
+                  formatter={(v: any) => [`${v}%`, 'Utilization']}
                 />
                 <Area
                   type="monotone"
