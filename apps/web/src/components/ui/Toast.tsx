@@ -18,6 +18,8 @@ interface Toast {
 
 interface ToastContextValue {
   toast: (message: string, variant?: ToastVariant, duration?: number) => void;
+  success: (title: string, message?: string) => void;
+  error: (title: string, message?: string) => void;
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null);
@@ -62,7 +64,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ toast: addToast }}>
+    <ToastContext.Provider value={{ 
+      toast: addToast,
+      success: (title: string, message?: string) => addToast(message ? `${title}: ${message}` : title, 'success'),
+      error: (title: string, message?: string) => addToast(message ? `${title}: ${message}` : title, 'error')
+    }}>
       {children}
 
       {/* Toast Container */}

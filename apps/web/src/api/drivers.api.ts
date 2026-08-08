@@ -7,6 +7,10 @@ export interface Driver {
   status: string;
   phone?: string;
   email?: string;
+  expiry?: string;
+  empId?: string;
+  license?: string;
+  category?: string;
 }
 
 export const getDrivers = async (): Promise<Driver[]> => {

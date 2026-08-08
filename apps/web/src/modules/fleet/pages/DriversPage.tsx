@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Plus, Search, AlertTriangle, MoreHorizontal, Download } from 'lucide-react';
+import { Plus, Search, AlertTriangle, MoreHorizontal, Download } from 'lucide-react';
 
 const STATUS: Record<string, { label: string; color: string; bg: string }> = {
   AVAILABLE: { label: 'Available', color: '#10B981', bg: 'hsl(160 40% 10%)' },
