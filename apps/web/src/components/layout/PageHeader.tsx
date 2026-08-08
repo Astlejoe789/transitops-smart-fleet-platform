@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { PageTitle, PageSubtitle } from '../ui/Typography';
+import { PageTitle } from '../ui/Typography';
 
 export interface PageHeaderProps extends HTMLAttributes<HTMLDivElement> {
   title: string;

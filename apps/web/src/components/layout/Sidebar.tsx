@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  Truck, X, LogOut, Settings, LayoutDashboard, Route,
+  Truck, X, Settings, LayoutDashboard, Route,
   Users, Wrench, Fuel, Receipt, BarChart3, Map,
   Ellipsis, Sun, Moon
 } from 'lucide-react';
@@ -31,12 +31,6 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
 ];
-
-interface SidebarProps {
-  isOpen?: boolean;
-  onClose?: () => void;
-  mobile?: boolean;
-}
 
 function SidebarContent({ onClose }: { onClose?: () => void }) {
   const { user, logout } = useAuth();

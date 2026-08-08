@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wrench, Plus, Search, Eye, Edit3, AlertTriangle, Download, MoreHorizontal } from 'lucide-react';
+import { Wrench, Plus, Search, AlertTriangle, Download, MoreHorizontal } from 'lucide-react';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   SCHEDULED:   { label: 'Scheduled',   color: '#1a8fff', bg: 'hsl(211 50% 12%)' },
