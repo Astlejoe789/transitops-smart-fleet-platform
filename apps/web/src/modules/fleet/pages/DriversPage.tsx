@@ -95,8 +95,8 @@ export default function DriversPage() {
             <tbody>
               {filtered.map(d => {
                 const s = STATUS[d.status];
-                const exp  = isExpired(d.expiry);
-                const soon = isExpiring(d.expiry);
+                const exp  = isExpired(d.expiry ?? '');
+                const soon = isExpiring(d.expiry ?? '');
                 return (
                   <tr key={d.id} className="border-t border-border hover:bg-muted/30 transition-colors group">
                     <td className="px-5 py-3.5">

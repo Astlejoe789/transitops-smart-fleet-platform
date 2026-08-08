@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Route, Plus, Search, ChevronRight, MoreHorizontal, AlertCircle, Download } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Search, ChevronRight, MoreHorizontal, AlertCircle, Download } from 'lucide-react';
 
 const STATUS: Record<string, { label: string; color: string; bg: string }> = {
   DRAFT:      { label: 'Draft',      color: '#64748b', bg: 'hsl(222 47% 12%)' },
@@ -25,7 +25,7 @@ export default function TripsPage() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchTrips();
   }, []);
 
