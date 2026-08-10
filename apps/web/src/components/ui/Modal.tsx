@@ -36,7 +36,7 @@ export function Modal({ isOpen, onClose, title, description, children, footer, c
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -54,7 +54,7 @@ export function Modal({ isOpen, onClose, title, description, children, footer, c
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className={cn(
-              'relative z-50 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[var(--radius-3xl)] border border-surface-800 bg-surface-950 p-6 shadow-lg',
+              'relative z-50 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-[var(--radius-3xl)] border border-surface-800 bg-surface-950 p-4 sm:p-6 shadow-lg',
               className
             )}
           >

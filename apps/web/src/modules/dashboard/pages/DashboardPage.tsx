@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import {
   Truck, Activity, Wrench, Fuel,
   Ellipsis, Map, CalendarDays, ChevronDown,
-  Clock3, Download, AlertTriangle, Shield, RefreshCw
+  Clock3, Download, AlertTriangle, Shield, RefreshCw,
+  Users, BarChart3, SendHorizonal, CheckCircle
 } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
@@ -26,36 +27,16 @@ const utilData = [
   { day: 'Sun', value: 79 },
 ];
 
-// ── KPI Cards ───────────────────────────────────────────────────
-const KPI_CARDS = [
-  {
-    icon: Truck,
-    iconClass: 'bg-secondary text-foreground',
-    label: 'Total vehicles',
-    value: '248',
-    sub: '+6 this month',
-  },
-  {
-    icon: Activity,
-    iconClass: 'bg-success-soft text-success',
-    label: 'Active now',
-    value: '187',
-    sub: '75.4% utilization',
-  },
-  {
-    icon: Wrench,
-    iconClass: 'bg-warning-soft text-warning',
-    label: 'In maintenance',
-    value: '12',
-    sub: '3 need attention',
-  },
-  {
-    icon: Fuel,
-    iconClass: 'bg-secondary text-foreground',
-    label: 'Fuel efficiency',
-    value: '8.4 mpg',
-    sub: '+2.1% vs last week',
-  },
+// ── KPI Cards (static fallback) ─────────────────────────────────────────
+const KPI_CARDS_FALLBACK = [
+  { icon: Truck,         iconClass: 'bg-secondary text-foreground',    label: 'Total Vehicles',     value: '248',       sub: '+6 this month' },
+  { icon: CheckCircle,   iconClass: 'bg-success-soft text-success',    label: 'Available Vehicles', value: '187',       sub: 'ready for dispatch' },
+  { icon: Activity,      iconClass: 'bg-primary/10 text-primary',      label: 'Active Trips',       value: '28',        sub: 'dispatched or in progress' },
+  { icon: SendHorizonal, iconClass: 'bg-warning-soft text-warning',    label: 'Pending Trips',      value: '14',        sub: 'awaiting dispatch' },
+  { icon: Users,         iconClass: 'bg-[#8B5CF6]/10 text-[#8B5CF6]', label: 'Drivers On Duty',    value: '32',        sub: 'of 89 total drivers' },
+  { icon: Wrench,        iconClass: 'bg-warning-soft text-warning',    label: 'In Maintenance',     value: '12',        sub: '3 need attention' },
+  { icon: Fuel,          iconClass: 'bg-secondary text-foreground',    label: 'Fuel Efficiency',    value: '8.4 km/L',  sub: '+2.1% vs last week' },
+  { icon: BarChart3,     iconClass: 'bg-success-soft text-success',    label: 'Fleet Utilization',  value: '75.4%',     sub: 'active vehicles' },
 ];
 
 // ── Vehicle activity ─────────────────────────────────────────────
@@ -106,11 +87,15 @@ export default function DashboardPage() {
   useEffect(() => { fetchData(); }, []);
 
   const currentKpiCards = summary ? [
-    { ...KPI_CARDS[0], value: String(summary.totalVehicles.value), sub: summary.totalVehicles.sub },
-    { ...KPI_CARDS[1], value: String(summary.activeVehicles.value), sub: summary.activeVehicles.sub },
-    { ...KPI_CARDS[2], value: String(summary.inMaintenance.value), sub: summary.inMaintenance.sub },
-    { ...KPI_CARDS[3], value: String(summary.fuelEfficiency.value), sub: summary.fuelEfficiency.sub },
-  ] : KPI_CARDS;
+    { ...KPI_CARDS_FALLBACK[0], value: String(summary.totalVehicles.value), sub: summary.totalVehicles.sub },
+    { ...KPI_CARDS_FALLBACK[1], value: String(summary.availableVehicles?.value ?? summary.activeVehicles.value), sub: summary.availableVehicles?.sub ?? summary.activeVehicles.sub },
+    { ...KPI_CARDS_FALLBACK[2], value: String(summary.activeTrips?.value ?? '—'), sub: summary.activeTrips?.sub ?? 'dispatched or in progress' },
+    { ...KPI_CARDS_FALLBACK[3], value: String(summary.pendingTrips?.value ?? '—'), sub: summary.pendingTrips?.sub ?? 'awaiting dispatch' },
+    { ...KPI_CARDS_FALLBACK[4], value: String(summary.driversOnDuty?.value ?? '—'), sub: summary.driversOnDuty?.sub ?? 'drivers on trip' },
+    { ...KPI_CARDS_FALLBACK[5], value: String(summary.inMaintenance.value), sub: summary.inMaintenance.sub },
+    { ...KPI_CARDS_FALLBACK[6], value: String(summary.fuelEfficiency.value), sub: summary.fuelEfficiency.sub },
+    { ...KPI_CARDS_FALLBACK[7], value: String(summary.fleetUtilization?.value ?? '—'), sub: summary.fleetUtilization?.sub ?? 'active vehicles' },
+  ] : KPI_CARDS_FALLBACK;
 
   const currentUtilData = fleet?.utilizationData || utilData;
   const currentVehicles = fleet?.vehicles || VEHICLES;
@@ -154,9 +139,9 @@ export default function DashboardPage() {
       </section>
 
       {/* ── KPI Cards ────────────────────────────────────────── */}
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Fleet metrics">
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Fleet metrics">
         {loading
-          ? Array.from({ length: 4 }).map((_, i) => (
+          ? Array.from({ length: 8 }).map((_, i) => (
               <article key={i} className="rounded-lg border bg-card p-5 shadow-sm">
                 <div className="mb-5 flex items-start justify-between">
                   <Skeleton className="size-10 rounded-md" />
@@ -172,7 +157,7 @@ export default function DashboardPage() {
           : currentKpiCards.map((card) => {
           const Icon = card.icon;
           return (
-            <article key={card.label} className="rounded-lg border bg-card p-5 shadow-sm">
+            <article key={card.label} className="rounded-lg border bg-card p-5 shadow-sm hover:border-primary/30 transition-colors">
               <div className="mb-5 flex items-start justify-between">
                 <span className={`grid size-10 place-items-center rounded-md ${card.iconClass}`}>
                   <Icon width={20} height={20} aria-hidden="true" />

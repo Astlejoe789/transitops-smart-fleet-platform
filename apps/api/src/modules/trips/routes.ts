@@ -9,6 +9,9 @@ router.use(authMiddleware);
 
 // Dispatch Board (Must come before /:id)
 router.get('/dispatch/board', tripController.getDispatchBoard.bind(tripController));
+// Available assets for dispatch form
+router.get('/available-vehicles', tripController.getAvailableVehicles.bind(tripController));
+router.get('/available-drivers', tripController.getAvailableDrivers.bind(tripController));
 
 // Basic CRUD
 router.get('/', tripController.getTrips.bind(tripController));

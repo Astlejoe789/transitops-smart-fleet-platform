@@ -108,6 +108,7 @@ export class MaintenanceService {
 
   /**
    * Create a new maintenance log
+   * Business Rule: Creating an active maintenance record automatically changes vehicle status to "In Shop".
    */
   async createMaintenanceLog(companyId: string, userId: string, data: Omit<Prisma.MaintenanceLogUncheckedCreateInput, 'companyId' | 'maintenanceId'> & { scheduledDate: string | Date }) {
     const vehicle = await prisma.vehicle.findFirst({
@@ -116,32 +117,44 @@ export class MaintenanceService {
 
     if (!vehicle) throw new HttpException(404, 'Vehicle not found');
 
+    // Business Rule: retired vehicles cannot be put into maintenance
+    if (vehicle.status === 'DECOMMISSIONED') {
+      throw new HttpException(400, 'Decommissioned/Retired vehicles cannot have maintenance records created');
+    }
+
     const maintenanceId = await this.generateMaintenanceId(companyId);
 
-    const log = await prisma.maintenanceLog.create({
-      data: {
-        companyId,
-        maintenanceId,
-        vehicleId: data.vehicleId,
-        vendorId: data.vendorId,
-        assignedTechnicianId: data.assignedTechnicianId,
-        maintenanceType: data.maintenanceType,
-        priority: data.priority,
-        status: 'SCHEDULED',
-        description: data.description,
-        estimatedCost: data.estimatedCost || 0,
-        scheduledDate: new Date(data.scheduledDate),
-        estimatedDuration: data.estimatedDuration,
-        odometerReading: data.odometerReading,
-        notes: data.notes,
-        checklist: data.checklist ? data.checklist : undefined,
-      },
+    const log = await prisma.$transaction(async (tx) => {
+      const newLog = await tx.maintenanceLog.create({
+        data: {
+          companyId,
+          maintenanceId,
+          vehicleId: data.vehicleId,
+          vendorId: data.vendorId,
+          assignedTechnicianId: data.assignedTechnicianId,
+          maintenanceType: data.maintenanceType,
+          priority: data.priority,
+          status: 'SCHEDULED',
+          description: data.description,
+          estimatedCost: data.estimatedCost || 0,
+          scheduledDate: new Date(data.scheduledDate),
+          estimatedDuration: data.estimatedDuration,
+          odometerReading: data.odometerReading,
+          notes: data.notes,
+          checklist: data.checklist ? data.checklist : undefined,
+        },
+      });
+
+      // Business Rule: Creating a maintenance record immediately sets vehicle to "In Shop" (UNDER_MAINTENANCE)
+      await tx.vehicle.update({
+        where: { id: data.vehicleId },
+        data: { status: 'UNDER_MAINTENANCE' },
+      });
+
+      return newLog;
     });
 
-    await this.logAudit(companyId, userId, 'CREATE', log.id, null, log);
-
-    // Ensure vehicle status becomes UNDER_MAINTENANCE if it's scheduled for today or starting immediately.
-    // For simplicity, we just create the log. Updating vehicle status can happen when status -> IN_PROGRESS.
+    await this.logAudit(companyId, userId, 'CREATE', log.id, null, { ...log, vehicleSetToInShop: true });
 
     return log;
   }
@@ -247,7 +260,7 @@ export class MaintenanceService {
 
     if (status === 'IN_PROGRESS') {
       dataToUpdate.startDate = new Date();
-      // Update vehicle status
+      // Vehicle should already be UNDER_MAINTENANCE from creation; ensure it is
       await prisma.vehicle.update({
         where: { id: log.vehicleId },
         data: { status: 'UNDER_MAINTENANCE' },
@@ -256,18 +269,26 @@ export class MaintenanceService {
 
     if (status === 'COMPLETED') {
       dataToUpdate.completedDate = new Date();
-      // Do not release vehicle until VERIFIED or CLOSED, depending on policy. 
-      // We will release it on VERIFIED.
+      // Business Rule: Closing maintenance restores vehicle to Available (unless retired)
+      const vehicle = await prisma.vehicle.findUnique({ where: { id: log.vehicleId } });
+      if (vehicle && vehicle.status === 'UNDER_MAINTENANCE') {
+        await prisma.vehicle.update({ where: { id: log.vehicleId }, data: { status: 'AVAILABLE' } });
+      }
     }
 
-    if (status === 'VERIFIED' || status === 'CANCELLED') {
-      // Release vehicle back to available if it's currently under maintenance
+    if (status === 'VERIFIED') {
+      // Also release on VERIFIED
       const vehicle = await prisma.vehicle.findUnique({ where: { id: log.vehicleId } });
       if (vehicle?.status === 'UNDER_MAINTENANCE') {
-        await prisma.vehicle.update({
-          where: { id: log.vehicleId },
-          data: { status: 'AVAILABLE' },
-        });
+        await prisma.vehicle.update({ where: { id: log.vehicleId }, data: { status: 'AVAILABLE' } });
+      }
+    }
+
+    if (status === 'CANCELLED') {
+      // Cancelling maintenance restores vehicle to Available (unless DECOMMISSIONED)
+      const vehicle = await prisma.vehicle.findUnique({ where: { id: log.vehicleId } });
+      if (vehicle && vehicle.status === 'UNDER_MAINTENANCE') {
+        await prisma.vehicle.update({ where: { id: log.vehicleId }, data: { status: 'AVAILABLE' } });
       }
     }
 
