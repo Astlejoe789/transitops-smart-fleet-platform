@@ -111,7 +111,7 @@ export function AuthLayout() {
 
       {/* ══ LEFT PANEL — 3D Truck Viewer ═══════════════════ */}
       <div
-        className="hidden lg:block auth-left-panel relative overflow-hidden shrink-0 lg:w-[60%]"
+        className="w-full h-[35vh] lg:h-auto lg:w-[60%] auth-left-panel relative overflow-hidden shrink-0"
         style={{ background: leftBg }}
       >
         {/* 3D Canvas fills the entire left panel */}
@@ -135,7 +135,7 @@ export function AuthLayout() {
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 55%, rgba(0,102,179,0.14) 0%, transparent 65%)', pointerEvents: 'none', zIndex: 2 }} />
 
         {/* Branding Overlay */}
-        <div style={{ position: 'absolute', top: 40, left: 48, zIndex: 3 }}>
+        <div className="hidden lg:block" style={{ position: 'absolute', top: 40, left: 48, zIndex: 3 }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
             <div style={{
               width: 44, height: 44,
@@ -152,7 +152,7 @@ export function AuthLayout() {
           </Link>
         </div>
 
-        <div style={{ position: 'absolute', bottom: 48, left: 48, zIndex: 3, maxWidth: 500 }}>
+        <div className="hidden lg:block" style={{ position: 'absolute', bottom: 48, left: 48, zIndex: 3, maxWidth: 500 }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -170,7 +170,7 @@ export function AuthLayout() {
 
       {/* ══ RIGHT PANEL — Auth Forms ═══════════════════════ */}
       <div 
-        className="w-full lg:w-[40%] flex flex-col relative min-h-screen lg:min-h-0"
+        className="w-full lg:w-[40%] flex flex-col relative flex-1"
         style={{
           background: rightBg,
           borderLeft: rightBorder,
