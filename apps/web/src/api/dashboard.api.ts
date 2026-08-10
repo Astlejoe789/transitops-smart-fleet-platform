@@ -2,11 +2,17 @@ import { apiClient } from './client';
 import type { ApiResponse } from '@/types/api.types';
 
 export interface DashboardSummary {
-  totalVehicles: { value: number; sub: string };
-  activeVehicles: { value: number; sub: string };
-  inMaintenance: { value: number; sub: string };
+  totalVehicles: { value: number | string; sub: string };
+  availableVehicles: { value: number | string; sub: string };
+  activeVehicles: { value: number | string; sub: string };
+  inMaintenance: { value: number | string; sub: string };
   fuelEfficiency: { value: string; sub: string };
+  activeTrips: { value: number | string; sub: string };
+  pendingTrips: { value: number | string; sub: string };
+  driversOnDuty: { value: number | string; sub: string };
+  fleetUtilization: { value: string; sub: string };
 }
+
 
 export interface DashboardFleetData {
   utilizationData: { day: string; value: number }[];
@@ -37,9 +43,14 @@ export const dashboardApi = {
       // Return mock data if backend not ready
       return {
         totalVehicles: { value: 248, sub: '+6 this month' },
+        availableVehicles: { value: 187, sub: 'ready for dispatch' },
         activeVehicles: { value: 187, sub: '75.4% utilization' },
         inMaintenance: { value: 12, sub: '3 need attention' },
         fuelEfficiency: { value: '8.4 mpg', sub: '+2.1% vs last week' },
+        activeTrips: { value: 28, sub: 'dispatched or in progress' },
+        pendingTrips: { value: 14, sub: 'awaiting dispatch' },
+        driversOnDuty: { value: 32, sub: 'of 89 total drivers' },
+        fleetUtilization: { value: '75.4%', sub: 'active vehicles' },
       };
     }
   },

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Download, FileText, Fuel, Wrench, Receipt, Users, Truck, Loader2 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { reportsApi, type ReportsSummary, type ReportItem } from '@/api/reports.api';
 import { useToast } from '@/components/ui/Toast';
 
@@ -64,6 +65,21 @@ const REPORTS = [
     indicatorClass: 'bg-[#3B82F6]',
     metrics: ['Avg Utilization: 82%', 'Peak Day: Tuesday', 'Lowest: Sunday (41%)'],
   },
+];
+
+const COST_DATA = [
+  { month: 'Jan', fuel: 24000, maintenance: 8000, tolls: 3000 },
+  { month: 'Feb', fuel: 22000, maintenance: 6000, tolls: 2800 },
+  { month: 'Mar', fuel: 26000, maintenance: 12000, tolls: 3400 },
+  { month: 'Apr', fuel: 23500, maintenance: 5000, tolls: 3100 },
+  { month: 'May', fuel: 28000, maintenance: 9500, tolls: 3800 },
+  { month: 'Jun', fuel: 25000, maintenance: 7000, tolls: 3200 },
+];
+
+const BREAKDOWN_DATA = [
+  { name: 'Fuel', value: 36, color: '#3B82F6' },
+  { name: 'Maintenance', value: 48, color: '#F59E0B' },
+  { name: 'Tolls & Others', value: 16, color: '#10B981' },
 ];
 
 export default function ReportsPage() {
@@ -154,6 +170,50 @@ export default function ReportsPage() {
           <div className="text-sm text-muted-foreground mt-1">Avg. Fuel Efficiency</div>
           <div className="text-xs text-muted-foreground/60 mt-0.5">{summary?.fuelEfficiency.sub || '+0.3 vs last month'}</div>
         </div>
+      </section>
+
+      {/* Charts Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <article className="rounded-lg border border-border bg-card p-5 shadow-sm flex flex-col">
+          <div className="mb-4">
+            <h2 className="font-display font-semibold text-lg">Operational Cost Trends</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Monthly breakdown of major expenses</p>
+          </div>
+          <div className="h-[300px] w-full mt-auto">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={COST_DATA} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} tickFormatter={(val) => `₹${val/1000}k`} />
+                <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '13px' }} formatter={(val: any) => `₹${val.toLocaleString()}`} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', marginTop: '10px' }} />
+                <Bar dataKey="fuel" name="Fuel" stackId="a" fill="#3B82F6" radius={[0, 0, 4, 4]} />
+                <Bar dataKey="maintenance" name="Maintenance" stackId="a" fill="#F59E0B" />
+                <Bar dataKey="tolls" name="Tolls & Others" stackId="a" fill="#10B981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </article>
+
+        <article className="rounded-lg border border-border bg-card p-5 shadow-sm flex flex-col">
+          <div className="mb-4">
+            <h2 className="font-display font-semibold text-lg">Expense Distribution (MTD)</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Cost breakdown by category</p>
+          </div>
+          <div className="h-[300px] w-full mt-auto">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={BREAKDOWN_DATA} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={2} dataKey="value" stroke="none">
+                  {BREAKDOWN_DATA.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(val: any) => `${val}%`} contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px', fontSize: '13px' }} />
+                <Legend layout="vertical" verticalAlign="middle" align="right" iconType="circle" wrapperStyle={{ fontSize: '13px' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </article>
       </section>
 
       {/* Report Cards */}

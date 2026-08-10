@@ -14,53 +14,45 @@ export class DashboardService {
   async getSummary(companyId: string) {
     const [
       totalVehicles,
+      availableVehicles,
+      vehiclesInMaintenance,
       vehiclesOnTrip,
-      maintenanceCount,
       fuelLogs,
       prevWeekFuelLogs,
       newVehiclesThisMonth,
       needsAttention,
+      activeTrips,
+      pendingTrips,
+      driversOnDuty,
+      totalDrivers,
     ] = await Promise.all([
       prisma.vehicle.count({ where: { companyId, deletedAt: null } }),
-      prisma.vehicle.count({ where: { companyId, status: 'IN_TRANSIT', deletedAt: null } }),
+      prisma.vehicle.count({ where: { companyId, status: 'AVAILABLE', deletedAt: null } }),
       prisma.vehicle.count({ where: { companyId, status: 'UNDER_MAINTENANCE', deletedAt: null } }),
+      prisma.vehicle.count({ where: { companyId, status: 'IN_TRANSIT', deletedAt: null } }),
       prisma.fuelLog.aggregate({
         _avg: { efficiency: true },
-        where: {
-          companyId,
-          deletedAt: null,
-          fuelDate: {
-            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          },
-        },
+        where: { companyId, deletedAt: null, fuelDate: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
       }),
       prisma.fuelLog.aggregate({
         _avg: { efficiency: true },
         where: {
           companyId,
           deletedAt: null,
-          fuelDate: {
-            gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-            lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          },
+          fuelDate: { gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
         },
       }),
       prisma.vehicle.count({
-        where: {
-          companyId,
-          deletedAt: null,
-          createdAt: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) },
-        },
+        where: { companyId, deletedAt: null, createdAt: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } },
       }),
-      prisma.maintenanceLog.count({
-        where: { companyId, status: { in: ['IN_PROGRESS', 'WAITING_FOR_PARTS'] }, deletedAt: null },
-      }),
+      prisma.maintenanceLog.count({ where: { companyId, status: { in: ['IN_PROGRESS', 'WAITING_FOR_PARTS'] }, deletedAt: null } }),
+      prisma.trip.count({ where: { companyId, status: { in: ['DISPATCHED', 'IN_PROGRESS'] }, deletedAt: null } }),
+      prisma.trip.count({ where: { companyId, status: 'DRAFT', deletedAt: null } }),
+      prisma.driver.count({ where: { companyId, status: 'ON_TRIP', deletedAt: null } }),
+      prisma.driver.count({ where: { companyId, deletedAt: null } }),
     ]);
 
-    // Utilization %
     const utilPct = totalVehicles > 0 ? ((vehiclesOnTrip / totalVehicles) * 100).toFixed(1) : '0.0';
-
-    // Fuel efficiency delta
     const currentMpg = fuelLogs._avg?.efficiency ?? 8.4;
     const prevMpg = prevWeekFuelLogs._avg?.efficiency ?? 8.2;
     const mpgDelta = currentMpg - prevMpg;
@@ -70,20 +62,27 @@ export class DashboardService {
     if (totalVehicles === 0) {
       return {
         totalVehicles: kpi(248, '+6 this month'),
-        activeVehicles: kpi(187, '75.4% utilization'),
+        availableVehicles: kpi(187, 'ready for dispatch'),
+        activeVehicles: kpi(32, '75.4% utilization'),
         inMaintenance: kpi(12, '3 need attention'),
-        fuelEfficiency: kpi('8.4 mpg', '+2.1% vs last week'),
+        fuelEfficiency: kpi('8.4 km/L', '+2.1% vs last week'),
+        activeTrips: kpi(28, '4 dispatched today'),
+        pendingTrips: kpi(14, 'awaiting dispatch'),
+        driversOnDuty: kpi(32, `of 89 total drivers`),
+        fleetUtilization: kpi('75.4%', 'active vehicles'),
       };
     }
 
     return {
       totalVehicles: kpi(totalVehicles, `+${newVehiclesThisMonth} this month`),
+      availableVehicles: kpi(availableVehicles, 'ready for dispatch'),
       activeVehicles: kpi(vehiclesOnTrip, `${utilPct}% utilization`),
-      inMaintenance: kpi(maintenanceCount, `${needsAttention} need attention`),
-      fuelEfficiency: kpi(
-        `${currentMpg.toFixed(1)} mpg`,
-        `${mpgSign}${mpgDelta.toFixed(1)}% vs last week`,
-      ),
+      inMaintenance: kpi(vehiclesInMaintenance, `${needsAttention} need attention`),
+      fuelEfficiency: kpi(`${currentMpg.toFixed(1)} km/L`, `${mpgSign}${mpgDelta.toFixed(1)}% vs last week`),
+      activeTrips: kpi(activeTrips, 'dispatched or in progress'),
+      pendingTrips: kpi(pendingTrips, 'awaiting dispatch'),
+      driversOnDuty: kpi(driversOnDuty, `of ${totalDrivers} total drivers`),
+      fleetUtilization: kpi(`${utilPct}%`, 'active vehicles'),
     };
   }
 

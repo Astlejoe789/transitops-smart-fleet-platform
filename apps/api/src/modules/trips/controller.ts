@@ -116,6 +116,26 @@ export class TripController {
       next(error);
     }
   }
+
+  async getAvailableVehicles(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId } = getUser(req);
+      const data = await tripService.getAvailableVehicles(companyId);
+      res.status(StatusCodes.OK).json({ status: 'success', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAvailableDrivers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { companyId } = getUser(req);
+      const data = await tripService.getAvailableDrivers(companyId);
+      res.status(StatusCodes.OK).json({ status: 'success', data });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const tripController = new TripController();
