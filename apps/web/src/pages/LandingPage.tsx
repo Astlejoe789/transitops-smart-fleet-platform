@@ -577,7 +577,7 @@ export default function LandingPage() {
           4. MISSION STATEMENT — TWO COLUMN
       ═══════════════════════════════════════════════════════ */}
       <section style={{ padding: '100px 32px', background: bg }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2" style={{ maxWidth: '1280px', margin: '0 auto', gap: '80px', alignItems: 'center' }}>
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
             <Tag>Our Mission</Tag>
             <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 800, color: textPrimary, lineHeight: 1.15, letterSpacing: '-0.02em', fontFamily: 'Outfit, Inter, sans-serif' }}>
@@ -634,7 +634,7 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ gap: '0' }}>
             {PILLARS.map((pillar, i) => {
               const Icon = pillar.icon;
               const row = Math.floor(i / 3);
@@ -644,8 +644,8 @@ export default function LandingPage() {
                   initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i % 3}
                   style={{
                     padding: '40px 36px',
-                    borderRight: col < 2 ? `1px solid ${borderColor}` : 'none',
-                    borderBottom: row < 1 ? `1px solid ${borderColor}` : 'none',
+                    borderRight: typeof window !== 'undefined' && window.innerWidth >= 1024 && col < 2 ? `1px solid ${borderColor}` : 'none',
+                    borderBottom: typeof window !== 'undefined' && window.innerWidth >= 1024 && row < 1 ? `1px solid ${borderColor}` : `1px solid ${borderColor}`,
                     background: cardBg,
                     transition: 'background 0.25s',
                   }}
@@ -787,7 +787,7 @@ export default function LandingPage() {
           9. SPLIT SECTION — IMAGE LEFT, TEXT RIGHT
       ═══════════════════════════════════════════════════════ */}
       <section style={{ padding: '100px 32px', background: bgAlt }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2" style={{ maxWidth: '1280px', margin: '0 auto', gap: '80px', alignItems: 'center' }}>
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
             <img
               src="/fleet-maintenance-yard.png"

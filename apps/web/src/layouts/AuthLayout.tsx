@@ -107,18 +107,12 @@ export function AuthLayout() {
   const linkHover = dark ? 'rgba(255,255,255,0.65)' : 'rgba(0,50,120,0.9)';
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', 'Outfit', ui-sans-serif, system-ui, sans-serif" }}>
+    <div className="flex flex-col lg:flex-row" style={{ minHeight: '100vh', fontFamily: "'Inter', 'Outfit', ui-sans-serif, system-ui, sans-serif" }}>
 
       {/* ══ LEFT PANEL — 3D Truck Viewer ═══════════════════ */}
       <div
-        style={{
-          width: '60%',
-          position: 'relative',
-          overflow: 'hidden',
-          background: leftBg,
-          flexShrink: 0,
-        }}
-        className="auth-left-panel"
+        className="hidden lg:block auth-left-panel relative overflow-hidden shrink-0 lg:w-[60%]"
+        style={{ background: leftBg }}
       >
         {/* 3D Canvas fills the entire left panel */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 1 }}>
@@ -175,14 +169,13 @@ export function AuthLayout() {
       </div>
 
       {/* ══ RIGHT PANEL — Auth Forms ═══════════════════════ */}
-      <div style={{
-        width: '40%',
-        background: rightBg,
-        borderLeft: rightBorder,
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative'
-      }}>
+      <div 
+        className="w-full lg:w-[40%] flex flex-col relative min-h-screen lg:min-h-0"
+        style={{
+          background: rightBg,
+          borderLeft: rightBorder,
+        }}
+      >
         {/* Main Content Area */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 10%' }}>
           <div style={{ maxWidth: 440, width: '100%', margin: '0 auto' }}>
